@@ -1,0 +1,101 @@
+.page_container {
+    /* border: 3px red solid; */
+    margin: 7px;
+
+    font-size: .7rem;
+    overflow-y: auto;
+    /* height: 100%; */
+    display: flex;
+    flex-direction: column;
+    
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    background: #FFF;
+    box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.25);
+}
+
+.titulo_pagina {
+    text-align: center;
+    position: sticky;
+    top: 0;
+}
+
+.lista_conteiner {
+    width: 100%;
+    flex: 1;
+}
+
+.lista_header {
+    display: flex;
+    align-items: center;
+}
+
+.linha_nomes_colunas {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    font-weight: bold;
+    flex-wrap: nowrap;
+}
+.linha_nomes_colunas > span {
+    display: flex;
+    align-items: center;
+}
+
+.linha_dados_entrega {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    overflow: hidden;
+    transition: all .15s;
+}
+
+.linha_dados_entrega:nth-child(odd) .dados {
+    background-color: #e0e0e0;
+}
+
+.dados {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    cursor: pointer;
+    min-height: 30px;
+    max-height: 30px;
+}
+.dados:hover {
+    font-weight: bold;
+    transition: all .15s;
+}
+.dados > span {
+    display: flex;
+    align-items: center;
+}
+
+.col_numero_entrega {
+    width: 10%;
+    justify-content: center;
+}
+.col_data {
+    width: 10%;
+    justify-content: center;
+}
+.col_cliente {
+    width: 50%;
+}
+.col_endereco {
+    width: 50%;
+}
+
+.detalhes_entrega {
+    position: absolute;
+    top: 30px;
+    left: 0;
+    right: 0;
+    bottom: auto;
+
+    border: 1px dashed silver;
+    background-color: #ffffff;
+    padding: 10px;
+}

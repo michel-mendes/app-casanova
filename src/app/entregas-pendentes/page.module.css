@@ -1,0 +1,100 @@
+.page_container {
+    display: flex;
+    flex-direction: column;
+    font-size: .7rem;
+    overflow-y: hidden;
+    height: 100%;
+    padding: 10px;
+}
+
+.conteiner_relatorio {
+    height: 100%;
+    border: 1px solid silver;
+    border-radius: 6px;
+    /* padding: 10px; */
+    background-color: white;
+}
+
+.header_por_venda {
+    display: flex;
+    flex-direction: row;
+    background-color: #ffffff;
+    height: 30px;
+    filter: brightness(.9);
+    font-weight: bold;
+}
+
+.header_por_venda .col_venda,
+.linha_por_venda .col_venda {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+}
+
+.header_por_venda .col_data,
+.linha_por_venda .col_data {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+}
+
+.header_por_venda .col_cliente,
+.linha_por_venda .col_cliente {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+}
+
+.header_por_venda .col_status,
+.linha_por_venda .col_status {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+}
+
+.conteudo_por_venda {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-top: 5px;
+}
+
+.linha_por_venda {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    overflow: hidden;
+
+    position: relative;
+    transition: all .15s;
+}
+
+.linha_por_venda .container_nomes_colunas {
+    display: flex;
+    flex-direction: row;
+    min-height: 30px;
+    max-height: 30px;
+
+    background-color: #e0e0e0;
+    transition: all .15s;
+}
+.container_nomes_colunas:hover {
+    background-color: #c0c0c0;
+    font-weight: bold;
+    transition: all .15s;
+}
+
+.linha_por_venda .detalhes_linha_por_venda {
+    position: absolute;
+    top: 30px;
+    left: 0;
+    right: 0;
+    bottom: auto;
+}

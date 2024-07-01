@@ -1,0 +1,78 @@
+.div {
+    border: 3px red solid;
+    font-size: .7rem;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.filter_container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: left;
+    padding: 10px;
+}
+
+.table_vendas {
+    /* border: 2px solid blue; */
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-collapse: collapse;
+}
+
+.row_venda {
+    border: 1px solid black;
+    border-bottom: none;
+}
+.row_venda:nth-last-child(2) {
+    border-bottom: 1px solid black;
+}
+
+.column_detail_venda {
+    cursor: pointer;
+    border-right: silver 1px solid;
+    padding: 3px;
+}
+
+.col_n_venda {
+    text-align: center;
+}
+.col_data {
+    text-align: center;
+}
+.col_valor {
+    text-align: right;
+}
+.col_margem {
+    text-align: center;
+}
+.col_btn_add_entrega {
+    text-align: center;
+}
+
+.div_itens_venda {
+    border-top: silver 1px solid;
+    padding: 10px 20px 10px 20px;
+    overflow: hidden;
+}
+
+.div_itens_venda[is-expanded="false"] {
+    display: none;
+}
+.div_itens_venda[is-expanded="true"] {
+    display: block;
+}
+
+.hide_itens_venda {
+    height: 0px;
+}
+
+.show_itens_venda {
+    height: auto;
+}
+
+.table_itens_venda {
+    width: 100%;
+}

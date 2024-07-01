@@ -1,0 +1,148 @@
+.page_container {
+    /* border: 3px green solid; */
+    font-size: .7rem;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.romaneios_container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    /* border: 3px solid red; */
+}
+
+.button_salvar_entrega {
+    padding: 10px;
+    background-color: #3483FA;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    font: inherit;
+    /* font-weight: bold; */
+    cursor: pointer;
+    transition: background-color .3s;
+}
+
+.button_salvar_entrega:hover {
+    transition: background-color .3s;
+    background-color: #2359aa;
+}
+
+.romaneio {
+    border: 1px solid silver;
+    border-radius: 6px;
+    /* padding: 10px; */
+    background-color: white;
+}
+
+.romaneio_header {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid silver;
+}
+
+.texto_nome_cliente,
+.texto_data_entrega {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.romaneio_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 10px;
+    /* border: 2px solid blue; */
+}
+
+.descricao_produto_container {
+    /* border: 3px solid yellow; */
+    gap: 5px;
+    flex: 60%;
+}
+
+.quant_modifier_container {
+    /* border: 3px solid red; */
+    text-align: center;
+    min-width: 150px;
+}
+
+.quant_input_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.button_quantidade {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: inherit;
+    border: none;
+}
+
+.button_quantidade>img {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.input_quantidade {
+    font: inherit;
+    width: 60px;
+    text-align: center;
+    padding: 3px;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid silver;
+    background-color: inherit;
+}
+
+.obs_container {
+    /* border: 3px solid purple; */
+    text-align: center;
+    min-width: 200px;
+}
+
+.input_observacoes {
+    font: inherit;
+    min-width: 300px;
+    padding: 3px;
+    border: none;
+    outline: none;
+    border-bottom: 1px silver solid;
+    background-color: inherit;
+}
+
+.item_data {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    flex-grow: 1;
+}
+
+.romaneio_footer {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid silver;
+}
+
+@media screen and (max-width: 500px) {
+    .romaneios_container {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .romaneio {
+        border-radius: 0px;
+    }
+}

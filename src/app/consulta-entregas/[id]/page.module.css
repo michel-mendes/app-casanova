@@ -1,0 +1,21 @@
+.tabela {
+    border: 1px solid black;
+    background-color: white;
+}
+
+.tabela td {
+    border: 1px solid gray;
+}
+
+.titulo_romaneio {
+    text-align: center;
+    background-color: silver;
+}
+
+.numero_venda {
+    text-align: center;
+}
+
+.fundo_prata {
+    background-color: silver;
+}
