@@ -2,17 +2,20 @@
 
 import React, { useRef, useEffect, useState } from 'react'
 
+import { ListaProdutosPendentesEntrega } from './ListaProdutosVendidos'
+
 import { useEntregasFuturas } from '@/hooks/useVendaEntregaFutura'
 import { IEntregaFuturaProps, IItemRestanteProps, ITempItemEntregue, ITempRomaneioEntrega } from '../interfaces'
 
-import style from "./page.module.css"
 import { LoadingAnimation } from '../components/LoadingAnimation'
 import { IEntregaPendente } from '@/database/models-mongoose/vendaEntregaFutura/IEntregaPendente'
+
+import style from "./page.module.css"
 
 function EntregasPendentesPage() {
 
     const { listaEntregasFuturas, loadingEntregasFuturas, atualizaListaDeEntregasFuturas } = useEntregasFuturas()
-    
+
     const [tipoAgupamento, setTipoAgrupamento] = useState<"produto" | "venda">("venda")
 
     useEffect(() => {
@@ -62,27 +65,29 @@ function EntregasPendentesPage() {
                 {
                     (loadingEntregasFuturas)
                         ? <LoadingAnimation />
-                        : (
-                            // {/* Conteiner de conteúdo */}
-                            <div>
-                                {/* Header */}
-                                <div className={style.header_por_venda}>
-                                    <span className={style.col_venda}>Nº venda</span>
-                                    <span className={style.col_data}>Data</span>
-                                    <span className={style.col_cliente}>Cliente</span>
-                                    <span className={style.col_status}>Status</span>
-                                </div>
+                        : (tipoAgupamento == "venda")
+                            ? (
+                                // {/* Conteiner de conteúdo */}
+                                <div>
+                                    {/* Header */}
+                                    <div className={style.header_por_venda}>
+                                        <span className={style.col_venda}>Nº venda</span>
+                                        <span className={style.col_data}>Data</span>
+                                        <span className={style.col_cliente}>Cliente</span>
+                                        <span className={style.col_status}>Status</span>
+                                    </div>
 
-                                {/* Body */}
-                                <div className={style.conteudo_por_venda}>
-                                    {
-                                        listaEntregasFuturas.map(entregaFutura => {
-                                            return <LinhaPorVenda entrega={entregaFutura} key={entregaFutura.idVenda} />
-                                        })
-                                    }
+                                    {/* Body */}
+                                    <div className={style.conteudo_por_venda}>
+                                        {
+                                            listaEntregasFuturas.map(entregaFutura => {
+                                                return <LinhaPorVenda entrega={entregaFutura} key={entregaFutura.idVenda} />
+                                            })
+                                        }
+                                    </div>
                                 </div>
-                            </div>
-                        )
+                            )
+                            : <ListaProdutosPendentesEntrega listaEntregasPendentes={listaEntregasFuturas} />
                 }
             </div>
         </div>

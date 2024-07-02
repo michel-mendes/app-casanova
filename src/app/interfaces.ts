@@ -36,6 +36,18 @@ export interface IItemRestanteProps {
     adicionaAoRomaneioTemporario(aRomaneio: ITempRomaneioEntrega): void;
 }
 
+export interface IProdutoPendente {
+    descricaoProduto?: string,
+    totalVendido?: number,
+    unidade?: string,
+    listaClientes?: Array<{
+        idVenda: number,
+        dataVenda: Date,
+        quantidade: number,
+        nomeCliente: string,
+    }>
+}
+
 export interface IVenda {
     id?: number;
 	dataEmissao?: Date;

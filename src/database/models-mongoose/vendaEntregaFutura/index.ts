@@ -13,11 +13,15 @@ const entregaPendenteSchema = new Schema(
         uf: { type: String },
         valorVenda: { type: Number },
         status: { type: String },
+        quantidadeTotalProdutos: { type: Number },
+        quantidadeEntregue: { type: Number },
 
         itensRestantes: Array<
             {
+                idVenda: { type: Number }
                 idItemVenda: { type: Number },
                 idProduto: { type: Number },
+                qtdeTotalComprado: { type: Number }
                 qtde: { type: Number },
                 unidade: { type: String },
                 valorUnit: { type: Number },

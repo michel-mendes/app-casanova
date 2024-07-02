@@ -17,6 +17,10 @@ function RomaneioPage() {
     const [romaneios, setRomaneios] = useState<Array<ITempRomaneioEntrega>>(JSON.parse(localStorage.getItem("romaneio") || "[]"))
 
     async function handleSalvaRomaneio(dadosRomaneio: ITempRomaneioEntrega) {
+        const confirmado = confirm(`Confirma o fechamento do romaneio para ${dadosRomaneio.nomeCliente}?`)
+
+        if (!confirmado) return
+        
         const novoRomaneio = await criaNovoRomaneio(dadosRomaneio as unknown as IRomaneioEntrega)
 
         if (novoRomaneio) {
@@ -33,15 +37,11 @@ function RomaneioPage() {
         localStorage.setItem("romaneio", JSON.stringify(romaneios))
     }, [romaneios])
 
+
     return (
         <div className={style.page_container}>
             <h1>Romaneios de Entrega</h1>
 
-            <div>
-                <button onClick={() => {
-                    localStorage.removeItem("romaneio")
-                }}>Limpar lista de romaneios</button>
-            </div>
 
             <div className={style.romaneios_container}>
                 {

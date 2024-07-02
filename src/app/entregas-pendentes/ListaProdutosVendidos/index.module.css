@@ -1,0 +1,34 @@
+.lista_produtos {
+    display: flex;
+    flex-direction: column;
+    /* border: 1px solid black; */
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    /* border: 1px solid blue; */
+}
+
+.coluna_produto {
+    width: 50%;
+}
+
+.coluna_quatidade {
+    width: auto;
+}
+
+.dados_produto {
+    display: flex;
+    flex-direction: row;
+    font-weight: bold;
+    /* border: 1px solid red; */
+}
+
+.lista_clientes {
+    /* border: 2px solid purple; */
+    list-style: none;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

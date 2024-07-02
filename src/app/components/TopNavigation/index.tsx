@@ -27,15 +27,18 @@ function TopNavigation() {
     const [romaneioCount, setRomaneioCount] = useState(0)
 
     async function handleClickAdicionarEntrega() {
+        
         const inputNumVenda = (document.getElementById("inputNumeroVenda") as HTMLInputElement)
         const nVenda = inputNumVenda.value
         const venda = await getVendaById(Number(nVenda))
 
         if (venda) {
+            if (!confirm(`Deseja adicionar ${venda?.nome} à lista de entregas pendentes?`)) return
+
             inputNumVenda.value = ""
             handleClickNovaEntregaFutura(venda, criaNovaEntregaFutura, alteraVenda)
         } else {
-            alert("Venda não localizada")
+            alert("Venda não localizada ou já adicionada")
             inputNumVenda.value = ""
         }
     }
@@ -43,11 +46,11 @@ function TopNavigation() {
     async function handleGeraRomaneioEntrega() {
         const inputNumVenda = (document.getElementById("inputNumeroVenda2") as HTMLInputElement)
         const nVenda = inputNumVenda.value
-        // alert(`Vamos criar romaneio?\nNúmero da venda: ${nVenda}`)
         const venda = await getVendaById(Number(nVenda))
-        // alert("show")
         
         if (venda) {
+            if (!confirm(`Deseja gerar o romaneio completo para ${venda?.nome}?`)) return
+
             const novoRomaneio = await criaNovoRomaneio({
                 // idEntregaPendente: "",
                 numeroEntrega: "",
