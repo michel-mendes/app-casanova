@@ -19,9 +19,12 @@ export function ListaProdutosPendentesEntrega({ listaEntregasPendentes }: { list
             // Itera cada produto da entrega
             for (const produto of entrega.itensRestantes) {
 
+                const produtoEncontrado = listaProdutos.some(item => item.idProduto === produto.idProduto)
+                
                 // Se o produto da entrega em questão não constar na lista, então adicione
-                if (!listaProdutos.includes({ descricaoProduto: produto.descricao })) {
+                if (!produtoEncontrado) {
                     const produtoVendido: IProdutoPendente = {
+                        idProduto: produto.idProduto,
                         descricaoProduto: produto.descricao,
                         totalVendido: produto.qtde,
                         unidade: produto.unidade,
@@ -68,7 +71,7 @@ export function ListaProdutosPendentesEntrega({ listaEntregasPendentes }: { list
                             <div>
                                 <div className={style.dados_produto}>
                                     <p className={style.coluna_produto}>{`-> `}{produtoPendente.descricaoProduto}</p>
-                                    <p className={style.coluna_quatidade}>{produtoPendente.totalVendido} {produtoPendente.unidade}</p>
+                                    <p className={style.coluna_quatidade}>{Number(produtoPendente.totalVendido).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 0})} {produtoPendente.unidade}</p>
                                 </div>
 
                                 <div>

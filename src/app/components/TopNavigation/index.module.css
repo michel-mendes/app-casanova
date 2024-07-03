@@ -14,6 +14,102 @@
     z-index: 1000;
 }
 
+.mobile_navbar {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    max-height: 48px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    background-color: #ffffff;
+    padding: 8px 16px;
+    z-index: 9999;
+}
+
+.mobile_navbar .hamburger_container {
+    border-radius: 100%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: -10px;
+    cursor: pointer;
+}
+
+.mobile_navbar .icone_hamburger {
+    width: 16px;
+    height: 16px;
+}
+
+.mobile_navbar .menu_overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    background-color: rgba(0 ,0 ,0 , .3);
+}
+
+.mobile_navbar .menu_overlay[is-closed="true"] {
+    display: none;
+}
+.mobile_navbar .menu_overlay[is-closed="false"] {
+    display: block;
+}
+
+.mobile_navbar .menu_container {
+    background-color: #ffffff;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 75%;
+    height: 100%;
+    font-size: 14px;
+}
+
+.mobile_navbar .close_menu_button {
+    border: solid 4px #ffffff;
+    border-radius: 7px;
+    background-color: rgb(232, 233, 235);
+    position: absolute;
+    top: 15px;
+    right: -15px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mobile_navbar .close_hamburger_icon {
+    width: 16px;
+    height: 16px;
+}
+
+.mobile_navbar .mobile_menu_input_container {
+    padding: 14px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.mobile_navbar .mobile_menu_link_container {
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mobile_navbar .mobile_menu_link_icon {
+    width: 16px;
+    height: 16px;
+}
+
 .logo {
     width: 180px;
 }
@@ -55,4 +151,20 @@
     width: 32px;
     height: 32px;
     cursor: pointer;
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        display: none;
+    }
+
+    .mobile_navbar {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .logo {
+        height: auto;
+        /* width: auto; */
+    }
 }

@@ -11,8 +11,9 @@
     height: 100%;
     border: 1px solid silver;
     border-radius: 6px;
-    /* padding: 10px; */
+    padding: 10px;
     background-color: white;
+    overflow: auto;
 }
 
 .header_por_venda {

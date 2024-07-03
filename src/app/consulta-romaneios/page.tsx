@@ -118,8 +118,8 @@ function LinhaDadosEntrega({ romaneio }: { romaneio: IRomaneioEntrega }) {
                     })
                 }
 
-                <a target="_blank" href={`/imprime-romaneio/${romaneio.id}`} rel="noopener noreferrer">
-                    <button>Imprimir romaneio de entrega</button>
+                <a target="_blank" href={`/imprime-romaneio/${romaneio.id}`} rel="noopener noreferrer" className={style.button_container}>
+                    <button className={style.imprime_romaneio}>Imprimir romaneio de entrega</button>
                 </a>
             </div>
 

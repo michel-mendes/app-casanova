@@ -195,7 +195,7 @@ function ItemRestante({ dadosItem, romaneio, setRomaneio, adicionaAoRomaneioTemp
     return (
         <tr>
             <td>{dadosItem.idProduto}</td>
-            <td>{dadosItem.qtde} {dadosItem.unidade}</td>
+            <td>{Number(dadosItem.qtde).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 0})} {dadosItem.unidade}</td>
             <td>{dadosItem.descricao}</td>
             <td>
                 <button disabled={produtoJaAdicionado ? true : false} onClick={adicionaProdutoAoRomaneio}>

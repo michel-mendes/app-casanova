@@ -37,7 +37,8 @@ export interface IItemRestanteProps {
 }
 
 export interface IProdutoPendente {
-    descricaoProduto?: string,
+    idProduto?: number,
+	descricaoProduto?: string,
     totalVendido?: number,
     unidade?: string,
     listaClientes?: Array<{

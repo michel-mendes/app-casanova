@@ -99,3 +99,27 @@
     background-color: #ffffff;
     padding: 10px;
 }
+
+.button_container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 5px;
+}
+
+.imprime_romaneio {
+    padding: 10px;
+    background-color: #3483FA;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    font: inherit;
+    /* font-weight: bold; */
+    cursor: pointer;
+    transition: background-color .3s;
+}
+
+.imprime_romaneio:hover {
+    transition: background-color .3s;
+    background-color: #2359aa;
+}
