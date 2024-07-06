@@ -16,6 +16,19 @@
     overflow: auto;
 }
 
+.container_radio_tipo_rel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+.radio_button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 .header_por_venda {
     display: flex;
     flex-direction: row;

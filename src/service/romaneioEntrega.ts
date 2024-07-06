@@ -1,3 +1,7 @@
+import puppeteer from "puppeteer"
+import { print } from "pdf-to-printer"
+import fs from "fs"
+
 import { connectDatabaseMongoDB } from "@/database/dbConnect-mongoose"
 import { GenericModelCRUD } from "@/database/classes/GenericModelCRUD"
 import { RomaneioEntrega } from "@/database/models-mongoose/romaneioEntrega"
@@ -9,7 +13,7 @@ const romaneioEntregaCRUD = new GenericModelCRUD(RomaneioEntrega)
 const entregaPendenteCRUD = new GenericModelCRUD(EntregaPendente)
 
 export {
-    listaTodosRomaneios, novoRomaneioEntrega, getRomaneio
+    listaTodosRomaneios, novoRomaneioEntrega, getRomaneio, imprimeRomaneioNoServidor
 }
 
 async function listaTodosRomaneios() {
@@ -118,7 +122,7 @@ async function buscaEntregaPendenteComListaDeRomaneios(dadosRomaneio: IRomaneioE
 function geraNumeroRomaneio(entregaPendente: IEntregaPendente | null, dadosRomaneio: IRomaneioEntrega) {
     let totalRomaneios = 0
     let numeroRomaneio = ""
-    
+
     if (!entregaPendente) {
         numeroRomaneio = `${dadosRomaneio.idVenda}/1`
     } else {
@@ -127,4 +131,34 @@ function geraNumeroRomaneio(entregaPendente: IEntregaPendente | null, dadosRoman
     }
 
     return numeroRomaneio
+}
+
+async function imprimeRomaneioNoServidor(idRomaneio: string) {
+    try {
+        const caminhoPdf = `romaneio-${idRomaneio}-${new Date().getTime()}.pdf`
+        
+        const browser = await puppeteer.launch({ headless: "shell" })
+        const paginaRomaneio = await browser.newPage()
+
+        await paginaRomaneio.goto(`http://localhost:1005/imprime-romaneio/${idRomaneio}`, { waitUntil: "networkidle2" })
+        await paginaRomaneio.pdf({
+            path: caminhoPdf,
+            format: "A5",
+            printBackground: true
+        })
+
+        await browser.close()
+
+        try {
+            await print(caminhoPdf, {silent: true, })
+        } catch(error: any) {
+            return `Erro ao imprimir:\n${error.message}`
+        } finally {
+            fs.rmSync(caminhoPdf, {force: true})
+        }
+        
+        return "Impressão OK!"
+    } catch (error: any) {
+        throw new Error(`Falha ao imprimir romaneio no servidor: ${error.message}`);
+    }
 }

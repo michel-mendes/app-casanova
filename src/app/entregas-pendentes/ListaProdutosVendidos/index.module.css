@@ -11,17 +11,30 @@
 }
 
 .coluna_produto {
-    width: 50%;
+    width: 100%;
 }
 
 .coluna_quatidade {
-    width: auto;
+    min-width: 100px;
+    text-align: center;
+}
+
+.coluna_num_clientes {
+    min-width: 80px;
+    text-align: center;
+}
+
+.linha_produto:nth-child(odd) {
+    background-color: lightgray;
 }
 
 .dados_produto {
     display: flex;
+    align-items: center;
     flex-direction: row;
     font-weight: bold;
+    height: auto;
+    padding: 5px;
     /* border: 1px solid red; */
 }
 

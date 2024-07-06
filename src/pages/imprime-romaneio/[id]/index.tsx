@@ -47,11 +47,11 @@ function FormularioRomaneio({ romaneio }: { romaneio: IRomaneioEntrega }) {
     return (
         <div className={style.romaneio}>
             <div className={style.titulo_secao}>
-                <span>ROMANEIO DE ENTREGA</span>
+                <span>ROMANEIO DE ENTREGA nº {romaneio.numeroEntrega}</span>
             </div>
-            <div className={style.linha_numero_venda}>
+            {/* <div className={style.linha_numero_venda}>
                 <span>Venda nº {romaneio.idVenda}</span>
-            </div>
+            </div> */}
 
             <div className={style.linha_cliente_e_data}>
                 <span className={style.celula_cliente}>Cliente</span>

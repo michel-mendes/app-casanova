@@ -17,6 +17,11 @@ function EntregasPendentesPage() {
     const { listaEntregasFuturas, loadingEntregasFuturas, atualizaListaDeEntregasFuturas } = useEntregasFuturas()
 
     const [tipoAgupamento, setTipoAgrupamento] = useState<"produto" | "venda">("venda")
+    const [mostraClientes, setMostraClientes] = useState(false)
+
+    function handleClicaMostraClientes() {
+        setMostraClientes(prevState => !prevState)
+    }
 
     useEffect(() => {
         atualizaListaDeEntregasFuturas()
@@ -31,35 +36,47 @@ function EntregasPendentesPage() {
             <div className={style.conteiner_relatorio}>
 
                 {/* Container seletor de relatório */}
-                <div>
-                    <div>
-                        <span>Agrupar por</span>
-                    </div>
-                    <label htmlFor="radio1">
-                        <input
-                            type="radio"
-                            name="tipoRel"
-                            id="radio1"
-                            checked={tipoAgupamento == "venda"}
-                            onClick={() => {
-                                setTipoAgrupamento("venda")
-                            }}
-                        />
-                        <span>Venda</span>
-                    </label>
+                <div className={style.container_radio_tipo_rel}>
+                    <div style={{display: "flex", flexDirection: "row", gap: "10px"}}>
+                        <p>Agrupar por: </p>
 
-                    <label htmlFor="radio2">
-                        <input
-                            type="radio"
-                            name="tipoRel"
-                            id="radio2"
-                            checked={tipoAgupamento == "produto"}
-                            onClick={() => {
-                                setTipoAgrupamento("produto")
-                            }}
-                        />
-                        <span>Produto</span>
-                    </label>
+                        <label htmlFor="radio1" className={style.radio_button}>
+                            <input
+                                type="radio"
+                                name="tipoRel"
+                                id="radio1"
+                                checked={tipoAgupamento == "venda"}
+                                onClick={() => {
+                                    setTipoAgrupamento("venda")
+                                }}
+                            />
+                            <span>Venda</span>
+                        </label>
+
+                        <label htmlFor="radio2" className={style.radio_button}>
+                            <input
+                                type="radio"
+                                name="tipoRel"
+                                id="radio2"
+                                checked={tipoAgupamento == "produto"}
+                                onClick={() => {
+                                    setTipoAgrupamento("produto")
+                                }}
+                            />
+                            <span>Produto</span>
+                        </label>
+                    </div>
+
+                    {
+                        tipoAgupamento == "produto" && (
+                            <div>
+                                <label htmlFor="checkMostraClientes" className={style.radio_button}>
+                                    <input type="checkbox" name="" id="checkMostraClientes" checked={mostraClientes} onChange={handleClicaMostraClientes} />
+                                    <span>Mostrar clientes</span>
+                                </label>
+                            </div>
+                        )
+                    }
                 </div>
 
                 {
@@ -87,7 +104,7 @@ function EntregasPendentesPage() {
                                     </div>
                                 </div>
                             )
-                            : <ListaProdutosPendentesEntrega listaEntregasPendentes={listaEntregasFuturas} />
+                            : <ListaProdutosPendentesEntrega listaEntregasPendentes={listaEntregasFuturas} mostraClientes={mostraClientes} />
                 }
             </div>
         </div>
@@ -195,7 +212,7 @@ function ItemRestante({ dadosItem, romaneio, setRomaneio, adicionaAoRomaneioTemp
     return (
         <tr>
             <td>{dadosItem.idProduto}</td>
-            <td>{Number(dadosItem.qtde).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 0})} {dadosItem.unidade}</td>
+            <td>{Number(dadosItem.qtde).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 0 })} {dadosItem.unidade}</td>
             <td>{dadosItem.descricao}</td>
             <td>
                 <button disabled={produtoJaAdicionado ? true : false} onClick={adicionaProdutoAoRomaneio}>

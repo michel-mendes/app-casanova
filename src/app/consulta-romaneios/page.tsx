@@ -11,7 +11,7 @@ import { IRomaneioEntrega } from '@/database/models-mongoose/romaneioEntrega/IRo
 
 function ConsultaEntregasPage() {
 
-    const { listaRomaneios, atualizaListaRomaneios, loadingRomaneios } = useRomaneioEntrega()
+    const { listaRomaneios, atualizaListaRomaneios, loadingRomaneios, imprimeRomaneioNoServidor } = useRomaneioEntrega()
 
     useEffect(() => {
         atualizaListaRomaneios()
@@ -24,13 +24,16 @@ function ConsultaEntregasPage() {
             {
                 loadingRomaneios
                     ? <LoadingAnimation />
-                    : <ListaEntregas listaRomaneios={listaRomaneios} />
+                    : <ListaEntregas listaRomaneios={listaRomaneios} imprimeRomaneioNoServidor={imprimeRomaneioNoServidor} />
             }
         </div>
     )
 }
 
-function ListaEntregas({ listaRomaneios }: { listaRomaneios: Array<IRomaneioEntrega> }) {
+function ListaEntregas({ listaRomaneios, imprimeRomaneioNoServidor }: {
+    listaRomaneios: Array<IRomaneioEntrega>
+    imprimeRomaneioNoServidor: (id: string) => Promise<string | undefined>
+}) {
     return (
         <div className={style.lista_conteiner}>
 
@@ -51,7 +54,7 @@ function ListaEntregas({ listaRomaneios }: { listaRomaneios: Array<IRomaneioEntr
             <div>
                 {
                     listaRomaneios.map(romaneio => {
-                        return <LinhaDadosEntrega romaneio={romaneio} key={romaneio.id} />
+                        return <LinhaDadosEntrega romaneio={romaneio} imprimeRomaneioNoServidor={imprimeRomaneioNoServidor} key={romaneio.id} />
                     })
                 }
             </div>
@@ -59,16 +62,25 @@ function ListaEntregas({ listaRomaneios }: { listaRomaneios: Array<IRomaneioEntr
     )
 }
 
-function LinhaDadosEntrega({ romaneio }: { romaneio: IRomaneioEntrega }) {
+function LinhaDadosEntrega({ romaneio, imprimeRomaneioNoServidor }: {
+    romaneio: IRomaneioEntrega
+    imprimeRomaneioNoServidor: (id: string) => Promise<string | undefined>
+}) {
 
     const [isExpanded, setIsExpanded] = useState(false)
     const [lineHeight, setLineHeight] = useState<{ height: string } | {}>({})
-    
+
     const lineRef = useRef<HTMLDivElement>(null)
     const detailsRef = useRef<HTMLDivElement>(null)
 
     function clickEntrega() {
         setIsExpanded(prevState => !prevState)
+    }
+
+    async function handleCliqueBotaoImprimirServidor() {
+        const resultadoImpressaoServidor = await imprimeRomaneioNoServidor(romaneio.id)
+
+        alert(resultadoImpressaoServidor)
     }
 
     useEffect(() => {
@@ -109,7 +121,7 @@ function LinhaDadosEntrega({ romaneio }: { romaneio: IRomaneioEntrega }) {
                                 <span>{produto.descricao}</span>
                                 &nbsp;
                                 <span>{produto.observacoes}</span>
-                                
+
                                 <br />
                                 <br />
                                 <hr />
@@ -118,9 +130,15 @@ function LinhaDadosEntrega({ romaneio }: { romaneio: IRomaneioEntrega }) {
                     })
                 }
 
-                <a target="_blank" href={`/imprime-romaneio/${romaneio.id}`} rel="noopener noreferrer" className={style.button_container}>
+                {/* <a target="_blank" href={`/imprime-romaneio/${romaneio.id}`} rel="noopener noreferrer" className={style.button_container}>
                     <button className={style.imprime_romaneio}>Imprimir romaneio de entrega</button>
-                </a>
+                </a> */}
+
+                <div className={style.button_container}>
+                    <button onClick={handleCliqueBotaoImprimirServidor} className={style.imprime_romaneio}>
+                        <span>Imprimir romaneio</span>
+                    </button>
+                </div>
             </div>
 
         </div>

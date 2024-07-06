@@ -26,7 +26,7 @@
 }
 
 .celula_cliente {
-    width: 100px;
+    min-width: 70px;
     font-weight: bold;
 }
 

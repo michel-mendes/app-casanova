@@ -61,11 +61,24 @@ export function useRomaneioEntrega() {
         }
     }
 
+    async function imprimeRomaneioNoServidor(id: string) {
+        const apiRes = await fetch(`/api/imprime-romaneio-servidor/${id}`)
+
+        if (!apiRes.ok) {
+            const erro: any = await apiRes.json()
+            throw erro
+        }
+
+        const sucesso = await apiRes.text()
+        return sucesso
+    }
+
     return {
         listaRomaneios,
         atualizaListaRomaneios,
         criaNovoRomaneio,
         exibeRomaneio,
+        imprimeRomaneioNoServidor,
         loadingRomaneios
     }
 }

@@ -13,6 +13,8 @@ function EntregaIdPage({ params }: { params: { id: string } }) {
     const { exibeRomaneio } = useRomaneioEntrega()
     const [romaneio, setRomaneio] = useState<IRomaneioEntrega>()
 
+
+
     useEffect(() => {
         async function getRomaneio() {
             const romaneio = await exibeRomaneio(params.id)
@@ -25,8 +27,6 @@ function EntregaIdPage({ params }: { params: { id: string } }) {
         getRomaneio()
     }, [])
 
-    const router = useRouter()
-
     return (
         <div>
             {
@@ -36,11 +36,11 @@ function EntregaIdPage({ params }: { params: { id: string } }) {
                         <table className={style.tabela}>
                             <tbody>
                                 <tr className={style.titulo_romaneio}>
-                                    <td colSpan={4}>ROMANEIO DE ENTREGA</td>
+                                    <td colSpan={4}>ROMANEIO DE ENTREGA nº {romaneio.numeroEntrega}</td>
                                 </tr>
-                                <tr className={style.numero_venda}>
+                                {/* <tr className={style.numero_venda}>
                                     <td colSpan={4}>Venda nº {romaneio.idVenda}</td>
-                                </tr>
+                                </tr> */}
                                 <tr>
                                     <td className={style.fundo_prata}>Cliente</td>
                                     <td>{romaneio.nomeCliente}</td>
@@ -79,65 +79,6 @@ function EntregaIdPage({ params }: { params: { id: string } }) {
                         </a>
                     </>
             }
-        </div>
-    )
-}
-
-function FormularioRomaneio({ romaneio }: { romaneio: IRomaneioEntrega }) {
-    return (
-        <div>
-            <div>
-                <span>ROMANEIO DE ENTREGA</span>
-            </div>
-            <div>
-                <span>Venda nº {romaneio.idVenda}</span>
-            </div>
-
-            <div>
-                <span>Cliente</span>
-                <span>{romaneio.nomeCliente}</span>
-                <span>Data entrega</span>
-                <span>{new Date(romaneio.dataEntrega).toLocaleDateString()}</span>
-            </div>
-
-            <div>
-                <span>PRODUTOS CONSTANTES NA ENTREGA</span>
-            </div>
-            <div>
-                <span>Quantidade</span>
-                <span>Descrição do Produto</span>
-                <span>Observações</span>
-            </div>
-
-            {
-                romaneio.itensEntrega.map(produto => {
-                    return (
-                        <div>
-                            <span>{produto.qtde} {String(produto.unidade).toLowerCase()}</span>
-                            <span>{produto.descricao}</span>
-                            <span>{produto.observacoes}</span>
-                        </div>
-                    )
-                })
-            }
-
-            <div>
-                <span>Observações</span>
-                <span>{romaneio.observacoes}</span>
-            </div>
-            <div>
-                <span>Nome do recebedor</span>
-                <span></span>
-            </div>
-
-            <div>
-                <span>Assinatura</span>
-                <span></span>
-            </div>
-
-            <div>
-                <span>NÃO ACEITAREMOS RECLAMAÇÕES POSTERIORES</span>
-            </div>
         </div>
     )
 }

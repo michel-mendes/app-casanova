@@ -5,7 +5,7 @@ import { IProdutoPendente } from "@/app/interfaces"
 
 import style from "./index.module.css"
 
-export function ListaProdutosPendentesEntrega({ listaEntregasPendentes }: { listaEntregasPendentes: Array<IEntregaPendente> }) {
+export function ListaProdutosPendentesEntrega({ listaEntregasPendentes, mostraClientes }: { listaEntregasPendentes: Array<IEntregaPendente>, mostraClientes: boolean }) {
 
     const [produtosPendentes, setProdutosPendentes] = useState<Array<IProdutoPendente>>([])
 
@@ -20,7 +20,7 @@ export function ListaProdutosPendentesEntrega({ listaEntregasPendentes }: { list
             for (const produto of entrega.itensRestantes) {
 
                 const produtoEncontrado = listaProdutos.some(item => item.idProduto === produto.idProduto)
-                
+
                 // Se o produto da entrega em questão não constar na lista, então adicione
                 if (!produtoEncontrado) {
                     const produtoVendido: IProdutoPendente = {
@@ -60,37 +60,43 @@ export function ListaProdutosPendentesEntrega({ listaEntregasPendentes }: { list
     return (
         <div className={style.lista_produtos}>
             <div className={style.header}>
-                <p className={style.coluna_produto}>Descrição do produto</p>
-                <p className={style.coluna_quatidade}>Quantidade pendente de entrega</p>
+                <p className={style.coluna_produto}>Produto</p>
+                <p className={style.coluna_quatidade}>Quantidade</p>
+                <p className={style.coluna_num_clientes}>Núm. clientes</p>
             </div>
 
             <div>
                 {
                     produtosPendentes.map(produtoPendente => {
                         return (
-                            <div>
+                            <div className={style.linha_produto}>
                                 <div className={style.dados_produto}>
                                     <p className={style.coluna_produto}>{`-> `}{produtoPendente.descricaoProduto}</p>
-                                    <p className={style.coluna_quatidade}>{Number(produtoPendente.totalVendido).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 0})} {produtoPendente.unidade}</p>
+                                    <p className={style.coluna_quatidade}>{Number(produtoPendente.totalVendido).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 0 })} {produtoPendente.unidade}</p>
+                                    <p className={style.coluna_num_clientes}>{produtoPendente.listaClientes?.length}</p>
                                 </div>
 
-                                <div>
-                                    <ul className={style.lista_clientes}>
-                                        {
-                                            (produtoPendente.listaClientes) && produtoPendente.listaClientes.map(cliente => {
-                                                return (
-                                                    <li>
-                                                        <span>{new Date(cliente.dataVenda).toLocaleDateString()}</span>
-                                                        <span> - </span>
-                                                        <span>{cliente.nomeCliente}</span>
-                                                        <span> - </span>
-                                                        <span>{cliente.quantidade}</span>
-                                                    </li>
-                                                )
-                                            })
-                                        }
-                                    </ul>
-                                </div>
+                                {
+                                    mostraClientes && (
+                                        <div>
+                                            <ul className={style.lista_clientes}>
+                                                {
+                                                    (produtoPendente.listaClientes) && produtoPendente.listaClientes.map(cliente => {
+                                                        return (
+                                                            <li>
+                                                                <span>{new Date(cliente.dataVenda).toLocaleDateString()}</span>
+                                                                <span> - </span>
+                                                                <span>{cliente.nomeCliente}</span>
+                                                                <span> - </span>
+                                                                <span>{cliente.quantidade}</span>
+                                                            </li>
+                                                        )
+                                                    })
+                                                }
+                                            </ul>
+                                        </div>
+                                    )
+                                }
                             </div>
                         )
                     })
