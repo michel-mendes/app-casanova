@@ -16,6 +16,11 @@
     overflow: auto;
 }
 
+.conteiner_relatorio h1 {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
 .container_radio_tipo_rel {
     display: flex;
     align-items: center;
@@ -111,4 +116,10 @@
     left: 0;
     right: 0;
     bottom: auto;
+}
+
+@media (max-width: 480px) {
+    .page_container {
+        padding: 4px
+    }
 }

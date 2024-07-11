@@ -12,7 +12,7 @@ import { IRomaneioEntrega } from '@/database/models-mongoose/romaneioEntrega/IRo
 
 function RomaneioPage() {
 
-    const { criaNovoRomaneio } = useRomaneioEntrega()
+    const { criaNovoRomaneio, imprimeRomaneioNoServidor } = useRomaneioEntrega()
 
     const [romaneios, setRomaneios] = useState<Array<ITempRomaneioEntrega>>(JSON.parse(localStorage.getItem("romaneio") || "[]"))
 
@@ -28,6 +28,10 @@ function RomaneioPage() {
                 const listaAtualizada = listaAtual.filter(romaneio => romaneio.idEntregaPendente !== String(novoRomaneio.idEntregaPendente))
                 return listaAtualizada
             })
+
+            if (confirm("Deseja imprimir o romaneio de entrega?")) {
+                imprimeRomaneioNoServidor(novoRomaneio.id)
+            }
         } else {
             alert(`Não deu certo o cadastro do romaneio =(\n\n"${novoRomaneio}"`)
         }

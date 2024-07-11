@@ -42,7 +42,7 @@ function ListaEntregas({ listaRomaneios, imprimeRomaneioNoServidor }: {
 
                 {/* Linha com os nomes das colunas */}
                 <div className={style.linha_nomes_colunas}>
-                    <span className={style.col_numero_entrega}>Número da Entrega</span>
+                    <span className={style.col_numero_entrega}>Nº entrega</span>
                     <span className={style.col_data}>Data</span>
                     <span className={style.col_cliente}>Cliente</span>
                     {/* <span className={style.col_endereco}>Endereço</span> */}
@@ -78,6 +78,8 @@ function LinhaDadosEntrega({ romaneio, imprimeRomaneioNoServidor }: {
     }
 
     async function handleCliqueBotaoImprimirServidor() {
+        if ( !confirm("Confirma impressão do romaneio?") ) return
+        
         const resultadoImpressaoServidor = await imprimeRomaneioNoServidor(romaneio.id)
 
         alert(resultadoImpressaoServidor)
@@ -100,20 +102,21 @@ function LinhaDadosEntrega({ romaneio, imprimeRomaneioNoServidor }: {
 
             <div className={style.dados} onClick={clickEntrega}>
                 <span className={style.col_numero_entrega}>{romaneio.numeroEntrega}</span>
-                <span className={style.col_data}>{new Date(romaneio.dataEntrega).toLocaleDateString()}</span>
+                <span className={style.col_data}>{new Date(romaneio.dataEntrega).toLocaleString()}</span>
                 <span className={style.col_cliente}>{romaneio.nomeCliente}</span>
                 {/* <span className={style.col_endereco}>{romaneio.enderecoEntrega}</span> */}
             </div>
 
-            <div className={style.detalhes_entrega} ref={detailsRef}>
-                <p>Endereço de entrega: <span>{romaneio.enderecoEntrega}</span></p>
+            <div className={style.detalhes_entrega} ref={detailsRef} key={romaneio.id}>
+                <p><b>Nº venda:</b> <span>{romaneio.idVenda}</span></p>
+                <p><b>Endereço de entrega:</b> <span>{romaneio.enderecoEntrega}</span></p>
                 <br />
                 <h3>Produtos entregues</h3>
                 <hr />
                 {
                     romaneio.itensEntrega.map(produto => {
                         return (
-                            <div key={produto.idItemVenda}>
+                            <div key={produto.idItemVenda!}>
                                 <br />
 
                                 <span>{produto.qtde} {produto.unidade}</span>

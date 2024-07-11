@@ -168,12 +168,12 @@ function TopNavigation() {
 
                         <hr />
 
-                        <Link href={"/entregas-pendentes"} className={style.mobile_menu_link_container}>
+                        <Link href={"/entregas-pendentes"} className={style.mobile_menu_link_container} onClick={handleClickHamburgerMenuButton}>
                             <img src={sandClockIcon.src} alt="" className={style.mobile_menu_link_icon} />
                             <span>Entregas pendentes</span>
                         </Link>
 
-                        <Link href={"/consulta-romaneios"} className={style.mobile_menu_link_container}>
+                        <Link href={"/consulta-romaneios"} className={style.mobile_menu_link_container} onClick={handleClickHamburgerMenuButton}>
                             <img src={deliveryTruckTime.src} alt="" className={style.mobile_menu_link_icon} />
                             <span>Imprimir romaneios</span>
                         </Link>

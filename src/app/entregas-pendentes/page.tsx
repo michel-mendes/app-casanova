@@ -29,11 +29,11 @@ function EntregasPendentesPage() {
 
     return (
         <div className={style.page_container}>
-            <h1>Entregas pendentes</h1>
-            {/* <button onClick={atualizaListaDeEntregasFuturas}>Atualiza</button> */}
 
             {/* Conteiner do relatório */}
             <div className={style.conteiner_relatorio}>
+
+            <h1>Entregas pendentes</h1>
 
                 {/* Container seletor de relatório */}
                 <div className={style.container_radio_tipo_rel}>

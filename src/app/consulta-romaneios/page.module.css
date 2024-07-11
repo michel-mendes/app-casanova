@@ -74,15 +74,15 @@
 }
 
 .col_numero_entrega {
-    width: 10%;
+    width: 80px;
     justify-content: center;
 }
 .col_data {
-    width: 10%;
+    width: 130px;
     justify-content: center;
 }
 .col_cliente {
-    width: 50%;
+    flex: 1;
 }
 .col_endereco {
     width: 50%;
@@ -122,4 +122,17 @@
 .imprime_romaneio:hover {
     transition: background-color .3s;
     background-color: #2359aa;
+}
+
+@media (max-width: 480px) {
+    .page_container {
+        /* padding: 0; */
+        margin: 4px; 
+        /* border: none; */
+        /* border-radius: 0; */
+    }
+    
+    .col_numero_entrega {
+        display: none !important;
+    }
 }

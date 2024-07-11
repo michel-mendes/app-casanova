@@ -71,7 +71,7 @@ export function ListaProdutosPendentesEntrega({ listaEntregasPendentes, mostraCl
                         return (
                             <div className={style.linha_produto}>
                                 <div className={style.dados_produto}>
-                                    <p className={style.coluna_produto}>{`-> `}{produtoPendente.descricaoProduto}</p>
+                                    <p className={style.coluna_produto}>{produtoPendente.descricaoProduto}</p>
                                     <p className={style.coluna_quatidade}>{Number(produtoPendente.totalVendido).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 0 })} {produtoPendente.unidade}</p>
                                     <p className={style.coluna_num_clientes}>{produtoPendente.listaClientes?.length}</p>
                                 </div>
