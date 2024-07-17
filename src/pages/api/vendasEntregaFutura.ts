@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { createNewVendasEntregaFutura, getAllVendasEntregaFutura } from "@/service/vendasEntregaFutura";
+import { createNewVendasEntregaFutura, getAllVendasEntregaFutura, alteraEntregaPendente } from "@/service/vendasEntregaFutura";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
@@ -23,6 +23,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     res.status(400).send(error)
                 }
                 break;
+            }
+            case "PUT": {
+                try {
+                    const receivedData = JSON.parse(body)
+                    const { id } = query
+
+                    const entregaFuturaAlterada = await alteraEntregaPendente(String(id), receivedData)
+
+                    res.status(200).send(entregaFuturaAlterada)
+                } catch (error) {
+                    res.status(400).send(error)
+                }
             }
         }
     } catch (error: any) {

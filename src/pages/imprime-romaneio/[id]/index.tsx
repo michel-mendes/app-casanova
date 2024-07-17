@@ -49,9 +49,9 @@ function FormularioRomaneio({ romaneio }: { romaneio: IRomaneioEntrega }) {
             <div className={style.titulo_secao}>
                 <span>ROMANEIO DE ENTREGA nº {romaneio.numeroEntrega}</span>
             </div>
-            {/* <div className={style.linha_numero_venda}>
-                <span>Venda nº {romaneio.idVenda}</span>
-            </div> */}
+            <div className={style.linha_numero_venda}>
+                <span>Venda {romaneio.tipoVenda}</span>
+            </div>
 
             <div className={style.linha_cliente_e_data}>
                 <span className={style.celula_cliente}>Cliente</span>
@@ -80,7 +80,7 @@ function FormularioRomaneio({ romaneio }: { romaneio: IRomaneioEntrega }) {
                 (romaneio && romaneio.itensEntrega) && romaneio.itensEntrega.map(produto => {
                     return (
                         <div className={style.linha_valores} key={produto.idItemVenda}>
-                            <span className={style.coluna_qtde_produto}>{produto.qtde} {String(produto.unidade).toLowerCase()}</span>
+                            <span className={style.coluna_qtde_produto}>{Number(produto.qtde).toLocaleString(undefined, {maximumFractionDigits: 2})} {String(produto.unidade).toLowerCase()}</span>
                             <span className={style.coluna_nome_produto}>{produto.descricao}</span>
                             <span className={style.coluna_obs_produto}>{produto.observacoes}</span>
                         </div>
