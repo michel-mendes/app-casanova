@@ -119,7 +119,7 @@ function LinhaDadosEntrega({ romaneio, imprimeRomaneioNoServidor }: {
                             <div key={produto.idItemVenda!}>
                                 <br />
 
-                                <span>{produto.qtde} {produto.unidade}</span>
+                                <span>{Number(produto.qtde).toLocaleString(undefined, {maximumFractionDigits: 2})} {produto.unidade}</span>
                                 &nbsp;
                                 <span>{produto.descricao}</span>
                                 &nbsp;

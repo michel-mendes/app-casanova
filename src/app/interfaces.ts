@@ -4,7 +4,7 @@ export interface ITempItemEntregue {
     idVenda: number,
     idItemVenda: number,
     idProduto: number,
-    qtde: number,
+    qtde?: number,
     qtdeRestante: number,
     unidade: string,
     valorUnit: number,
@@ -15,6 +15,7 @@ export interface ITempItemEntregue {
 
 export interface ITempRomaneioEntrega {
     idEntregaPendente: string,
+	tipoVenda: string,
     numeroEntrega: string,
     dataEntrega: Date,
     idVenda: number,
@@ -26,7 +27,8 @@ export interface ITempRomaneioEntrega {
 }
 
 export interface IEntregaFuturaProps {
-    entregaFutura: IEntregaPendente
+    entregaFutura: IEntregaPendente,
+	alteraEntregaPendente: (idEntrega: string, dados: IEntregaPendente) => Promise<void>
 }
 
 export interface IItemRestanteProps {

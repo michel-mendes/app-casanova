@@ -7,6 +7,16 @@
   min-height: 100vh;
 }
 
+.fundo {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  object-position: center;
+  opacity: .3;
+}
+
 .description {
   display: inherit;
   justify-content: inherit;

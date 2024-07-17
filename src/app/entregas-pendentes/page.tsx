@@ -14,7 +14,7 @@ import style from "./page.module.css"
 
 function EntregasPendentesPage() {
 
-    const { listaEntregasFuturas, loadingEntregasFuturas, atualizaListaDeEntregasFuturas } = useEntregasFuturas()
+    const { listaEntregasFuturas, loadingEntregasFuturas, atualizaListaDeEntregasFuturas, alteraEntregaPendente } = useEntregasFuturas()
 
     const [tipoAgupamento, setTipoAgrupamento] = useState<"produto" | "venda">("venda")
     const [mostraClientes, setMostraClientes] = useState(false)
@@ -33,11 +33,11 @@ function EntregasPendentesPage() {
             {/* Conteiner do relatório */}
             <div className={style.conteiner_relatorio}>
 
-            <h1>Entregas pendentes</h1>
+                <h1>Entregas pendentes</h1>
 
                 {/* Container seletor de relatório */}
                 <div className={style.container_radio_tipo_rel}>
-                    <div style={{display: "flex", flexDirection: "row", gap: "10px"}}>
+                    <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
                         <p>Agrupar por: </p>
 
                         <label htmlFor="radio1" className={style.radio_button}>
@@ -98,7 +98,7 @@ function EntregasPendentesPage() {
                                     <div className={style.conteudo_por_venda}>
                                         {
                                             listaEntregasFuturas.map(entregaFutura => {
-                                                return <LinhaPorVenda entrega={entregaFutura} key={entregaFutura.idVenda} />
+                                                return <LinhaPorVenda entrega={entregaFutura} alteraEntregaPendente={alteraEntregaPendente} key={entregaFutura.idVenda} />
                                             })
                                         }
                                     </div>
@@ -111,12 +111,13 @@ function EntregasPendentesPage() {
     )
 }
 
-function EntregaPendente({ entregaFutura }: IEntregaFuturaProps) {
+function EntregaPendente({ entregaFutura, alteraEntregaPendente }: IEntregaFuturaProps) {
 
     const [romaneioEntrega, setRomaneioEntrega] = useState<ITempRomaneioEntrega>({
         dataEntrega: new Date(),
         enderecoEntrega: entregaFutura.endereco,
         idEntregaPendente: entregaFutura.id as any,
+        tipoVenda: entregaFutura.tipoVenda,
         idVenda: entregaFutura.idVenda,
         nomeCliente: entregaFutura.nomeCliente,
         observacoes: "",
@@ -132,6 +133,30 @@ function EntregaPendente({ entregaFutura }: IEntregaFuturaProps) {
             setRomaneioEntrega(meuRomaneio)
         }
     }, [])
+
+    async function handleClickAlteraNome() {
+        const novoNome = prompt(`Digite um novo nome para "${entregaFutura.nomeCliente}"`, "")
+
+        if (!novoNome) {
+            alert("Insira um nome válido")
+            return
+        }
+
+        await alteraEntregaPendente(String(entregaFutura.id), { nomeCliente: novoNome } as any)
+        alert("Nome alterado com sucesso!")
+    }
+
+    async function handleClickAlteraEnderecoEntrega() {
+        const novoEnd = prompt(`Digite um novo endereço para a entrega de "${entregaFutura.nomeCliente}"`, "")
+
+        if (!novoEnd) {
+            alert("Insira um endereço válido")
+            return
+        }
+
+        await alteraEntregaPendente(String(entregaFutura.id), { endereco: novoEnd } as any)
+        alert("Endereço alterado com sucesso!")
+    }
 
     function adicionaAoRomaneioTemporario(aRomaneio: ITempRomaneioEntrega) {
         const listaRomaneiosLocal: Array<ITempRomaneioEntrega> = JSON.parse(localStorage.getItem("romaneio") || "[]")
@@ -154,27 +179,31 @@ function EntregaPendente({ entregaFutura }: IEntregaFuturaProps) {
     }
 
     return (
-        <tr>
-            <div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Código do produto</th>
-                            <th>Quantidade</th>
-                            <th>Descrição</th>
-                            <th>Romaneio de entrega</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            entregaFutura.itensRestantes.map((dadosItem, itemIndex) => {
-                                return <ItemRestante key={itemIndex} dadosItem={dadosItem} romaneio={romaneioEntrega} setRomaneio={setRomaneioEntrega} adicionaAoRomaneioTemporario={adicionaAoRomaneioTemporario} />
-                            })
-                        }
-                    </tbody>
-                </table>
+        // <tr>
+        <div className={style.conteiner_tabela}>
+            <div className={style.detalhes_entrega}>
+                <p><b>Nome do cliente:</b> <span>{entregaFutura.nomeCliente}</span> <button onClick={handleClickAlteraNome}>Alterar nome do cliente</button></p>
+                <p><b>Endereço de entrega:</b> <span>{entregaFutura.endereco}</span> <button onClick={handleClickAlteraEnderecoEntrega}>Alterar endereço de entrega</button></p>
             </div>
-        </tr>
+            <table className={style.tabela_produtos_pendentes}>
+                <thead>
+                    <tr>
+                        <th className={style.col_id_produto}>Código do produto</th>
+                        <th>Quantidade</th>
+                        <th>Descrição</th>
+                        <th>Romaneio de entrega</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        entregaFutura.itensRestantes.map((dadosItem, itemIndex) => {
+                            return <ItemRestante key={itemIndex} dadosItem={dadosItem} romaneio={romaneioEntrega} setRomaneio={setRomaneioEntrega} adicionaAoRomaneioTemporario={adicionaAoRomaneioTemporario} />
+                        })
+                    }
+                </tbody>
+            </table>
+        </div>
+        // </tr>
     )
 }
 
@@ -210,25 +239,31 @@ function ItemRestante({ dadosItem, romaneio, setRomaneio, adicionaAoRomaneioTemp
     }
 
     return (
-        <tr>
-            <td>{dadosItem.idProduto}</td>
+        <tr className={style.linha_produto_pendente} entregue-total={Number(dadosItem.qtde) < 0.5 ? "true" : "false"}>
+            <td className={style.col_id_produto}>{dadosItem.idProduto}</td>
             <td>{Number(dadosItem.qtde).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 0 })} {dadosItem.unidade}</td>
             <td>{dadosItem.descricao}</td>
-            <td>
-                <button disabled={produtoJaAdicionado ? true : false} onClick={adicionaProdutoAoRomaneio}>
-                    {
-                        produtoJaAdicionado
-                            ? <span>* Já está na entrega *</span>
-                            : <span>Adicionar à entrega</span>
-                    }
-                </button>
+            <td className={style.col_button_container}>
+                {
+                    (Number(dadosItem.qtde > 0.5))
+                    ? (
+                        <button disabled={produtoJaAdicionado ? true : false} onClick={adicionaProdutoAoRomaneio} className={style.button_adicionar_entrega}>
+                            {
+                                produtoJaAdicionado
+                                    ? <span>* Já está na entrega *</span>
+                                    : <span>Adicionar à entrega</span>
+                            }
+                        </button>
+                    )
+                    : null
+                }
             </td>
         </tr>
     )
 }
 
 
-function LinhaPorVenda({ entrega }: { entrega: IEntregaPendente }) {
+function LinhaPorVenda({ entrega, alteraEntregaPendente }: { entrega: IEntregaPendente, alteraEntregaPendente: (idEntrega: string, dados: IEntregaPendente) => Promise<void> }) {
 
     const [exibindoProdutos, setExibindoProdutos] = useState(false)
     const [alturaLinha, setAlturaLinha] = useState<{ height: string } | {}>({})
@@ -262,7 +297,7 @@ function LinhaPorVenda({ entrega }: { entrega: IEntregaPendente }) {
             </div>
 
             <div className={style.detalhes_linha_por_venda} ref={detalhesRef}>
-                <EntregaPendente entregaFutura={entrega} key={entrega.idVenda} />
+                <EntregaPendente entregaFutura={entrega} alteraEntregaPendente={alteraEntregaPendente} key={entrega.idVenda} />
             </div>
         </div>
     )

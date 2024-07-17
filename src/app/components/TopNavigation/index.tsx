@@ -2,8 +2,6 @@
 
 import React, { useEffect, useState } from 'react'
 
-import { navigate } from '@/app/actions'
-
 import { useVendas } from '@/hooks/useVendas'
 import { useEntregasFuturas } from '@/hooks/useVendaEntregaFutura'
 import { useRomaneioEntrega } from '@/hooks/useRomaneioEntrega'
@@ -21,12 +19,13 @@ import style from "./index.module.css"
 import { Input } from '../Input'
 import { IVenda } from '@/app/interfaces'
 import { IEntregaPendente } from '@/database/models-mongoose/vendaEntregaFutura/IEntregaPendente'
+import { LoadingAnimation } from '../LoadingAnimation'
 
 function TopNavigation() {
 
-    const { getVendaById, alteraVenda } = useVendas()
-    const { criaNovaEntregaFutura } = useEntregasFuturas()
-    const { criaNovoRomaneio } = useRomaneioEntrega()
+    const { localizaVenda, alteraVenda, aguardandoApiVendas } = useVendas()
+    const { criaNovaEntregaFutura, aguardandoApiEntregaFutura } = useEntregasFuturas()
+    const { criaNovoRomaneio, imprimeRomaneioNoServidor, aguardandoApiRomaneio } = useRomaneioEntrega()
 
     const [romaneioCount, setRomaneioCount] = useState(0)
 
@@ -36,33 +35,45 @@ function TopNavigation() {
         setIsClosed(prevState => !prevState)
     }
 
-    async function handleClickAdicionarEntrega() {
+    function handleClickMenuOverlay(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        const menuOverlay = event.currentTarget
+        // const menuContainer = document.getElementById("menuContainer")
+        const closeMenuButton = document.getElementById("closeMenuButton")
 
-        const inputNumVenda = (document.getElementById("inputNumeroVenda") as HTMLInputElement)
+        if (event.target === menuOverlay || event.target === closeMenuButton) {
+            handleClickHamburgerMenuButton()
+        }
+    }
+    
+    async function handleClickAdicionarEntrega(idInput: string) {
+
+        const inputNumVenda = (document.getElementById( idInput ) as HTMLInputElement)
         const nVenda = inputNumVenda.value
-        const venda = await getVendaById(Number(nVenda))
+        const venda = await localizaVenda(Number(nVenda))
 
         if (venda) {
             if (!confirm(`Deseja adicionar ${venda?.nome} à lista de entregas pendentes?`)) return
 
             inputNumVenda.value = ""
             handleClickNovaEntregaFutura(venda, criaNovaEntregaFutura, alteraVenda)
-        } else {
-            alert("Venda não localizada ou já adicionada")
-            inputNumVenda.value = ""
+
+            alert("Venda adicionada à lista de entregas pendentes!")
         }
+
+        inputNumVenda.value = ""
     }
 
-    async function handleGeraRomaneioEntrega() {
-        const inputNumVenda = (document.getElementById("inputNumeroVenda2") as HTMLInputElement)
+    async function handleGeraRomaneioEntrega(idInput: string) {
+        const inputNumVenda = (document.getElementById( idInput ) as HTMLInputElement)
         const nVenda = inputNumVenda.value
-        const venda = await getVendaById(Number(nVenda))
+        const venda = await localizaVenda(Number(nVenda))
 
         if (venda) {
             if (!confirm(`Deseja gerar o romaneio completo para ${venda?.nome}?`)) return
 
             const novoRomaneio = await criaNovoRomaneio({
                 // idEntregaPendente: "",
+                tipoVenda: (venda.tipoVenda === "v") ? "À Vista" : "À Prazo",
                 numeroEntrega: "",
                 dataEntrega: new Date(Date.now()),
                 idVenda: venda.id!,
@@ -75,17 +86,17 @@ function TopNavigation() {
             if (novoRomaneio) {
                 const confirmado = confirm(`Deseja imprimir o romaneio de entrega para ${novoRomaneio.nomeCliente}?`)
 
-                if (confirmado) navigate(`/imprime-romaneio/${novoRomaneio.id}`)
+                // if (confirmado) navigate(`/imprime-romaneio/${novoRomaneio.id}`)
+                if (confirmado) await imprimeRomaneioNoServidor(novoRomaneio.id)
 
                 inputNumVenda.value = ""
             } else {
                 alert("Erro ao cadastrar romaneio")
                 inputNumVenda.value = ""
             }
-        } else {
-            alert("Venda não localizada")
-            inputNumVenda.value = ""
         }
+
+        inputNumVenda.value = ""
     }
 
     useEffect(() => {
@@ -108,12 +119,20 @@ function TopNavigation() {
 
                 <div className={style.adicionar_entrega_container}>
                     <Input placeholder={{ insideInput: true, text: "Adicionar entrega futura" }} inputType='text' fieldName='inputNumeroVenda' />
-                    <img className={style.icone_dicionar} src={addIcon.src} alt="Adicionar entrega futura" onClick={handleClickAdicionarEntrega} />
+                    {
+                        (aguardandoApiVendas || aguardandoApiEntregaFutura)
+                            ? <LoadingAnimation />
+                            : <img className={style.icone_dicionar} src={addIcon.src} alt="Adicionar entrega futura" onClick={() => {handleClickAdicionarEntrega("inputNumeroVenda")}} />
+                    }
                 </div>
 
                 <div className={style.adicionar_entrega_container}>
                     <Input placeholder={{ insideInput: true, text: "Gerar romaneio de entrega única" }} inputType='text' fieldName='inputNumeroVenda2' />
-                    <img className={style.icone_dicionar} src={addIcon.src} alt="Imprimir romaneio" onClick={handleGeraRomaneioEntrega} />
+                    {
+                        (aguardandoApiVendas || aguardandoApiEntregaFutura)
+                            ? <LoadingAnimation />
+                            : <img className={style.icone_dicionar} src={addIcon.src} alt="Imprimir romaneio" onClick={() => {handleGeraRomaneioEntrega("inputNumeroVenda2")}}/>
+                    }
                 </div>
 
                 <Link href={"/entregas-pendentes"}>Entregas pendentes</Link>
@@ -148,21 +167,30 @@ function TopNavigation() {
                     </div>
                 </Link>
 
-                <div className={style.menu_overlay} is-closed={String(isClosed)}>
-                    <div className={style.menu_container}>
+                <div className={style.menu_overlay} is-closed={String(isClosed)} id='menuOverlay' onClick={handleClickMenuOverlay}>
+                    <div className={style.menu_container} id='menuContainer'>
+                        
                         <div className={style.mobile_menu_input_container}>
                             <p>Adicionar venda à entrega pendente</p>
                             <div className={style.adicionar_entrega_container}>
-                                <Input placeholder={{ insideInput: true, text: "Nº venda" }} inputType='text' fieldName='inputNumeroVenda' />
-                                <img className={style.icone_dicionar} src={addIcon.src} alt="Adicionar entrega futura" onClick={handleClickAdicionarEntrega} />
+                                <Input placeholder={{ insideInput: true, text: "Nº venda" }} inputType='text' fieldName='inputNumeroVenda_mobile' />
+                                {
+                                    (aguardandoApiVendas || aguardandoApiEntregaFutura)
+                                        ? <LoadingAnimation />
+                                        : <img className={style.icone_dicionar} src={addIcon.src} alt="Adicionar entrega futura" onClick={() => {handleClickAdicionarEntrega("inputNumeroVenda_mobile")}} />
+                                }
                             </div>
                         </div>
 
                         <div className={style.mobile_menu_input_container}>
                             <p>Gerar romaneio de entrega</p>
                             <div className={style.adicionar_entrega_container}>
-                                <Input placeholder={{ insideInput: true, text: "Nº venda" }} inputType='text' fieldName='inputNumeroVenda2' />
-                                <img className={style.icone_dicionar} src={addIcon.src} alt="Imprimir romaneio" onClick={handleGeraRomaneioEntrega} />
+                                <Input placeholder={{ insideInput: true, text: "Nº venda" }} inputType='text' fieldName='inputNumeroVenda2_mobile' />
+                                {
+                                    (aguardandoApiVendas || aguardandoApiRomaneio)
+                                        ? <LoadingAnimation />
+                                        : <img className={style.icone_dicionar} src={addIcon.src} alt="Imprimir romaneio" onClick={() => {handleGeraRomaneioEntrega("inputNumeroVenda2_mobile")}} />
+                                }
                             </div>
                         </div>
 
@@ -178,7 +206,7 @@ function TopNavigation() {
                             <span>Imprimir romaneios</span>
                         </Link>
 
-                        <div className={style.close_menu_button} onClick={handleClickHamburgerMenuButton}>
+                        <div className={style.close_menu_button} onClick={handleClickHamburgerMenuButton} id='closeMenuButton'>
                             <img src={closeHamburgerIcon.src} alt="" className={style.close_hamburger_icon} />
                         </div>
                     </div>
@@ -201,10 +229,10 @@ function IconeQuantidadeEntregas({ quantidadeEntregas }: IIconeQuantidadeEntrega
     )
 }
 
-function handleClickNovaEntregaFutura(
+async function handleClickNovaEntregaFutura(
     venda: IVenda,
     criaNovaEntregaFutura: (vefData: IEntregaPendente) => Promise<void>,
-    alteraVenda: (id: number, dadosVenda: IVenda) => Promise<void>
+    alteraVenda: (id: number, dadosVenda: IVenda) => Promise<void | IVenda>
 ) {
     let quantidadeTotalProdutos = 0
 
@@ -214,6 +242,8 @@ function handleClickNovaEntregaFutura(
 
     const novaEntragaFutura = {
         idVenda: venda?.id!,
+        finalizada: false,
+        tipoVenda: venda?.tipoVenda,
         dataEmissao: venda?.dataEmissao!,
         nomeCliente: venda?.nome!,
         endereco: `${venda?.endereco}${venda?.numero ? `, ${venda?.numero}` : ""}${venda?.bairro ? ` (${venda?.bairro})` : ""}`,
@@ -240,8 +270,8 @@ function handleClickNovaEntregaFutura(
         itensEntregues: [],
     } as any
 
-    criaNovaEntregaFutura(novaEntragaFutura)
-    alteraVenda(venda.id!, { entregaFutura: 1 })
+    await criaNovaEntregaFutura(novaEntragaFutura)
+    await alteraVenda(venda.id!, { entregaFutura: 1 })
     venda!.entregaFutura = 1;
 }
 

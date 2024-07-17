@@ -16,7 +16,26 @@ function RomaneioPage() {
 
     const [romaneios, setRomaneios] = useState<Array<ITempRomaneioEntrega>>(JSON.parse(localStorage.getItem("romaneio") || "[]"))
 
+    function validaQuantidadesDosProdutos(dados: ITempRomaneioEntrega): boolean {
+        for (const produto of dados.itensEntrega) {
+            if (!produto.qtde || produto.qtde <= 0) {
+                alert(`Por favor, insira uma quantidade válida para "${produto.descricao}"!`)
+                return false
+            }
+            
+            if (produto.qtde > produto.qtdeRestante) {
+                alert(`Verifique o item "${produto.descricao}".\n\nA quantidade digitada é maior que o restante para entregar!`)
+                return false
+            }
+        }
+
+        return true
+    }
+    
     async function handleSalvaRomaneio(dadosRomaneio: ITempRomaneioEntrega) {
+
+        if ( !validaQuantidadesDosProdutos(dadosRomaneio) ) return
+
         const confirmado = confirm(`Confirma o fechamento do romaneio para ${dadosRomaneio.nomeCliente}?`)
 
         if (!confirmado) return
@@ -91,6 +110,8 @@ interface IProdutoRomaneioProps {
 
 function ProdutoRomaneio({ listaRomaneios, setListaRomaneios, romaneio, produto, myIndex }: IProdutoRomaneioProps) {
 
+    const [quantidade, setQuantidade] = useState<undefined | number>()
+    
     const idInputQtde = `inputQuantidadeItemEntregar_${produto.idItemVenda}`
     const idInputObs = `inputObservacoesItemEntregar_${produto.idItemVenda}`
     const temBordaEmbaixo = (myIndex + 1) < romaneio.itensEntrega.length
@@ -114,20 +135,22 @@ function ProdutoRomaneio({ listaRomaneios, setListaRomaneios, romaneio, produto,
         setListaRomaneios([...listaRomaneiosAtualizada])
     }
 
-    function updateQuantProduto() {
-        let novaQuantidade = Number((document.getElementById(idInputQtde)! as HTMLInputElement).value)
+    function updateQuantProduto(valor: number | undefined) {
+        
+        setQuantidade(valor)
+        // let novaQuantidade = (document.getElementById(idInputQtde)! as HTMLInputElement).value
 
-        if (novaQuantidade > produto.qtdeRestante) {
-            novaQuantidade = produto.qtdeRestante
-        } else if (novaQuantidade < 0) {
-            novaQuantidade = 0
-        }
+        // if (novaQuantidade > produto.qtdeRestante) {
+        //     novaQuantidade = produto.qtdeRestante
+        // } else if (novaQuantidade < 0) {
+        //     novaQuantidade = 0
+        // }
 
         const listaRomaneiosAtualizada = listaRomaneios.map(romaneio => {
             if (romaneio.idVenda == produto.idVenda) {
                 const produtosAtualizados = romaneio.itensEntrega.map(itemEntrega => {
                     if (itemEntrega.idItemVenda == produto.idItemVenda) {
-                        itemEntrega.qtde = novaQuantidade
+                        itemEntrega.qtde = valor
                     }
 
                     return itemEntrega
@@ -141,23 +164,17 @@ function ProdutoRomaneio({ listaRomaneios, setListaRomaneios, romaneio, produto,
     }
 
     function handleSubtractButton() {
-        const input = document.getElementById(idInputQtde)! as HTMLInputElement
-        let value = Number(input.value)
+        const qtde = (quantidade) ? quantidade - 1 : 0
+        setQuantidade(qtde)
 
-        value--
-
-        input.value = String(value)
-        updateQuantProduto()
+        updateQuantProduto(qtde)
     }
 
     function handleAddButton() {
-        const input = document.getElementById(idInputQtde)! as HTMLInputElement
-        let value = Number(input.value)
+       const qtde = (quantidade) ? quantidade + 1 : 1
+       setQuantidade(qtde)
 
-        value++
-
-        input.value = String(value)
-        updateQuantProduto()
+       updateQuantProduto(qtde)
     }
 
     function updateObservacoesProduto() {
@@ -195,7 +212,7 @@ function ProdutoRomaneio({ listaRomaneios, setListaRomaneios, romaneio, produto,
                         <img src={iconRemove.src} alt="" />
                     </button>
 
-                    <input className={style.input_quantidade} type="number" value={produto.qtde} id={idInputQtde} onChange={updateQuantProduto} /> {produto.unidade}
+                    <input className={style.input_quantidade} type="number" value={produto.qtde} id={idInputQtde} onChange={e => updateQuantProduto((e.target.value) ? Number(e.target.value) : undefined)} /> {produto.unidade}
 
                     <button className={style.button_quantidade} onClick={handleAddButton}>
                         <img src={iconAdd.src} alt="" />

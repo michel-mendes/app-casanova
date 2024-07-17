@@ -3,6 +3,8 @@ import { useEffect, useState } from "react"
 import { IEntregaPendente } from "@/database/models-mongoose/vendaEntregaFutura/IEntregaPendente"
 import { IProdutoPendente } from "@/app/interfaces"
 
+import { sortArrayOfObjects } from "@/app/helpers"
+
 import style from "./index.module.css"
 
 export function ListaProdutosPendentesEntrega({ listaEntregasPendentes, mostraClientes }: { listaEntregasPendentes: Array<IEntregaPendente>, mostraClientes: boolean }) {
@@ -41,7 +43,8 @@ export function ListaProdutosPendentesEntrega({ listaEntregasPendentes, mostraCl
 
                 // Se o produto constar na lista, apenas adicione o cliente que tem o mesmo comprado
                 else {
-                    const produtoVendido = listaProdutos.find(item => item.descricaoProduto == produto.descricao)
+                    const produtoVendido = listaProdutos.find(item => item.idProduto == produto.idProduto)
+                    // const produtoVendido = listaProdutos.find(item => item.descricaoProduto == produto.descricao)
 
                     produtoVendido!.totalVendido! += produto.qtde
                     produtoVendido!.listaClientes!.push({
@@ -54,7 +57,8 @@ export function ListaProdutosPendentesEntrega({ listaEntregasPendentes, mostraCl
             }
         }
 
-        setProdutosPendentes(listaProdutos)
+        const listaProdoutosOrganizada = sortArrayOfObjects<IProdutoPendente>(listaProdutos, "descricaoProduto", true)
+        setProdutosPendentes(listaProdoutosOrganizada)
     }, [])
 
     return (
