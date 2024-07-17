@@ -17,7 +17,9 @@ export interface IItemRestante {
 
 export interface IEntregaPendente extends mongoose.Document {
     id?: ObjectId;
+    finalizada: boolean,
     idVenda: number,
+    tipoVenda: string,
     dataEmissao: Date,
     nomeCliente: string,
     endereco: string,

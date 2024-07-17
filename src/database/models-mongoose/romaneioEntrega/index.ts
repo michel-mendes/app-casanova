@@ -5,6 +5,7 @@ import { IRomaneioEntrega } from "./IRomaneioEntrega"
 const romaneioEntregaSchema = new Schema(
     {
         idEntregaPendente: { type: Schema.Types.ObjectId || null,  },
+        tipoVenda: { type: String },
         numeroEntrega: { type: String },
         dataEntrega: { type: Date },
         idVenda: { type: Number },

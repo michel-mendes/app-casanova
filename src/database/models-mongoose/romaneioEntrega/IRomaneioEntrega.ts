@@ -15,6 +15,7 @@ export interface IItemEntregue {
 
 export interface IRomaneioEntrega extends mongoose.Document {
     idEntregaPendente: ObjectId | string | null,
+    tipoVenda: string,
     numeroEntrega: string,
     dataEntrega: Date,
     idVenda: number,

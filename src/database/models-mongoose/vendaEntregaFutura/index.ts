@@ -6,6 +6,8 @@ const entregaPendenteSchema = new Schema(
     {
 
         idVenda: { type: Number },
+        finalizada: { type: Boolean },
+        tipoVenda: { type: String },
         dataEmissao: { type: Date },
         nomeCliente: { type: String },
         endereco: { type: String },
