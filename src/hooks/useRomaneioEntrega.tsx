@@ -4,6 +4,7 @@ import { IRomaneioEntrega } from "@/database/models-mongoose/romaneioEntrega/IRo
 export function useRomaneioEntrega() {
     const [listaRomaneios, setListaRomaneios] = useState<Array<IRomaneioEntrega>>([])
     const [loadingRomaneios, setLoadingRomaneios] = useState<boolean>(false)
+    const [aguardandoApi, setAguardandoApi] = useState(false)
 
     async function atualizaListaRomaneios() {
         setLoadingRomaneios(true)
@@ -20,6 +21,8 @@ export function useRomaneioEntrega() {
     }
 
     async function criaNovoRomaneio(dadosRomaneio: IRomaneioEntrega) {
+        setAguardandoApi(true)
+
         try {
             const apiResponse = await fetch(`/api/romaneioEntrega`, {method: "POST", body: JSON.stringify(dadosRomaneio)})
             
@@ -41,9 +44,13 @@ export function useRomaneioEntrega() {
         } catch (error) {
             alert(`Erro:\n\n-> ${error}`)
         }
+
+        setAguardandoApi(false)
     }
 
     async function exibeRomaneio(id: string) {
+        setAguardandoApi(true)
+
         try {
             const apiResponse = await fetch(`/api/romaneioEntrega?id=${id}`, {method: "GET"})
 
@@ -59,18 +66,28 @@ export function useRomaneioEntrega() {
         } catch (error) {
             alert(`Erro:\n\n-> ${error}`)
         }
+
+        setAguardandoApi(false)
     }
 
     async function imprimeRomaneioNoServidor(id: string) {
-        const apiRes = await fetch(`/api/imprime-romaneio-servidor/${id}`)
+        setAguardandoApi(true)
 
-        if (!apiRes.ok) {
-            const erro: any = await apiRes.json()
-            throw erro
+        try {
+            const apiRes = await fetch(`/api/imprime-romaneio-servidor/${id}`)
+
+            if (!apiRes.ok) {
+                const erro: any = await apiRes.json()
+                throw erro
+            }
+
+            const sucesso = await apiRes.text()
+            return sucesso
+        } catch (error) {
+            alert(`Erro: \n\n-> ${error}`)
         }
 
-        const sucesso = await apiRes.text()
-        return sucesso
+        setAguardandoApi(false)
     }
 
     return {
@@ -79,6 +96,7 @@ export function useRomaneioEntrega() {
         criaNovoRomaneio,
         exibeRomaneio,
         imprimeRomaneioNoServidor,
-        loadingRomaneios
+        loadingRomaneios,
+        aguardandoApiRomaneio: aguardandoApi
     }
 }

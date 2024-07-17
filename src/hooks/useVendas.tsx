@@ -1,52 +1,70 @@
 import { useState } from "react";
+import { useQuery } from "react-query";
+
 import { IVenda } from "@/app/interfaces";
 
 export function useVendas() {
     const [listaVendas, setListaVendas] = useState<Array<IVenda>>([])
     const [loadingVendas, setLoadingVendas] = useState<boolean>(false)
+    const [aguardandoApi, setAguardandoApi] = useState(false)
 
     async function atualizaLista(startDate: string, endDate: string) {
-        setLoadingVendas(true)
+
         try {
+            setLoadingVendas(true)
+
             const novaLista: Array<IVenda> = await (await fetch(`/api/vendas?start=${startDate}&end=${endDate}`)).json()
 
-            setListaVendas(novaLista)   
+            setListaVendas(novaLista)
         } catch (error) {
             setListaVendas([])
+        } finally {
+            setLoadingVendas(false)
         }
-        setLoadingVendas(false)
+
     }
 
     async function alteraVenda(id: number, dadosVenda: IVenda) {
-        try {
-            const venda: IVenda = await (await (fetch(`/api/vendas/${id}`, {method: "PUT", body: JSON.stringify(dadosVenda)}))).json()
 
-            // alert("Venda alterada!!")
-        } catch (error) {
-            alert("Erro ao alterar venda!")
+        setAguardandoApi(true)
+
+        const respostaApi = await fetch(`/api/vendas/${id}`, { method: "PUT", body: JSON.stringify(dadosVenda) })
+
+        if (!respostaApi.ok) {
+            setAguardandoApi(false)
+            return alert((await respostaApi.json() as any).error)
         }
+
+        const venda = (await respostaApi.json()) as IVenda
+
+        setAguardandoApi(false)
+        return venda
+
     }
 
-    async function getVendaById(idVenda: number) {
-        try {
-            const apiResp = await (fetch(`/api/vendas/${idVenda}`, {method: "GET"}))
+    async function localizaVenda(idVenda: number) {
 
-            if (apiResp.ok) {
-                return ( await apiResp.json() ) as IVenda
-            } else {
-                return null
-            }
-        } catch (error) {
-            alert(`Não foi possível encontrar a venda nº ${idVenda}`)
-            return null
+        setAguardandoApi(true)
+        const respostaApi = await (fetch(`/api/vendas/${idVenda}`, { method: "GET" }))
+
+        if (!respostaApi.ok) {
+            setAguardandoApi(false)
+            return alert((await respostaApi.json() as any).error)
         }
+
+        const venda = (await respostaApi.json()) as IVenda
+
+        setAguardandoApi(false)
+        return venda
+
     }
 
     return {
         listaVendas,
         atualizaLista,
-        getVendaById,
+        localizaVenda,
         alteraVenda,
-        loadingVendas
+        loadingVendas,
+        aguardandoApiVendas: aguardandoApi
     }
 }
