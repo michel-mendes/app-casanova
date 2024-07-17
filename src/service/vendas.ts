@@ -39,36 +39,49 @@ export async function listarVendas(startDate: string, endDate: string) {
 }
 
 export async function alteraVenda(id: number, dadosVenda: IVenda) {
-    const venda = await vendas.findOne({ where: {id} })
+    try {
+        const venda = await vendas.findOne({ where: { id } })
 
-    if (venda) {
+        if (!venda) {
+            throw new Error("Venda inexistente")
+        }
+
         venda.set(dadosVenda)
-
         await venda.save()
-    }
 
-    return venda
+        return venda
+    } catch (error: any) {
+        throw new Error(`Falha ao alterar venda: ${error.message}`)
+    }
 }
 
-export async function buscaVendaPorId(idVenda: number) {
-    const venda = await vendas.findByPk(idVenda, {
-        include: {
-            model: ItemVenda,
-            attributes: [
-                "id",
-                "idVenda",
-                "idProduto",
-                "qtde",
-                "unidade",
-                "vlrUnitario",
-                "vlrTotal",
-                "descricao",
-                "vlrCustoDia",
-                "margemLucro"
-            ],
-            as: "itensVenda"
-        }
-    })
+export async function localizaVendaPorId(idVenda: number) {
+    try {
+        const venda = await vendas.findByPk(idVenda, {
+            include: {
+                model: ItemVenda,
+                attributes: [
+                    "id",
+                    "idVenda",
+                    "idProduto",
+                    "qtde",
+                    "unidade",
+                    "vlrUnitario",
+                    "vlrTotal",
+                    "descricao",
+                    "vlrCustoDia",
+                    "margemLucro"
+                ],
+                as: "itensVenda"
+            }
+        })
 
-    return venda
+        if (!venda) {
+            throw new Error("Venda inexistente")
+        }
+
+        return venda
+    } catch (error: any) {
+        throw new Error(`Falha ao localizar venda: ${error.message}`)
+    }
 }

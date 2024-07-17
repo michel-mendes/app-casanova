@@ -89,19 +89,25 @@ async function descontaProdutosDaEntrega(romaneioCadastrado: IRomaneioEntrega, e
         })
 
         // Exclui produtos que foram totalmente entregues
+        /*
         listaItensRestantesAtualizada = removeItensZerados(listaItensRestantesAtualizada)
         entregaPendente.itensRestantes = [...listaItensRestantesAtualizada]
+        */
 
         // Calcula em porcentagem o progresso da entrega
         const percentualConcluido = Number((Number(entregaPendente.quantidadeEntregue) * 100) / Number(entregaPendente.quantidadeTotalProdutos)).toFixed(0)
         entregaPendente.status = `${percentualConcluido}% entregue`
 
+        await entregaPendente.save()
+        
         // Exclui a entrega pendente se todos os produtos já foram entregues ou apenas salva as alterações caso haja produtos para entregar...
+        /*
         if (entregaPendente.itensRestantes.length > 0) {
             await entregaPendente.save()
         } else {
             await entregaPendente.deleteOne()
         }
+        */
 
     }
 }
