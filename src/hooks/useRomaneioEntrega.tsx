@@ -7,93 +7,139 @@ export function useRomaneioEntrega() {
     const [aguardandoApi, setAguardandoApi] = useState(false)
 
     async function atualizaListaRomaneios() {
-        setLoadingRomaneios(true)
-
+        
         try {
+            setLoadingRomaneios(true)
+
             const novaLista: Array<IRomaneioEntrega> =  await (await fetch(`/api/romaneioEntrega`)).json()
 
             setListaRomaneios([...novaLista])
         } catch (error) {
             alert(error)
+        } finally {
+            setLoadingRomaneios(false)
         }
 
-        setLoadingRomaneios(false)
     }
 
     async function criaNovoRomaneio(dadosRomaneio: IRomaneioEntrega) {
-        setAguardandoApi(true)
-
+        
         try {
+            setAguardandoApi(true)
+
             const apiResponse = await fetch(`/api/romaneioEntrega`, {method: "POST", body: JSON.stringify(dadosRomaneio)})
             
-            // Erro
-            if (apiResponse.status !== 200) {
-                // alert(`${await apiResponse.text()}`)
-                return
+            // Erro ---------------------------
+            if (!apiResponse.ok) {
+                const erroApi = await (apiResponse.json() as any).error
+                
+                throw new Error(erroApi)
             }
+            // --------------------------------
+
             
             const novoRomaneio: IRomaneioEntrega = await apiResponse.json()
-            // alert("Novo romaneio cadastrado com sucesso!")
 
+            // Atualiza lista de romaneios
             setListaRomaneios(listaAtual => {
+                
                 const novaLista = [...listaAtual, novoRomaneio]
                 return novaLista
+
             })
 
             return novoRomaneio
-        } catch (error) {
-            alert(`Erro:\n\n-> ${error}`)
+        } finally {
+            setAguardandoApi(false)
         }
 
-        setAguardandoApi(false)
+    }
+
+    async function deletaRomaneio(idRomaneio: string) {
+
+        try {
+            setAguardandoApi(true)
+
+            const apiResponse = await fetch(`/api/romaneioEntrega/${idRomaneio}`, {method: "DELETE"})
+
+            // Erro ---------------------------
+            if (!apiResponse.ok) {
+                const erroApi = await (apiResponse.json() as any).error
+                
+                throw new Error(erroApi)
+            }
+            // --------------------------------
+
+            const romaneioDeletado: IRomaneioEntrega = await apiResponse.json()
+
+            // Atualiza lista de romaneios
+            setListaRomaneios(listaAtual => {
+                
+                const novaLista = listaAtual.filter(romaneio => romaneio.id !== romaneioDeletado.id)
+                return novaLista
+
+            })
+
+            return romaneioDeletado
+        } finally {
+            setAguardandoApi(false)
+        }
+
     }
 
     async function exibeRomaneio(id: string) {
-        setAguardandoApi(true)
-
+        
         try {
-            const apiResponse = await fetch(`/api/romaneioEntrega?id=${id}`, {method: "GET"})
+            setAguardandoApi(true)
 
-            // Erro
-            if (apiResponse.status !== 200) {
-                // alert(`${await apiResponse.text()}`)
-                return
+            const apiResponse = await fetch(`/api/romaneioEntrega/${id}`, {method: "GET"})
+
+            // Erro ---------------------------
+            if (!apiResponse.ok) {
+                const erroApi = await (apiResponse.json() as any).error
+                
+                throw new Error(erroApi)
             }
+            // --------------------------------
 
             const romaneio: IRomaneioEntrega = await apiResponse.json()
 
             return romaneio
-        } catch (error) {
-            alert(`Erro:\n\n-> ${error}`)
+        } finally {
+            setAguardandoApi(false)
         }
 
-        setAguardandoApi(false)
     }
 
     async function imprimeRomaneioNoServidor(id: string) {
-        setAguardandoApi(true)
-
+        
         try {
-            const apiRes = await fetch(`/api/imprime-romaneio-servidor/${id}`)
+            setAguardandoApi(true)
 
-            if (!apiRes.ok) {
-                const erro: any = await apiRes.json()
-                throw erro
+            const apiResponse = await fetch(`/api/imprime-romaneio-servidor/${id}`)
+
+            // Erro ---------------------------
+            if (!apiResponse.ok) {
+                const erroApi = await (apiResponse.json() as any).error
+                
+                throw new Error(erroApi)
             }
+            // --------------------------------
 
-            const sucesso = await apiRes.text()
-            return sucesso
-        } catch (error) {
-            alert(`Erro: \n\n-> ${error}`)
+            const mensagemSucessoImpressao = await apiResponse.text()
+
+            return mensagemSucessoImpressao
+        } finally {
+            setAguardandoApi(false)
         }
 
-        setAguardandoApi(false)
     }
 
     return {
         listaRomaneios,
         atualizaListaRomaneios,
         criaNovoRomaneio,
+        deletaRomaneio,
         exibeRomaneio,
         imprimeRomaneioNoServidor,
         loadingRomaneios,

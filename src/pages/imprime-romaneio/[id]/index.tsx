@@ -13,21 +13,26 @@ function ImprimeRomaneioPage() {
     const params = useParams()
 
     const { exibeRomaneio } = useRomaneioEntrega()
-    const [romaneio, setRomaneio] = useState<IRomaneioEntrega>()
+    const [romaneio, setRomaneio] = useState<IRomaneioEntrega | null>()
 
     useEffect(() => {
         async function getRomaneio() {
-            const idRomaneio = (params) ? String(params.id) : ""
-            const tempRomaneio = await exibeRomaneio(idRomaneio)
+            try {
+                const idRomaneio = (params) ? String(params.id) : ""
+                const tempRomaneio = await exibeRomaneio(idRomaneio)
 
-            if (tempRomaneio) {
-                if (!tempRomaneio.id) return
+                if (tempRomaneio) {
+                    if (!tempRomaneio.id) return
 
-                setRomaneio(tempRomaneio)
-                setTimeout(window.print, 500)
+                    setRomaneio(tempRomaneio)
+                    setTimeout(window.print, 500)
+                }
+            } catch (error: any) {
+                setRomaneio(null)
+                alert(error.message)
             }
         }
-        
+
         getRomaneio()
     }, [params])
 
@@ -80,7 +85,7 @@ function FormularioRomaneio({ romaneio }: { romaneio: IRomaneioEntrega }) {
                 (romaneio && romaneio.itensEntrega) && romaneio.itensEntrega.map(produto => {
                     return (
                         <div className={style.linha_valores} key={produto.idItemVenda}>
-                            <span className={style.coluna_qtde_produto}>{Number(produto.qtde).toLocaleString(undefined, {maximumFractionDigits: 2})} {String(produto.unidade).toLowerCase()}</span>
+                            <span className={style.coluna_qtde_produto}>{Number(produto.qtde).toLocaleString(undefined, { maximumFractionDigits: 2 })} {String(produto.unidade).toLowerCase()}</span>
                             <span className={style.coluna_nome_produto}>{produto.descricao}</span>
                             <span className={style.coluna_obs_produto}>{produto.observacoes}</span>
                         </div>

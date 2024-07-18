@@ -13,7 +13,7 @@ const romaneioEntregaCRUD = new GenericModelCRUD(RomaneioEntrega)
 const entregaPendenteCRUD = new GenericModelCRUD(EntregaPendente)
 
 export {
-    listaTodosRomaneios, novoRomaneioEntrega, getRomaneio, imprimeRomaneioNoServidor
+    listaTodosRomaneios, novoRomaneioEntrega, deletaRomaneioEntrega, localizaRomaneioPorId, imprimeRomaneioNoServidor
 }
 
 async function listaTodosRomaneios() {
@@ -23,21 +23,21 @@ async function listaTodosRomaneios() {
         const listaRomaneios: Array<IRomaneioEntrega> = await romaneioEntregaCRUD.findDocuments()
 
         return listaRomaneios
-    } catch (error) {
-        return `Erro ao consultar romaneios >> ${error}`
+    } catch (error: any) {
+        throw new Error(`Falha ao listar romaneios: ${error.message}`)
     }
 }
 
-async function getRomaneio(idRomaneio: string) {
+async function localizaRomaneioPorId(id: string) {
     try {
         await connectDatabaseMongoDB()
 
-        const romaneio: IRomaneioEntrega = await romaneioEntregaCRUD.findDocumentById(idRomaneio)
+        const romaneio: IRomaneioEntrega = await romaneioEntregaCRUD.findDocumentById(id)
 
         return romaneio
 
-    } catch (error) {
-        return `Erro ao consultar romaneio ID "${idRomaneio}" >> ${error}`
+    } catch (error: any) {
+        throw new Error(`Falha ao localizar romaneio: ${error.message}`)
     }
 }
 
@@ -50,14 +50,62 @@ async function novoRomaneioEntrega(dadosRomaneio: IRomaneioEntrega) {
 
         const romaneioCadastrado: IRomaneioEntrega = await romaneioEntregaCRUD.insertDocument(dadosRomaneio)
 
-        // Se o romaneio for cadastrado com sucesso, subtrair os itens entregues no objeto "EntregaPendente"
-        await descontaProdutosDaEntrega(romaneioCadastrado, entregaPendente)
+        // Remove da entrega pendente os produtos que constam no novo romaneio
+        await atualizaProdutosDaEntrega(romaneioCadastrado, entregaPendente, "NOVO_ROMANEIO")
 
         return romaneioCadastrado
-    } catch (error) {
-        return `Erro ao criar novo romaneio >> ${error}`
+    } catch (error: any) {
+        throw new Error(`Falha ao criar novo romaneio: ${error.message}`)
     }
 }
+
+async function deletaRomaneioEntrega(id: string) {
+    try {
+        await connectDatabaseMongoDB()
+        
+        const romaneioDeletado = await romaneioEntregaCRUD.deleteDocument(id)
+        const entregaPendente = await entregaPendenteCRUD.findDocumentById(String(romaneioDeletado.idEntregaPendente))
+
+        // Retorna para a entrega pendente os produtos que constam no romaneio cancelado
+        await atualizaProdutosDaEntrega(romaneioDeletado, entregaPendente, "ROMANEIO_CANCELADO")
+        
+        return romaneioDeletado
+    } catch (error: any) {
+        throw new Error(`Falha ao deletar romaneio: ${error.message}`)
+    }
+}
+
+async function imprimeRomaneioNoServidor(idRomaneio: string) {
+    try {
+        const caminhoPdf = `romaneio-${idRomaneio}-${new Date().getTime()}.pdf`
+        
+        const browser = await puppeteer.launch({ headless: "shell" })
+        const paginaRomaneio = await browser.newPage()
+
+        await paginaRomaneio.goto(`http://localhost:1005/imprime-romaneio/${idRomaneio}`, { waitUntil: "networkidle2" })
+        await paginaRomaneio.pdf({
+            path: caminhoPdf,
+            format: "A5",
+            printBackground: true
+        })
+
+        await browser.close()
+
+        try {
+            await print(caminhoPdf, {silent: true, })
+        } catch(error: any) {
+            throw new Error(error.message)
+        } finally {
+            fs.rmSync(caminhoPdf, {force: true})
+        }
+        
+        return "Impressão OK!"
+    } catch (error: any) {
+        throw new Error(`Falha ao imprimir romaneio no servidor: ${error.message}`);
+    }
+}
+
+
 
 // helpers
 function removeItensZerados(itens: Array<IItemRestante>) {
@@ -68,18 +116,27 @@ function removeItensZerados(itens: Array<IItemRestante>) {
     return [...listaSemItensZerados]
 }
 
-async function descontaProdutosDaEntrega(romaneioCadastrado: IRomaneioEntrega, entregaPendente: IEntregaPendente | null) {
-    if (entregaPendente && romaneioCadastrado) {
+async function atualizaProdutosDaEntrega(romaneioEntrega: IRomaneioEntrega, entregaPendente: IEntregaPendente | null, tipoAtualizacao: "NOVO_ROMANEIO" | "ROMANEIO_CANCELADO") {
+    if (entregaPendente && romaneioEntrega) {
 
+        // Atualiza produtos restantes descontando as quantidades entregues de acordo com o romaneio
         let listaItensRestantesAtualizada = entregaPendente.itensRestantes.map(itemRestante => {
 
             const itemAtualizado = { ...itemRestante }
 
-            for (const itemEntregue of romaneioCadastrado.itensEntrega) {
+            for (const itemEntregue of romaneioEntrega.itensEntrega) {
 
                 if (itemRestante.idItemVenda == itemEntregue.idItemVenda) {
-                    itemAtualizado.qtde -= itemEntregue.qtde
-                    entregaPendente.quantidadeEntregue += itemEntregue.qtde
+                    const quantidadeAtualizada = (tipoAtualizacao === "NOVO_ROMANEIO")
+                        ? (itemAtualizado.qtde - itemEntregue.qtde)
+                        : (itemAtualizado.qtde + itemEntregue.qtde)
+
+                    const totalEntregueAtualizado = (tipoAtualizacao === "NOVO_ROMANEIO")
+                        ? (entregaPendente.quantidadeEntregue + itemEntregue.qtde)
+                        : (entregaPendente.quantidadeEntregue - itemEntregue.qtde)
+
+                    itemAtualizado.qtde = quantidadeAtualizada
+                    entregaPendente.quantidadeEntregue = totalEntregueAtualizado
                 }
 
             }
@@ -88,26 +145,17 @@ async function descontaProdutosDaEntrega(romaneioCadastrado: IRomaneioEntrega, e
 
         })
 
-        // Exclui produtos que foram totalmente entregues
-        /*
-        listaItensRestantesAtualizada = removeItensZerados(listaItensRestantesAtualizada)
         entregaPendente.itensRestantes = [...listaItensRestantesAtualizada]
-        */
 
         // Calcula em porcentagem o progresso da entrega
         const percentualConcluido = Number((Number(entregaPendente.quantidadeEntregue) * 100) / Number(entregaPendente.quantidadeTotalProdutos)).toFixed(0)
         entregaPendente.status = `${percentualConcluido}% entregue`
-
-        await entregaPendente.save()
         
-        // Exclui a entrega pendente se todos os produtos já foram entregues ou apenas salva as alterações caso haja produtos para entregar...
-        /*
-        if (entregaPendente.itensRestantes.length > 0) {
-            await entregaPendente.save()
-        } else {
-            await entregaPendente.deleteOne()
-        }
-        */
+        // Marca entrega finalizada se todos os produtos tiverem sido entregues
+        entregaPendente.finalizada = Number(entregaPendente.quantidadeEntregue) == Number(entregaPendente.quantidadeTotalProdutos)
+
+        // Salva entrega pendente
+        await entregaPendente.save()
 
     }
 }
@@ -137,34 +185,4 @@ function geraNumeroRomaneio(entregaPendente: IEntregaPendente | null, dadosRoman
     }
 
     return numeroRomaneio
-}
-
-async function imprimeRomaneioNoServidor(idRomaneio: string) {
-    try {
-        const caminhoPdf = `romaneio-${idRomaneio}-${new Date().getTime()}.pdf`
-        
-        const browser = await puppeteer.launch({ headless: "shell" })
-        const paginaRomaneio = await browser.newPage()
-
-        await paginaRomaneio.goto(`http://localhost:1005/imprime-romaneio/${idRomaneio}`, { waitUntil: "networkidle2" })
-        await paginaRomaneio.pdf({
-            path: caminhoPdf,
-            format: "A5",
-            printBackground: true
-        })
-
-        await browser.close()
-
-        try {
-            await print(caminhoPdf, {silent: true, })
-        } catch(error: any) {
-            return `Erro ao imprimir:\n${error.message}`
-        } finally {
-            fs.rmSync(caminhoPdf, {force: true})
-        }
-        
-        return "Impressão OK!"
-    } catch (error: any) {
-        throw new Error(`Falha ao imprimir romaneio no servidor: ${error.message}`);
-    }
 }

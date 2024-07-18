@@ -15,9 +15,9 @@ export function useEntregasFuturas() {
             setListaEntregasFuturas(novaLista)
         } catch (error) {
             alert(error)
+        } finally {
+            setLoadingEntregasFuturas(false)
         }
-
-        setLoadingEntregasFuturas(false)
     }
 
     async function criaNovaEntregaFutura(vefData: IEntregaPendente) {
@@ -41,9 +41,9 @@ export function useEntregasFuturas() {
             })
         } catch (error) {
             alert(`Erro:\n\n-> ${error}`)
+        } finally {
+            setAguardandoApi(false)
         }
-
-        setAguardandoApi(false)
     }
 
     async function alteraEntregaPendente(idEntrega: string, dados: IEntregaPendente) {
@@ -66,6 +66,8 @@ export function useEntregasFuturas() {
             })
         } catch (error) {
             alert(`Erro:\n\n-> ${error}`)
+        } finally {
+            setAguardandoApi(false)
         }
     }
 
