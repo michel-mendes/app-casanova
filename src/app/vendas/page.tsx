@@ -131,7 +131,7 @@ function VendasPage() {
 
                                     return (
                                         <>
-                                            <tr className={style.row_venda}>
+                                            <tr className={style.row_venda} key={`${venda.id}${vendaIndex}`}>
                                                 <td className={`${style.column_detail_venda} ${style.col_n_venda}`} onClick={() => { toggleExpandVenda(vendaIndex) }}>{venda.id}</td>
                                                 <td className={`${style.column_detail_venda} ${style.col_data}`} onClick={() => { toggleExpandVenda(vendaIndex) }}>{dataVenda}</td>
                                                 <td className={`${style.column_detail_venda}`} onClick={() => { toggleExpandVenda(vendaIndex) }}>{venda.nome}</td>
@@ -145,7 +145,8 @@ function VendasPage() {
                                                     }
                                                 </td>
                                             </tr>
-                                            <tr>
+
+                                            <tr key={`${venda.id}${vendaIndex + 2}`}>
                                                 <td colSpan={6}>
 
                                                     <div
@@ -191,7 +192,7 @@ function VendasPage() {
                                                                         const prodCusto = produto.vlrCustoDia
                                                                         const prodMargem = produto.margemLucro
                                                                         return (
-                                                                            <tr>
+                                                                            <tr key={produto.id}>
                                                                                 <td style={{ border: "1px solid #c0c0c0" }}>{prodId}</td>
                                                                                 <td style={{ border: "1px solid #c0c0c0" }}>{prodDescricao}</td>
                                                                                 <td style={{ border: "1px solid #c0c0c0" }}>{prodQtde} {prodUn}</td>

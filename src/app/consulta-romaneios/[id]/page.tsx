@@ -62,7 +62,7 @@ function EntregaIdPage({ params }: { params: { id: string } }) {
                                 {
                                     romaneio.itensEntrega.map(produto => {
                                         return (
-                                            <tr>
+                                            <tr key={produto.idItemVenda}>
                                                 <td>{produto.qtde} {produto.unidade}</td>
                                                 <td colSpan={2}>{produto.descricao}</td>
                                                 <td>{produto.observacoes}</td>

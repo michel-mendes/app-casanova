@@ -14,7 +14,7 @@ function RomaneioPage() {
 
     const { criaNovoRomaneio, imprimeRomaneioNoServidor } = useRomaneioEntrega()
 
-    const [romaneios, setRomaneios] = useState<Array<ITempRomaneioEntrega>>(JSON.parse(localStorage.getItem("romaneio") || "[]"))
+    const [romaneios, setRomaneios] = useState<Array<ITempRomaneioEntrega>>((localStorage) ? (JSON.parse(localStorage.getItem("romaneio") || "[]")) : [])
 
     function validaQuantidadesDosProdutos(dados: ITempRomaneioEntrega): boolean {
         for (const produto of dados.itensEntrega) {
@@ -57,7 +57,7 @@ function RomaneioPage() {
     }
 
     useEffect(() => {
-        localStorage.setItem("romaneio", JSON.stringify(romaneios))
+        localStorage && localStorage.setItem("romaneio", JSON.stringify(romaneios))
     }, [romaneios])
 
 
@@ -70,7 +70,7 @@ function RomaneioPage() {
                 {
                     romaneios.map(romaneio => {
                         return (
-                            <div className={style.romaneio}>
+                            <div className={style.romaneio} key={romaneio.idVenda}>
 
                                 {/* Header */}
                                 <div className={style.romaneio_header}>
@@ -203,7 +203,7 @@ function ProdutoRomaneio({ listaRomaneios, setListaRomaneios, romaneio, produto,
         <div className={style.romaneio_item} style={(temBordaEmbaixo) ? { borderBottom: "1px dashed silver" } : {}}>
             <div className={`${style.item_data} ${style.descricao_produto_container}`}>
                 <span>{produto.descricao}</span>
-                <span style={{ color: "#3483fa", fontWeight: "bold", cursor: "pointer" }} onClick={excluiProduto}>Excluir</span>
+                <span style={{ color: "#3483fa", fontWeight: "bold", cursor: "pointer", padding: "5px", width: "fit-content" }} onClick={excluiProduto}>Excluir</span>
             </div>
 
             <div className={`${style.item_data} ${style.quant_modifier_container}`}>

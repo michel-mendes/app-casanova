@@ -101,7 +101,7 @@ function TopNavigation() {
 
     useEffect(() => {
         const romaneioVerifierTimer = setInterval(() => {
-            const cacheRomaneio: Array<any> = JSON.parse(localStorage.getItem("romaneio") || "[]")
+            const cacheRomaneio: Array<any> = (localStorage) ? ( JSON.parse(localStorage.getItem("romaneio") || "[]") ) : []
 
             setRomaneioCount(cacheRomaneio.length)
         }, 500)
@@ -231,7 +231,7 @@ function IconeQuantidadeEntregas({ quantidadeEntregas }: IIconeQuantidadeEntrega
 
 async function handleClickNovaEntregaFutura(
     venda: IVenda,
-    criaNovaEntregaFutura: (vefData: IEntregaPendente) => Promise<void>,
+    criaNovaEntregaFutura: (vefData: IEntregaPendente) => Promise<IEntregaPendente | undefined>,
     alteraVenda: (id: number, dadosVenda: IVenda) => Promise<void | IVenda>
 ) {
     let quantidadeTotalProdutos = 0

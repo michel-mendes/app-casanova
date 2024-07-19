@@ -46,7 +46,7 @@ function EntregasPendentesPage() {
                                 name="tipoRel"
                                 id="radio1"
                                 checked={tipoAgupamento == "venda"}
-                                onClick={() => {
+                                onChange={() => {
                                     setTipoAgrupamento("venda")
                                 }}
                             />
@@ -59,7 +59,7 @@ function EntregasPendentesPage() {
                                 name="tipoRel"
                                 id="radio2"
                                 checked={tipoAgupamento == "produto"}
-                                onClick={() => {
+                                onChange={() => {
                                     setTipoAgrupamento("produto")
                                 }}
                             />
@@ -126,7 +126,7 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente }: IEntregaFutur
     })
 
     useEffect(() => {
-        const listaRomaneiosLocal: Array<ITempRomaneioEntrega> = JSON.parse(localStorage.getItem("romaneio") || "[]")
+        const listaRomaneiosLocal: Array<ITempRomaneioEntrega> = (localStorage) ? (JSON.parse(localStorage.getItem("romaneio") || "[]")) : []
         const meuRomaneio = listaRomaneiosLocal.find(romaneioLocal => romaneioLocal.idVenda == entregaFutura.idVenda)
 
         if (meuRomaneio) {
@@ -159,7 +159,7 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente }: IEntregaFutur
     }
 
     function adicionaAoRomaneioTemporario(aRomaneio: ITempRomaneioEntrega) {
-        const listaRomaneiosLocal: Array<ITempRomaneioEntrega> = JSON.parse(localStorage.getItem("romaneio") || "[]")
+        const listaRomaneiosLocal: Array<ITempRomaneioEntrega> = (localStorage) ? (JSON.parse(localStorage.getItem("romaneio") || "[]")) : []
         const romaneioExistente = listaRomaneiosLocal.find(item => item.idVenda == aRomaneio.idVenda)
 
         if (romaneioExistente) {
@@ -169,12 +169,12 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente }: IEntregaFutur
                 else return item
             })
 
-            localStorage.setItem("romaneio", JSON.stringify(listaRomaneioAtualizada))
+            localStorage && localStorage.setItem("romaneio", JSON.stringify(listaRomaneioAtualizada))
 
         } else {
             const listaRomaneioAtualizada = [...listaRomaneiosLocal, aRomaneio]
 
-            localStorage.setItem("romaneio", JSON.stringify(listaRomaneioAtualizada))
+            localStorage && localStorage.setItem("romaneio", JSON.stringify(listaRomaneioAtualizada))
         }
     }
 
@@ -286,6 +286,8 @@ function LinhaPorVenda({ entrega, alteraEntregaPendente }: { entrega: IEntregaPe
             setAlturaLinha({ height: "30px" })
         }
     }, [exibindoProdutos])
+
+    if (entrega.quantidadeEntregue == entrega.quantidadeTotalProdutos) return null
 
     return (
         <div className={style.linha_por_venda} style={alturaLinha} ref={linhaRef}>

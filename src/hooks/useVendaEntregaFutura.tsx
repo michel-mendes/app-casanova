@@ -39,6 +39,8 @@ export function useEntregasFuturas() {
                 const novaLista = [...listaAtual, novaEntregaFutura]
                 return novaLista
             })
+
+            return novaEntregaFutura
         } catch (error) {
             alert(`Erro:\n\n-> ${error}`)
         } finally {

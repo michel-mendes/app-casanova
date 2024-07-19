@@ -67,7 +67,7 @@ function index() {
                                         const fimSemana = moment(semana.fimSemana)
 
                                         return (
-                                            <tr>
+                                            <tr key={index}>
                                                 <td>{index + 1}</td>
                                                 <td>{inicioSemana.add(3, "hours").toDate().toLocaleDateString()}</td>
                                                 <td>até</td>
@@ -105,12 +105,12 @@ function index() {
                                 </tr>
 
                                 {
-                                    listaContasPagar.map((contaPagar: any) => {
+                                    listaContasPagar.map((contaPagar: any, index) => {
                                         const vencimento = moment(contaPagar.dtVencimento).utc(false)
                                         const valor = Number(contaPagar.vlrParcela).toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})
 
                                         return (
-                                            <tr>
+                                            <tr key={index}>
                                                 <td>{vencimento.format("DD/MM/yyyy")}</td>
                                                 <td>{contaPagar.dadosFornecedor.razao}</td>
                                                 <td>{contaPagar.documento}</td>

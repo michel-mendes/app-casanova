@@ -71,9 +71,9 @@ export function ListaProdutosPendentesEntrega({ listaEntregasPendentes, mostraCl
 
             <div>
                 {
-                    produtosPendentes.map(produtoPendente => {
+                    produtosPendentes.map((produtoPendente, index) => {
                         return (
-                            <div className={style.linha_produto}>
+                            <div className={style.linha_produto} key={`${produtoPendente.idProduto}${index}`}>
                                 <div className={style.dados_produto}>
                                     <p className={style.coluna_produto}>{produtoPendente.descricaoProduto}</p>
                                     <p className={style.coluna_quatidade}>{Number(produtoPendente.totalVendido).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 0 })} {produtoPendente.unidade}</p>
@@ -85,9 +85,11 @@ export function ListaProdutosPendentesEntrega({ listaEntregasPendentes, mostraCl
                                         <div>
                                             <ul className={style.lista_clientes}>
                                                 {
-                                                    (produtoPendente.listaClientes) && produtoPendente.listaClientes.map(cliente => {
+                                                    (produtoPendente.listaClientes) && produtoPendente.listaClientes.map((cliente, index) => {
+                                                        if (cliente.quantidade == 0) return null
+                                                        
                                                         return (
-                                                            <li>
+                                                            <li key={`${cliente.idVenda}${index}`}>
                                                                 <span>{new Date(cliente.dataVenda).toLocaleDateString()}</span>
                                                                 <span> - </span>
                                                                 <span>{cliente.nomeCliente}</span>
