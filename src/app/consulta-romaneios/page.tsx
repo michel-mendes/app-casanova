@@ -102,7 +102,7 @@ function LinhaDadosEntrega({ romaneio, imprimeRomaneioNoServidor }: {
 
             <div className={style.dados} onClick={clickEntrega}>
                 <span className={style.col_numero_entrega}>{romaneio.numeroEntrega}</span>
-                <span className={style.col_data}>{new Date(romaneio.dataEntrega).toLocaleString()}</span>
+                <span className={style.col_data}>{new Date(romaneio.dataEntrega).toLocaleString(undefined, {dateStyle: "short", timeStyle: "short"})}</span>
                 <span className={style.col_cliente}>{romaneio.nomeCliente}</span>
                 {/* <span className={style.col_endereco}>{romaneio.enderecoEntrega}</span> */}
             </div>

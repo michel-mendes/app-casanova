@@ -287,7 +287,7 @@ function LinhaPorVenda({ entrega, alteraEntregaPendente }: { entrega: IEntregaPe
         }
     }, [exibindoProdutos])
 
-    if (entrega.quantidadeEntregue == entrega.quantidadeTotalProdutos) return null
+    if (Number(entrega.quantidadeEntregue).toFixed(2) == Number(entrega.quantidadeTotalProdutos).toFixed(2)) return null
 
     return (
         <div className={style.linha_por_venda} style={alturaLinha} ref={linhaRef}>

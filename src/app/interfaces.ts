@@ -109,3 +109,11 @@ export interface IVenda {
 
 	itensVenda?: Array<any>
 }
+
+export interface IProdutoRomaneioProps {
+    listaRomaneios: Array<ITempRomaneioEntrega>
+    setListaRomaneios: React.Dispatch<React.SetStateAction<ITempRomaneioEntrega[]>>
+    romaneio: ITempRomaneioEntrega;
+    produto: ITempItemEntregue;
+    myIndex: number;
+}

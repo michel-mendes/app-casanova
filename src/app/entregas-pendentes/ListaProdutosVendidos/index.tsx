@@ -72,6 +72,8 @@ export function ListaProdutosPendentesEntrega({ listaEntregasPendentes, mostraCl
             <div>
                 {
                     produtosPendentes.map((produtoPendente, index) => {
+                        if (produtoPendente.totalVendido == 0) return null
+                        
                         return (
                             <div className={style.linha_produto} key={`${produtoPendente.idProduto}${index}`}>
                                 <div className={style.dados_produto}>
