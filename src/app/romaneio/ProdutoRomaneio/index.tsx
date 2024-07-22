@@ -6,10 +6,11 @@ import iconRemove from "../../images/minus-circle-svgrepo-com.svg"
 
 import style from "./index.module.css"
 
-function ProdutoRomaneio({ listaRomaneios, setListaRomaneios, romaneio, produto, myIndex }: IProdutoRomaneioProps) {
+function ProdutoRomaneio({ listaRomaneios, setListaRomaneios, romaneio, produto, myIndex, idInputObs }: IProdutoRomaneioProps) {
 
-    const scripts = useScripts({ listaRomaneios, myIndex, produto, romaneio, setListaRomaneios })
+    const scripts = useScripts({ listaRomaneios, myIndex, produto, romaneio, setListaRomaneios, idInputObs })
     const possuiBordaInferior = (myIndex + 1) < romaneio.itensEntrega.length
+
 
     return (
         <div className={style.romaneio_item} style={(possuiBordaInferior) ? { borderBottom: "1px dashed silver" } : {}}>
@@ -34,7 +35,7 @@ function ProdutoRomaneio({ listaRomaneios, setListaRomaneios, romaneio, produto,
             </div>
 
             <div className={`${style.item_data} ${style.obs_container}`}>
-                <input className={style.input_observacoes} type="text" name="" value={scripts.observacao} onChange={scripts.atualizaObservacoesProduto} autoComplete='off' />
+                <input className={style.input_observacoes} type="text" name="" id={idInputObs} value={produto.observacoes} onChange={scripts.atualizaObservacoesProduto} autoComplete='off' />
                 <span style={{ fontWeight: "bold" }}>Observações</span>
             </div>
         </div>

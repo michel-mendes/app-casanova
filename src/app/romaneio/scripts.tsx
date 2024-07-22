@@ -74,14 +74,14 @@ function useScripts() {
     useEffect(() => {
         if (localStorage) {
             const listaRomaneioLocalStorage: Array<ITempRomaneioEntrega> = JSON.parse(localStorage.getItem("romaneio") || "[]")
-
+            
             setRomaneios(listaRomaneioLocalStorage)
             setGravacaoLiberada(true)
         }
     }, [])
 
     return {
-        romaneios, setRomaneios, handleClickBotaoSalvaRomaneio, 
+        romaneios, setRomaneios, handleClickBotaoSalvaRomaneio
     }
 }
 

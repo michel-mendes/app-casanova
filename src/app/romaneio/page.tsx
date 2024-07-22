@@ -32,7 +32,7 @@ function RomaneioPage() {
                                 <div>
                                     {
                                         romaneio.itensEntrega.map((itemEntrega, index) => {
-                                            return <ProdutoRomaneio romaneio={romaneio} listaRomaneios={scripts.romaneios} setListaRomaneios={scripts.setRomaneios} produto={itemEntrega} myIndex={index} key={itemEntrega.idItemVenda} />
+                                            return <ProdutoRomaneio romaneio={romaneio} listaRomaneios={scripts.romaneios} setListaRomaneios={scripts.setRomaneios} produto={itemEntrega} myIndex={index} key={itemEntrega.idItemVenda} idInputObs={`inputObservacoesItemEntregar_${itemEntrega.idItemVenda}`} />
                                         })
                                     }
                                 </div>

@@ -116,4 +116,5 @@ export interface IProdutoRomaneioProps {
     romaneio: ITempRomaneioEntrega;
     produto: ITempItemEntregue;
     myIndex: number;
+	idInputObs: string;
 }
