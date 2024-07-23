@@ -24,20 +24,20 @@ async function getAllVendasEntregaFutura() {
 }
 
 async function createNewVendasEntregaFutura(vefData: IEntregaPendente) {
-    // try {
+    try {
         connectDatabaseMongoDB()
         
         const vendaEntregaFuturaJaCadastrada = await vendaEntregaFuturaCRUD.findOneDocument( {idVenda: vefData.idVenda} )
-        if (vendaEntregaFuturaJaCadastrada) throw "Entrega futura já cadastrada!"
+        if (vendaEntregaFuturaJaCadastrada) throw new Error("Entrega futura já cadastrada!")
 
         vefData.tipoVenda = (vefData.tipoVenda === "v") ? "À Vista" : "À Prazo"
 
         const createdVendaEntregaFutura = await vendaEntregaFuturaCRUD.insertDocument(vefData)
 
         return createdVendaEntregaFutura
-    // } catch (error) {
-    //     return `Erro ao cadastrar nova entrega futura >> ${error}`
-    // }
+    } catch (error: any) {
+        throw new Error(`Falha ao cadastrar nova entrega futura: ${error.message}`)
+    }
 }
 
 async function alteraEntregaPendente(idEntrega: string, dados: IEntregaPendente) {

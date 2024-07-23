@@ -19,8 +19,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     const novaEntregaFuturaCadastrada = await createNewVendasEntregaFutura(receivedData)
 
                     res.status(200).send(novaEntregaFuturaCadastrada)
-                } catch (error) {
-                    res.status(400).send(error)
+                } catch (error: any) {
+                    return res.status(400).json({ error: error.message })
                 }
                 break;
             }
@@ -32,8 +32,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     const entregaFuturaAlterada = await alteraEntregaPendente(String(id), receivedData)
 
                     res.status(200).send(entregaFuturaAlterada)
-                } catch (error) {
-                    res.status(400).send(error)
+                } catch (error: any) {
+                    return res.status(400).json({ error: error.message })
                 }
             }
         }

@@ -55,9 +55,15 @@ function TopNavigation() {
             if (!confirm(`Deseja adicionar ${venda?.nome} à lista de entregas pendentes?`)) return
 
             inputNumVenda.value = ""
-            handleClickNovaEntregaFutura(venda, criaNovaEntregaFutura, alteraVenda)
+            try {
+                const entregaFutura = await handleClickNovaEntregaFutura(venda, criaNovaEntregaFutura, alteraVenda)
 
-            alert("Venda adicionada à lista de entregas pendentes!")
+                alert("Venda adicionada à lista de entrega futura!")
+            } catch (error: any) {
+                alert(error.message)
+            }
+
+            // alert("Venda adicionada à lista de entregas pendentes!")
         }
 
         inputNumVenda.value = ""
@@ -70,6 +76,11 @@ function TopNavigation() {
 
         if (venda) {
             if (!confirm(`Deseja gerar o romaneio completo para ${venda?.nome}?`)) return
+
+            if (venda.entregaFutura == 1) {
+                alert("Esta venda já está cadastrada na entrega futura.\nPara fazer o romaneio vá em 'Entregas Pendentes'")
+                return
+            }
 
             const novoRomaneio = await criaNovoRomaneio({
                 // idEntregaPendente: "",
@@ -270,9 +281,15 @@ async function handleClickNovaEntregaFutura(
         itensEntregues: [],
     } as any
 
-    await criaNovaEntregaFutura(novaEntragaFutura)
-    await alteraVenda(venda.id!, { entregaFutura: 1 })
-    venda!.entregaFutura = 1;
+    try {
+        const entregaFuturaCadastrada = await criaNovaEntregaFutura(novaEntragaFutura)
+        await alteraVenda(venda.id!, { entregaFutura: 1 })
+        venda!.entregaFutura = 1;
+
+        return entregaFuturaCadastrada
+    } catch (error: any) {
+        throw new Error(error.message)
+    }
 }
 
 export { TopNavigation }
