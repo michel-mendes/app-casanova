@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer"
 import { print } from "pdf-to-printer"
 import fs from "fs"
+import moment from "moment"
 
 import { connectDatabaseMongoDB } from "@/database/dbConnect-mongoose"
 import { GenericModelCRUD } from "@/database/classes/GenericModelCRUD"
@@ -8,6 +9,7 @@ import { RomaneioEntrega } from "@/database/models-mongoose/romaneioEntrega"
 import { IRomaneioEntrega } from "@/database/models-mongoose/romaneioEntrega/IRomaneioEntrega"
 import { EntregaPendente } from "@/database/models-mongoose/vendaEntregaFutura"
 import { IEntregaPendente, IItemRestante } from "@/database/models-mongoose/vendaEntregaFutura/IEntregaPendente"
+import { FilterQuery } from "mongoose"
 
 const romaneioEntregaCRUD = new GenericModelCRUD(RomaneioEntrega)
 const entregaPendenteCRUD = new GenericModelCRUD(EntregaPendente)
@@ -16,11 +18,25 @@ export {
     listaTodosRomaneios, novoRomaneioEntrega, deletaRomaneioEntrega, localizaRomaneioPorId, imprimeRomaneioNoServidor
 }
 
-async function listaTodosRomaneios() {
+async function listaTodosRomaneios(filtraData?:{ dataInicial: Date, dataFinal: Date }) {
     try {
         await connectDatabaseMongoDB()
 
-        const listaRomaneios: Array<IRomaneioEntrega> = await romaneioEntregaCRUD.findDocuments()
+        let filtro: FilterQuery<IRomaneioEntrega> = {}
+
+        if (filtraData) {
+            const dataInicial = moment(filtraData.dataInicial).utc(false).startOf("day")
+            const dataFinal = moment(filtraData.dataFinal).utc(false).endOf("day")
+
+            filtro = {
+                dataEntrega: {
+                    $gte: dataInicial,
+                    $lte: dataFinal
+                }
+            }
+        }
+
+        const listaRomaneios: Array<IRomaneioEntrega> = await romaneioEntregaCRUD.findDocuments(filtro)
 
         return listaRomaneios
     } catch (error: any) {

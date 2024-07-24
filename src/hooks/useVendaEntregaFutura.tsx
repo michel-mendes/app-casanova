@@ -19,12 +19,12 @@ export function useEntregasFuturas() {
         }
     }
 
-    async function criaNovaEntregaFutura(vefData: IEntregaPendente) {
+    async function criaNovaEntregaFutura(dadosEntrega: IEntregaPendente) {
         
         try {
             setAguardandoApi(true)
 
-            const apiResponse = await fetch(`/api/vendasEntregaFutura`, {method: "POST", body: JSON.stringify(vefData)})
+            const apiResponse = await fetch(`/api/vendasEntregaFutura`, {method: "POST", body: JSON.stringify(dadosEntrega)})
             
             // Erro ---------------------------
             if (!apiResponse.ok) {

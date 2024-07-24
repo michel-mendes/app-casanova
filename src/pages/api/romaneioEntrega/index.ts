@@ -2,11 +2,23 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { listaTodosRomaneios, novoRomaneioEntrega } from "@/service/romaneioEntrega";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { method, body } = req
+    const { method, body, query } = req
+    const { start, end } = query
 
     if (method === "GET") {
         try {
-            const listaRomaneios = await listaTodosRomaneios()
+            let filtraData
+
+            if (start && end) {
+                filtraData = {
+                    dataInicial: new Date(String(start)),
+                    dataFinal: new Date(String(end))
+                }
+            } else {
+                filtraData = undefined
+            }
+
+            const listaRomaneios = await listaTodosRomaneios(filtraData)
 
             res.status(200).json(listaRomaneios)
         } catch (error: any) {

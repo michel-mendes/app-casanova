@@ -1,10 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
-
-import { useVendas } from '@/hooks/useVendas'
-import { useEntregasFuturas } from '@/hooks/useVendaEntregaFutura'
-import { useRomaneioEntrega } from '@/hooks/useRomaneioEntrega'
+import React from 'react'
 
 import Link from 'next/link'
 import addIcon from "../../images/add-circle-svgrepo-com.svg"
@@ -15,115 +11,31 @@ import deliveryTruckTime from "../../images/delivery-truck-time-svgrepo-com.svg"
 import hamburgerIcon from "../../images/hamburger-menu.svg"
 import closeHamburgerIcon from "../../images/close-hamburger-menu.svg"
 
-import style from "./index.module.css"
 import { Input } from '../Input'
-import { IVenda } from '@/app/interfaces'
-import { IEntregaPendente } from '@/database/models-mongoose/vendaEntregaFutura/IEntregaPendente'
 import { LoadingAnimation } from '../LoadingAnimation'
+
+import useScripts from './scripts'
+
+import style from "./index.module.css"
 
 function TopNavigation() {
 
-    const { localizaVenda, alteraVenda, aguardandoApiVendas } = useVendas()
-    const { criaNovaEntregaFutura, aguardandoApiEntregaFutura } = useEntregasFuturas()
-    const { criaNovoRomaneio, imprimeRomaneioNoServidor, aguardandoApiRomaneio } = useRomaneioEntrega()
-
-    const [romaneioCount, setRomaneioCount] = useState(0)
-
-    const [isClosed, setIsClosed] = useState(true)
-
-    function handleClickHamburgerMenuButton() {
-        setIsClosed(prevState => !prevState)
-    }
-
-    function handleClickMenuOverlay(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-        const menuOverlay = event.currentTarget
-        // const menuContainer = document.getElementById("menuContainer")
-        const closeMenuButton = document.getElementById("closeMenuButton")
-
-        if (event.target === menuOverlay || event.target === closeMenuButton) {
-            handleClickHamburgerMenuButton()
-        }
-    }
+    const {
+        aguardandoApiEntregaFutura,
+        aguardandoApiRomaneio,
+        aguardandoApiVendas,
+        handleCliqueBotaoAdicionarEntrega,
+        handleCliqueBotaoGeraRomaneioEntrega,
+        handleCliqueBotaoHamburgerMenu,
+        handleCliqueOverlayMenu,
+        isMenuClosed,
+        romaneioCount
+    } = useScripts()
     
-    async function handleClickAdicionarEntrega(idInput: string) {
-
-        const inputNumVenda = (document.getElementById( idInput ) as HTMLInputElement)
-        const nVenda = inputNumVenda.value
-        const venda = await localizaVenda(Number(nVenda))
-
-        if (venda) {
-            if (!confirm(`Deseja adicionar ${venda?.nome} à lista de entregas pendentes?`)) return
-
-            inputNumVenda.value = ""
-            try {
-                const entregaFutura = await handleClickNovaEntregaFutura(venda, criaNovaEntregaFutura, alteraVenda)
-
-                alert("Venda adicionada à lista de entrega futura!")
-            } catch (error: any) {
-                alert(error.message)
-            }
-
-            // alert("Venda adicionada à lista de entregas pendentes!")
-        }
-
-        inputNumVenda.value = ""
-    }
-
-    async function handleGeraRomaneioEntrega(idInput: string) {
-        const inputNumVenda = (document.getElementById( idInput ) as HTMLInputElement)
-        const nVenda = inputNumVenda.value
-        const venda = await localizaVenda(Number(nVenda))
-
-        if (venda) {
-            if (!confirm(`Deseja gerar o romaneio completo para ${venda?.nome}?`)) return
-
-            if (venda.entregaFutura == 1) {
-                alert("Esta venda já está cadastrada na entrega futura.\nPara fazer o romaneio vá em 'Entregas Pendentes'")
-                return
-            }
-
-            const novoRomaneio = await criaNovoRomaneio({
-                // idEntregaPendente: "",
-                tipoVenda: (venda.tipoVenda === "v") ? "À Vista" : "À Prazo",
-                numeroEntrega: "",
-                dataEntrega: new Date(Date.now()),
-                idVenda: venda.id!,
-                nomeCliente: venda.nome!,
-                enderecoEntrega: `${venda.endereco}, ${venda.numero}`,
-                observacoes: "",
-                itensEntrega: [...venda.itensVenda!]
-            } as any)
-
-            if (novoRomaneio) {
-                const confirmado = confirm(`Deseja imprimir o romaneio de entrega para ${novoRomaneio.nomeCliente}?`)
-
-                // if (confirmado) navigate(`/imprime-romaneio/${novoRomaneio.id}`)
-                if (confirmado) await imprimeRomaneioNoServidor(novoRomaneio.id)
-
-                inputNumVenda.value = ""
-            } else {
-                alert("Erro ao cadastrar romaneio")
-                inputNumVenda.value = ""
-            }
-        }
-
-        inputNumVenda.value = ""
-    }
-
-    useEffect(() => {
-        const romaneioVerifierTimer = setInterval(() => {
-            const cacheRomaneio: Array<any> = (localStorage) ? ( JSON.parse(localStorage.getItem("romaneio") || "[]") ) : []
-
-            setRomaneioCount(cacheRomaneio.length)
-        }, 500)
-
-        return () => {
-            clearInterval(romaneioVerifierTimer)
-        }
-    }, [])
-
     return (
         <>
+            
+            {/* Barra de navegação Desktop */}
             <div className={style.navbar}>
 
                 <img className={style.logo} src={novaLogo.src} alt="Logo" />
@@ -133,7 +45,7 @@ function TopNavigation() {
                     {
                         (aguardandoApiVendas || aguardandoApiEntregaFutura)
                             ? <LoadingAnimation />
-                            : <img className={style.icone_dicionar} src={addIcon.src} alt="Adicionar entrega futura" onClick={() => {handleClickAdicionarEntrega("inputNumeroVenda")}} />
+                            : <img className={style.icone_dicionar} src={addIcon.src} alt="Adicionar entrega futura" onClick={() => {handleCliqueBotaoAdicionarEntrega("inputNumeroVenda")}} />
                     }
                 </div>
 
@@ -142,7 +54,7 @@ function TopNavigation() {
                     {
                         (aguardandoApiVendas || aguardandoApiEntregaFutura)
                             ? <LoadingAnimation />
-                            : <img className={style.icone_dicionar} src={addIcon.src} alt="Imprimir romaneio" onClick={() => {handleGeraRomaneioEntrega("inputNumeroVenda2")}}/>
+                            : <img className={style.icone_dicionar} src={addIcon.src} alt="Imprimir romaneio" onClick={() => {handleCliqueBotaoGeraRomaneioEntrega("inputNumeroVenda2")}}/>
                     }
                 </div>
 
@@ -161,9 +73,11 @@ function TopNavigation() {
 
             </div>
 
+
+            {/* Barra de navegação Mobile */}
             <div className={style.mobile_navbar}>
 
-                <div className={style.hamburger_container} onClick={handleClickHamburgerMenuButton}>
+                <div className={style.hamburger_container} onClick={handleCliqueBotaoHamburgerMenu}>
                     <img src={hamburgerIcon.src} alt="" className={style.icone_hamburger} />
                 </div>
 
@@ -178,7 +92,7 @@ function TopNavigation() {
                     </div>
                 </Link>
 
-                <div className={style.menu_overlay} is-closed={String(isClosed)} id='menuOverlay' onClick={handleClickMenuOverlay}>
+                <div className={style.menu_overlay} is-closed={String(isMenuClosed)} id='menuOverlay' onClick={handleCliqueOverlayMenu}>
                     <div className={style.menu_container} id='menuContainer'>
                         
                         <div className={style.mobile_menu_input_container}>
@@ -188,7 +102,7 @@ function TopNavigation() {
                                 {
                                     (aguardandoApiVendas || aguardandoApiEntregaFutura)
                                         ? <LoadingAnimation />
-                                        : <img className={style.icone_dicionar} src={addIcon.src} alt="Adicionar entrega futura" onClick={() => {handleClickAdicionarEntrega("inputNumeroVenda_mobile")}} />
+                                        : <img className={style.icone_dicionar} src={addIcon.src} alt="Adicionar entrega futura" onClick={() => {handleCliqueBotaoAdicionarEntrega("inputNumeroVenda_mobile")}} />
                                 }
                             </div>
                         </div>
@@ -200,24 +114,24 @@ function TopNavigation() {
                                 {
                                     (aguardandoApiVendas || aguardandoApiRomaneio)
                                         ? <LoadingAnimation />
-                                        : <img className={style.icone_dicionar} src={addIcon.src} alt="Imprimir romaneio" onClick={() => {handleGeraRomaneioEntrega("inputNumeroVenda2_mobile")}} />
+                                        : <img className={style.icone_dicionar} src={addIcon.src} alt="Imprimir romaneio" onClick={() => {handleCliqueBotaoGeraRomaneioEntrega("inputNumeroVenda2_mobile")}} />
                                 }
                             </div>
                         </div>
 
                         <hr />
 
-                        <Link href={"/entregas-pendentes"} className={style.mobile_menu_link_container} onClick={handleClickHamburgerMenuButton}>
+                        <Link href={"/entregas-pendentes"} className={style.mobile_menu_link_container} onClick={handleCliqueBotaoHamburgerMenu}>
                             <img src={sandClockIcon.src} alt="" className={style.mobile_menu_link_icon} />
                             <span>Entregas pendentes</span>
                         </Link>
 
-                        <Link href={"/consulta-romaneios"} className={style.mobile_menu_link_container} onClick={handleClickHamburgerMenuButton}>
+                        <Link href={"/consulta-romaneios"} className={style.mobile_menu_link_container} onClick={handleCliqueBotaoHamburgerMenu}>
                             <img src={deliveryTruckTime.src} alt="" className={style.mobile_menu_link_icon} />
                             <span>Imprimir romaneios</span>
                         </Link>
 
-                        <div className={style.close_menu_button} onClick={handleClickHamburgerMenuButton} id='closeMenuButton'>
+                        <div className={style.close_menu_button} onClick={handleCliqueBotaoHamburgerMenu} id='closeMenuButton'>
                             <img src={closeHamburgerIcon.src} alt="" className={style.close_hamburger_icon} />
                         </div>
                     </div>
@@ -238,58 +152,6 @@ function IconeQuantidadeEntregas({ quantidadeEntregas }: IIconeQuantidadeEntrega
             <span>{quantidadeEntregas}</span>
         </div>
     )
-}
-
-async function handleClickNovaEntregaFutura(
-    venda: IVenda,
-    criaNovaEntregaFutura: (vefData: IEntregaPendente) => Promise<IEntregaPendente | undefined>,
-    alteraVenda: (id: number, dadosVenda: IVenda) => Promise<void | IVenda>
-) {
-    let quantidadeTotalProdutos = 0
-
-    for (const produto of venda?.itensVenda!) {
-        quantidadeTotalProdutos += produto.qtde
-    }
-
-    const novaEntragaFutura = {
-        idVenda: venda?.id!,
-        finalizada: false,
-        tipoVenda: venda?.tipoVenda,
-        dataEmissao: venda?.dataEmissao!,
-        nomeCliente: venda?.nome!,
-        endereco: `${venda?.endereco}${venda?.numero ? `, ${venda?.numero}` : ""}${venda?.bairro ? ` (${venda?.bairro})` : ""}`,
-        cidade: venda?.cidade!,
-        uf: venda?.uf!,
-        valorVenda: venda?.vlrLiquido!,
-        status: "Pendente",
-        quantidadeTotalProdutos,
-        quantidadeEntregue: 0,
-
-        itensRestantes: venda?.itensVenda?.map(itemVenda => {
-            return {
-                idVenda: itemVenda.idVenda,
-                idItemVenda: itemVenda.id,
-                idProduto: itemVenda.idProduto,
-                qtdeTotalComprado: itemVenda.qtde,
-                qtde: itemVenda.qtde,
-                unidade: itemVenda.unidade,
-                valorUnit: itemVenda.vlrUnitario,
-                valorTotal: itemVenda.vlrTotal,
-                descricao: itemVenda.descricao,
-            }
-        }) || [],
-        itensEntregues: [],
-    } as any
-
-    try {
-        const entregaFuturaCadastrada = await criaNovaEntregaFutura(novaEntragaFutura)
-        await alteraVenda(venda.id!, { entregaFutura: 1 })
-        venda!.entregaFutura = 1;
-
-        return entregaFuturaCadastrada
-    } catch (error: any) {
-        throw new Error(error.message)
-    }
 }
 
 export { TopNavigation }

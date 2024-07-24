@@ -1,19 +1,44 @@
 import { useState } from "react"
 import { IRomaneioEntrega } from "@/database/models-mongoose/romaneioEntrega/IRomaneioEntrega"
+import { sortArrayOfObjects } from "@/app/helpers"
+
+interface IAtualizaListaRomaniosArgs {
+    filtraData?: {
+        dataInicial: Date;
+        dataFinal: Date;
+    }
+    organiza?: {
+        nomeProp: keyof IRomaneioEntrega;
+        crescente: boolean
+    }
+}
 
 export function useRomaneioEntrega() {
     const [listaRomaneios, setListaRomaneios] = useState<Array<IRomaneioEntrega>>([])
     const [loadingRomaneios, setLoadingRomaneios] = useState<boolean>(false)
     const [aguardandoApi, setAguardandoApi] = useState(false)
 
-    async function atualizaListaRomaneios() {
+    async function atualizaListaRomaneios(options?: IAtualizaListaRomaniosArgs) {
+
+        const { organiza, filtraData } = options!
         
         try {
             setLoadingRomaneios(true)
 
-            const novaLista: Array<IRomaneioEntrega> =  await (await fetch(`/api/romaneioEntrega`)).json()
+            const query = (filtraData)
+                            ? `?start=${new Date(filtraData.dataInicial).toJSON().slice(0, 10)}&end=${new Date(filtraData.dataFinal).toJSON().slice(0, 10)}`
+                            : ""
 
-            setListaRomaneios([...novaLista])
+            const novaLista: Array<IRomaneioEntrega> =  await (await fetch(`/api/romaneioEntrega${query}`)).json()
+
+            if (organiza) {
+                const listaOrganizada = sortArrayOfObjects<IRomaneioEntrega>(novaLista, organiza.nomeProp, organiza.crescente)
+
+                setListaRomaneios([ ...listaOrganizada ])
+            } else {
+                setListaRomaneios([ ...novaLista ])
+            }
+
         } catch (error) {
             alert(error)
         } finally {

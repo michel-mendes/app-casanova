@@ -1,25 +1,68 @@
 "use client"
 
 import React, { useEffect, useState, useRef } from 'react'
-import { navigate } from "../actions"
 
 import { useRomaneioEntrega } from '@/hooks/useRomaneioEntrega'
 import { LoadingAnimation } from '../components/LoadingAnimation'
 
+import { sortArrayOfObjects } from '../helpers'
+
 import style from "./page.module.css"
 import { IRomaneioEntrega } from '@/database/models-mongoose/romaneioEntrega/IRomaneioEntrega'
+import { Input } from '../components/Input'
 
 function ConsultaEntregasPage() {
 
+    const [startDate, setStartDate] = useState(new Date(Date.now()).toJSON().slice(0, 10))
+    const [endDate, setEndDate] = useState(new Date(Date.now()).toJSON().slice(0, 10))
+    
     const { listaRomaneios, atualizaListaRomaneios, loadingRomaneios, imprimeRomaneioNoServidor } = useRomaneioEntrega()
 
     useEffect(() => {
-        atualizaListaRomaneios()
+        atualizaListaRomaneios({
+            filtraData: {
+                dataInicial: new Date(startDate),
+                dataFinal: new Date(endDate)
+            },
+            organiza: {
+                crescente: false,
+                nomeProp: "dataEntrega"
+            }
+        })
+    }, [startDate, endDate])
+    
+    useEffect(() => {
+        const dataInicial = new Date(Date.now()).toJSON().slice(0, 10)
+        const dataFinal = new Date(Date.now()).toJSON().slice(0, 10)
+
+        setStartDate(dataInicial)
+        setEndDate(dataFinal)
+
+        atualizaListaRomaneios({
+            filtraData: {
+                dataInicial: new Date(dataInicial),
+                dataFinal: new Date(dataFinal)
+            },
+            organiza: {
+                crescente: false,
+                nomeProp: "dataEntrega"
+            }
+        })
     }, [])
 
     return (
         <div className={style.page_container}>
-            <h1 className={style.titulo_pagina}>Consulta Entregas</h1>
+
+            <div className={style.title_container}>
+                <h1 className={style.titulo_pagina}>Consulta Entregas</h1>
+
+                <div className={style.date_inputs_container}>
+                    <Input fieldName='' inputType='date' label='Data início' onChange={(e) => { setStartDate(e as string) }} value={startDate} />
+                    <Input fieldName='' inputType='date' label='Data fim' onChange={(e) => { setEndDate(e as string) }} value={endDate} />
+                </div>
+
+                <hr />
+            </div>
 
             {
                 loadingRomaneios
@@ -78,8 +121,8 @@ function LinhaDadosEntrega({ romaneio, imprimeRomaneioNoServidor }: {
     }
 
     async function handleCliqueBotaoImprimirServidor() {
-        if ( !confirm("Confirma impressão do romaneio?") ) return
-        
+        if (!confirm("Confirma impressão do romaneio?")) return
+
         const resultadoImpressaoServidor = await imprimeRomaneioNoServidor(romaneio.id)
 
         alert(resultadoImpressaoServidor)
@@ -102,7 +145,7 @@ function LinhaDadosEntrega({ romaneio, imprimeRomaneioNoServidor }: {
 
             <div className={style.dados} onClick={clickEntrega}>
                 <span className={style.col_numero_entrega}>{romaneio.numeroEntrega}</span>
-                <span className={style.col_data}>{new Date(romaneio.dataEntrega).toLocaleString(undefined, {dateStyle: "short", timeStyle: "short"})}</span>
+                <span className={style.col_data}>{new Date(romaneio.dataEntrega).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}</span>
                 <span className={style.col_cliente}>{romaneio.nomeCliente}</span>
                 {/* <span className={style.col_endereco}>{romaneio.enderecoEntrega}</span> */}
             </div>
@@ -119,7 +162,7 @@ function LinhaDadosEntrega({ romaneio, imprimeRomaneioNoServidor }: {
                             <div key={produto.idItemVenda!}>
                                 <br />
 
-                                <span>{Number(produto.qtde).toLocaleString(undefined, {maximumFractionDigits: 2})} {produto.unidade}</span>
+                                <span>{Number(produto.qtde).toLocaleString(undefined, { maximumFractionDigits: 2 })} {produto.unidade}</span>
                                 &nbsp;
                                 <span>{produto.descricao}</span>
                                 &nbsp;

@@ -25,19 +25,25 @@ export function useVendas() {
 
     async function alteraVenda(id: number, dadosVenda: IVenda) {
 
-        setAguardandoApi(true)
+        try {
+            setAguardandoApi(true)
 
-        const respostaApi = await fetch(`/api/vendas/${id}`, { method: "PUT", body: JSON.stringify(dadosVenda) })
+            const apiResponse = await fetch(`/api/vendas/${id}`, { method: "PUT", body: JSON.stringify(dadosVenda) })
 
-        if (!respostaApi.ok) {
+            // Erro ---------------------------
+            if (!apiResponse.ok) {
+                const erroApi = await (apiResponse.json() as any).error
+
+                throw new Error(erroApi)
+            }
+            // --------------------------------
+
+            const vendaAlterada = (await apiResponse.json()) as IVenda
+
+            return vendaAlterada
+        } finally {
             setAguardandoApi(false)
-            return alert((await respostaApi.json() as any).error)
         }
-
-        const venda = (await respostaApi.json()) as IVenda
-
-        setAguardandoApi(false)
-        return venda
 
     }
 
