@@ -1,3 +1,4 @@
+import { IItemEntregue } from "@/database/models-mongoose/romaneioEntrega/IRomaneioEntrega";
 import { IEntregaPendente, IItemRestante } from "@/database/models-mongoose/vendaEntregaFutura/IEntregaPendente"
 
 export interface ITempItemEntregue {
@@ -28,7 +29,7 @@ export interface ITempRomaneioEntrega {
 
 export interface IEntregaFuturaProps {
     entregaFutura: IEntregaPendente,
-	alteraEntregaPendente: (idEntrega: string, dados: IEntregaPendente) => Promise<void>
+	alteraEntregaPendente: (idEntrega: string, dados: IEntregaPendente) => Promise<IEntregaPendente>
 }
 
 export interface IItemRestanteProps {
@@ -107,7 +108,7 @@ export interface IVenda {
 	acompanhamentoApp?: number;
 	margemLucro?: number;
 
-	itensVenda?: Array<any>
+	itensVenda?: Array<IItemEntregue>
 }
 
 export interface IProdutoRomaneioProps {

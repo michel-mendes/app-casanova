@@ -23,5 +23,5 @@ export interface IRomaneioEntrega extends mongoose.Document {
     enderecoEntrega: string,
     observacoes: string,
     
-    itensEntrega: Array<IItemEntregue> | []
+    itensEntrega: Array<IItemEntregue>
 }

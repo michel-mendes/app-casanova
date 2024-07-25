@@ -71,7 +71,7 @@ function useScripts() {
                 const entregaFutura = await adicionaVendaParaEntregaFutura({ venda, apiAlteraVenda: alteraVenda, apiNovaEntregaFutura: criaNovaEntregaFutura })
 
                 const novoRomaneio = await criaNovoRomaneio({
-                    idEntregaPendente: entregaFutura.id,
+                    idEntregaPendente: entregaFutura.id!,
                     tipoVenda: (venda.tipoVenda === "v") ? "À Vista" : "À Prazo",
                     numeroEntrega: "",
                     dataEntrega: new Date(Date.now()),
@@ -79,7 +79,19 @@ function useScripts() {
                     nomeCliente: venda.nome!,
                     enderecoEntrega: `${venda.endereco}, ${venda.numero}`,
                     observacoes: "",
-                    itensEntrega: [...venda.itensVenda!]
+                    itensEntrega: venda.itensVenda!.map(item => {
+                        return {
+                            descricao: item.descricao,
+                            idItemVenda: item.idItemVenda,
+                            idProduto: item.idProduto,
+                            idVenda: item.idVenda,
+                            observacoes: item.observacoes,
+                            qtde: item.qtde,
+                            unidade: item.unidade,
+                            valorTotal: item.valorTotal,
+                            valorUnit: item.valorUnit
+                        }
+                    })
                 } as any)
 
                 if (novoRomaneio) {

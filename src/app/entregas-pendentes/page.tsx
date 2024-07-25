@@ -10,6 +10,8 @@ import { IEntregaFuturaProps, IItemRestanteProps, ITempItemEntregue, ITempRomane
 import { LoadingAnimation } from '../components/LoadingAnimation'
 import { IEntregaPendente } from '@/database/models-mongoose/vendaEntregaFutura/IEntregaPendente'
 
+import dropdownIcon from "../images/dropdown-svgrepo-com.svg"
+
 import style from "./page.module.css"
 
 function EntregasPendentesPage() {
@@ -17,6 +19,7 @@ function EntregasPendentesPage() {
     const { listaEntregasFuturas, loadingEntregasFuturas, atualizaListaDeEntregasFuturas, alteraEntregaPendente } = useEntregasFuturas()
 
     const [tipoAgupamento, setTipoAgrupamento] = useState<"produto" | "venda">("venda")
+    const [mostraFializadas, setMostraFinalizadas] = useState(false)
     const [mostraClientes, setMostraClientes] = useState(false)
 
     function handleClicaMostraClientes() {
@@ -68,6 +71,25 @@ function EntregasPendentesPage() {
                     </div>
 
                     {
+                        tipoAgupamento == "venda" && (
+                            <div>
+                                <label htmlFor="check1" className={style.radio_button} style={{ cursor: "pointer" }}>
+                                    <input
+                                        type="checkbox"
+                                        name="exibeFinalizadas"
+                                        id="check1"
+                                        checked={mostraFializadas}
+                                        onChange={() => {
+                                            setMostraFinalizadas(prevState => !prevState)
+                                        }}
+                                    />
+                                    <span>Mostra finalizadas</span>
+                                </label>
+                            </div>
+                        )
+                    }
+
+                    {
                         tipoAgupamento == "produto" && (
                             <div>
                                 <label htmlFor="checkMostraClientes" className={style.radio_button}>
@@ -98,7 +120,7 @@ function EntregasPendentesPage() {
                                     <div className={style.conteudo_por_venda}>
                                         {
                                             listaEntregasFuturas.map(entregaFutura => {
-                                                return <LinhaPorVenda entrega={entregaFutura} alteraEntregaPendente={alteraEntregaPendente} key={entregaFutura.idVenda} />
+                                                return <LinhaPorVenda entrega={entregaFutura} alteraEntregaPendente={alteraEntregaPendente} exibeFinalizadas={mostraFializadas} key={entregaFutura.idVenda} />
                                             })
                                         }
                                     </div>
@@ -112,6 +134,8 @@ function EntregasPendentesPage() {
 }
 
 function EntregaPendente({ entregaFutura, alteraEntregaPendente }: IEntregaFuturaProps) {
+
+    const [popupMenuAberto, setPopupMenuAberto] = useState(false)
 
     const [romaneioEntrega, setRomaneioEntrega] = useState<ITempRomaneioEntrega>({
         dataEntrega: new Date(),
@@ -133,6 +157,24 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente }: IEntregaFutur
             setRomaneioEntrega(meuRomaneio)
         }
     }, [])
+
+    function handleCliqueBotaoMenuPopup() {
+        setPopupMenuAberto(prevState => !prevState)
+    }
+
+    async function handleCliqueBotaoMarcaEntregaConcluida() {
+        try {
+            if (!confirm(`Deseja realmente finalizar a entrega do cliente "${entregaFutura.nomeCliente}"?`)) return
+
+            const entregaAlterada = await alteraEntregaPendente(String(entregaFutura.id), {
+                finalizada: true
+            } as any)
+
+            alert(`A entrega do cliente "${entregaAlterada.nomeCliente}" foi marcada como finalizada!`)
+        } catch (error: any) {
+            alert(error.message)
+        }
+    }
 
     async function handleClickAlteraNome() {
         const novoNome = prompt(`Digite um novo nome para "${entregaFutura.nomeCliente}"`, "")
@@ -181,6 +223,24 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente }: IEntregaFutur
     return (
         // <tr>
         <div className={style.conteiner_tabela}>
+
+            <div className={style.conteiner_dropdown}>
+
+                <button className={style.botao_dropdown} onClick={handleCliqueBotaoMenuPopup}>
+                    <p>Mais opções</p>
+                    <img src={dropdownIcon.src} alt="" />
+                </button>
+
+                {
+                    popupMenuAberto && (
+                        <div id="myDropdown" className={style.conteudo_dropdown}>
+                            <p>Cancelar entrega</p>
+                            <p onClick={handleCliqueBotaoMarcaEntregaConcluida}>Marcar entrega concluída</p>
+                        </div>
+                    )
+                }
+            </div>
+
             <div className={style.detalhes_entrega}>
                 <p><b>Nome do cliente:</b> <span>{entregaFutura.nomeCliente}</span> <button onClick={handleClickAlteraNome}>Alterar nome do cliente</button></p>
                 <p><b>Endereço de entrega:</b> <span>{entregaFutura.endereco}</span> <button onClick={handleClickAlteraEnderecoEntrega}>Alterar endereço de entrega</button></p>
@@ -246,16 +306,16 @@ function ItemRestante({ dadosItem, romaneio, setRomaneio, adicionaAoRomaneioTemp
             <td className={style.col_button_container}>
                 {
                     (Number(dadosItem.qtde > 0.5))
-                    ? (
-                        <button disabled={produtoJaAdicionado ? true : false} onClick={adicionaProdutoAoRomaneio} className={style.button_adicionar_entrega}>
-                            {
-                                produtoJaAdicionado
-                                    ? <span>* Já está na entrega *</span>
-                                    : <span>Adicionar à entrega</span>
-                            }
-                        </button>
-                    )
-                    : null
+                        ? (
+                            <button disabled={produtoJaAdicionado ? true : false} onClick={adicionaProdutoAoRomaneio} className={style.button_adicionar_entrega}>
+                                {
+                                    produtoJaAdicionado
+                                        ? <span>* Já está na entrega *</span>
+                                        : <span>Adicionar à entrega</span>
+                                }
+                            </button>
+                        )
+                        : null
                 }
             </td>
         </tr>
@@ -263,7 +323,7 @@ function ItemRestante({ dadosItem, romaneio, setRomaneio, adicionaAoRomaneioTemp
 }
 
 
-function LinhaPorVenda({ entrega, alteraEntregaPendente }: { entrega: IEntregaPendente, alteraEntregaPendente: (idEntrega: string, dados: IEntregaPendente) => Promise<void> }) {
+function LinhaPorVenda({ entrega, alteraEntregaPendente, exibeFinalizadas }: { entrega: IEntregaPendente, alteraEntregaPendente: (idEntrega: string, dados: IEntregaPendente) => Promise<IEntregaPendente>, exibeFinalizadas: boolean }) {
 
     const [exibindoProdutos, setExibindoProdutos] = useState(false)
     const [alturaLinha, setAlturaLinha] = useState<{ height: string } | {}>({})
@@ -271,6 +331,8 @@ function LinhaPorVenda({ entrega, alteraEntregaPendente }: { entrega: IEntregaPe
 
     const linhaRef = useRef<HTMLDivElement>(null)
     const detalhesRef = useRef<HTMLDivElement>(null)
+
+    const entregaFinalizada = (Number(entrega.quantidadeEntregue).toFixed(2) == Number(entrega.quantidadeTotalProdutos).toFixed(2)) || entrega.finalizada
 
     function handleClicaLinha() {
         setExibindoProdutos(prevState => !prevState)
@@ -287,10 +349,10 @@ function LinhaPorVenda({ entrega, alteraEntregaPendente }: { entrega: IEntregaPe
         }
     }, [exibindoProdutos])
 
-    if (Number(entrega.quantidadeEntregue).toFixed(2) == Number(entrega.quantidadeTotalProdutos).toFixed(2)) return null
+    if (exibeFinalizadas == false && entregaFinalizada) return null
 
     return (
-        <div className={style.linha_por_venda} style={alturaLinha} ref={linhaRef}>
+        <div className={style.linha_por_venda} style={alturaLinha} entrega-finalizada={(entregaFinalizada) ? "true" : "false"} ref={linhaRef}>
             <div className={style.container_nomes_colunas} onClick={handleClicaLinha}>
                 <span className={style.col_venda}>{entrega.idVenda}</span>
                 <span className={style.col_data}>{new Date(entrega.dataEmissao).toLocaleDateString()}</span>
