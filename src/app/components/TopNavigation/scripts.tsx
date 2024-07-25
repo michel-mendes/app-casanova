@@ -82,14 +82,14 @@ function useScripts() {
                     itensEntrega: venda.itensVenda!.map(item => {
                         return {
                             descricao: item.descricao,
-                            idItemVenda: item.idItemVenda,
+                            idItemVenda: item.id,
                             idProduto: item.idProduto,
                             idVenda: item.idVenda,
-                            observacoes: item.observacoes,
+                            observacoes: "",
                             qtde: item.qtde,
                             unidade: item.unidade,
-                            valorTotal: item.valorTotal,
-                            valorUnit: item.valorUnit
+                            valorTotal: item.vlrTotal,
+                            valorUnit: item.vlrUnitario
                         }
                     })
                 } as any)
