@@ -1,4 +1,4 @@
-import { IItemEntregue } from "@/database/models-mongoose/romaneioEntrega/IRomaneioEntrega";
+import { ItemVenda } from "@/database/models/itensVenda/ItemVenda";
 import { IEntregaPendente, IItemRestante } from "@/database/models-mongoose/vendaEntregaFutura/IEntregaPendente"
 
 export interface ITempItemEntregue {
@@ -108,7 +108,7 @@ export interface IVenda {
 	acompanhamentoApp?: number;
 	margemLucro?: number;
 
-	itensVenda?: Array<IItemEntregue>
+	itensVenda?: Array<ItemVenda>
 }
 
 export interface IProdutoRomaneioProps {
