@@ -79,6 +79,7 @@ export function useEntregasFuturas() {
 
     return {
         listaEntregasFuturas,
+        setListaEntregasFuturas,
         atualizaListaDeEntregasFuturas,
         criaNovaEntregaFutura,
         alteraEntregaPendente,

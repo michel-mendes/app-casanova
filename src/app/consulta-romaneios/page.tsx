@@ -53,8 +53,9 @@ function ConsultaEntregasPage() {
     return (
         <div className={style.page_container}>
 
+            <h1 className={style.titulo_pagina}>Consulta Entregas</h1>
+            
             <div className={style.title_container}>
-                <h1 className={style.titulo_pagina}>Consulta Entregas</h1>
 
                 <div className={style.date_inputs_container}>
                     <Input fieldName='' inputType='date' label='Data início' onChange={(e) => { setStartDate(e as string) }} value={startDate} />
@@ -66,7 +67,11 @@ function ConsultaEntregasPage() {
 
             {
                 loadingRomaneios
-                    ? <LoadingAnimation />
+                    ? (
+                        <div className={style.loading_container}>
+                            <LoadingAnimation />
+                        </div>
+                    )
                     : <ListaEntregas listaRomaneios={listaRomaneios} imprimeRomaneioNoServidor={imprimeRomaneioNoServidor} />
             }
         </div>
@@ -94,11 +99,17 @@ function ListaEntregas({ listaRomaneios, imprimeRomaneioNoServidor }: {
             </div>
 
             {/* Body com dados */}
-            <div>
+            <div className={style.lista_body}>
                 {
-                    listaRomaneios.map(romaneio => {
+                    listaRomaneios && listaRomaneios.length > 0
+                    ? listaRomaneios.map(romaneio => {
                         return <LinhaDadosEntrega romaneio={romaneio} imprimeRomaneioNoServidor={imprimeRomaneioNoServidor} key={romaneio.id} />
                     })
+                    : (
+                        <div className={style.no_items_container}>
+                            <p>Não há nenhum romaneio de entrega nesse período</p>
+                        </div>
+                    )
                 }
             </div>
         </div>

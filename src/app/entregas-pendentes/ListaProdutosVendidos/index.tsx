@@ -59,7 +59,7 @@ export function ListaProdutosPendentesEntrega({ listaEntregasPendentes, mostraCl
 
         const listaProdoutosOrganizada = sortArrayOfObjects<IProdutoPendente>(listaProdutos, "descricaoProduto", true)
         setProdutosPendentes(listaProdoutosOrganizada)
-    }, [])
+    }, [listaEntregasPendentes])
 
     return (
         <div className={style.lista_produtos}>

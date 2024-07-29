@@ -13,11 +13,17 @@ import { IEntregaPendente } from '@/database/models-mongoose/vendaEntregaFutura/
 import dropdownIcon from "../images/dropdown-svgrepo-com.svg"
 
 import style from "./page.module.css"
+import { Input } from '../components/Input'
+import { sortArrayOfObjects } from '../helpers'
 
 function EntregasPendentesPage() {
 
-    const { listaEntregasFuturas, loadingEntregasFuturas, atualizaListaDeEntregasFuturas, alteraEntregaPendente } = useEntregasFuturas()
-
+    const { listaEntregasFuturas, setListaEntregasFuturas, loadingEntregasFuturas, atualizaListaDeEntregasFuturas, alteraEntregaPendente } = useEntregasFuturas()
+    
+    const [listaFiltrada, setListaFiltrada] = useState<Array<IEntregaPendente>>([])
+    const [filtroCliente, setFiltroCliente] = useState("")
+    const [filtroProduto, setFiltroProduto] = useState("")
+    
     const [tipoAgupamento, setTipoAgrupamento] = useState<"produto" | "venda">("venda")
     const [mostraFializadas, setMostraFinalizadas] = useState(false)
     const [mostraClientes, setMostraClientes] = useState(false)
@@ -26,6 +32,35 @@ function EntregasPendentesPage() {
         setMostraClientes(prevState => !prevState)
     }
 
+    useEffect(() => {
+        const listaFiltradaClientes = listaEntregasFuturas.filter(entrega => {
+
+            if ( entrega.nomeCliente.toUpperCase().includes(filtroCliente.toUpperCase()) ) return entrega
+
+        })
+
+        const listaFiltradaProdutos = listaFiltradaClientes.filter(entrega => {
+
+            let itemEncontrado = false
+
+            for (const produto of entrega.itensRestantes) {
+                if (produto.descricao.toUpperCase().includes(filtroProduto.toUpperCase())) {
+                    itemEncontrado = true
+                    break
+                }
+            }
+
+            if (itemEncontrado) {
+                return entrega
+            }
+
+        })
+
+        const listaOrganizada = sortArrayOfObjects<IEntregaPendente>(listaFiltradaProdutos, "status", true)
+
+        setListaFiltrada( [...listaOrganizada] )
+    }, [filtroCliente, filtroProduto, listaEntregasFuturas])
+    
     useEffect(() => {
         atualizaListaDeEntregasFuturas()
     }, [])
@@ -40,7 +75,8 @@ function EntregasPendentesPage() {
 
                 {/* Container seletor de relatório */}
                 <div className={style.container_radio_tipo_rel}>
-                    <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
+                    
+                    <div className={style.container_filtros}>
                         <p>Agrupar por: </p>
 
                         <label htmlFor="radio1" className={style.radio_button}>
@@ -68,6 +104,10 @@ function EntregasPendentesPage() {
                             />
                             <span>Produto</span>
                         </label>
+
+                        <Input inputType='text' fieldName='filtroCli' placeholder={{insideInput: false, text: "Filtre por cliente"}} onChange={(value) => { setFiltroCliente(String(value)) }} />
+                        <Input inputType='text' fieldName='filtroProd' placeholder={{insideInput: false, text: "Filtre por produto"}} onChange={(value) => { setFiltroProduto(String(value)) }} />
+                        <br />
                     </div>
 
                     {
@@ -103,7 +143,11 @@ function EntregasPendentesPage() {
 
                 {
                     (loadingEntregasFuturas)
-                        ? <LoadingAnimation />
+                        ? (
+                            <div className={style.loading_container}>
+                                <LoadingAnimation />
+                            </div>
+                        )
                         : (tipoAgupamento == "venda")
                             ? (
                                 // {/* Conteiner de conteúdo */}
@@ -119,14 +163,14 @@ function EntregasPendentesPage() {
                                     {/* Body */}
                                     <div className={style.conteudo_por_venda}>
                                         {
-                                            listaEntregasFuturas.map(entregaFutura => {
+                                            listaFiltrada.map(entregaFutura => {
                                                 return <LinhaPorVenda entrega={entregaFutura} alteraEntregaPendente={alteraEntregaPendente} exibeFinalizadas={mostraFializadas} key={entregaFutura.idVenda} />
                                             })
                                         }
                                     </div>
                                 </div>
                             )
-                            : <ListaProdutosPendentesEntrega listaEntregasPendentes={listaEntregasFuturas} mostraClientes={mostraClientes} />
+                            : <ListaProdutosPendentesEntrega listaEntregasPendentes={listaFiltrada} mostraClientes={mostraClientes} />
                 }
             </div>
         </div>
@@ -327,7 +371,6 @@ function LinhaPorVenda({ entrega, alteraEntregaPendente, exibeFinalizadas }: { e
 
     const [exibindoProdutos, setExibindoProdutos] = useState(false)
     const [alturaLinha, setAlturaLinha] = useState<{ height: string } | {}>({})
-    const [alturaInicial, setAlturaInicial] = useState<number | undefined>()
 
     const linhaRef = useRef<HTMLDivElement>(null)
     const detalhesRef = useRef<HTMLDivElement>(null)

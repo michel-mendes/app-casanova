@@ -5,6 +5,23 @@
   align-items: center;
   padding: 6rem;
   min-height: 100vh;
+
+  background-image: url("../app/images/casa-nova-acabamentos-frente.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: top center;
+
+  position: relative;
+}
+.main::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ffffff;
+  opacity: .5;
 }
 
 .fundo {
@@ -13,7 +30,7 @@
   top: 0;
   right: 0;
   bottom: 0;
-  object-position: center;
+  object-position: top center;
   opacity: .3;
 }
 
