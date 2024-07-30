@@ -1,31 +1,8 @@
-import { Model, Optional } from "sequelize";
+import { Model, CreationOptional, NonAttribute, Association, InferAttributes, InferCreationAttributes } from "sequelize";
+import { AuxBaixa } from "../auxBaixas/AuxBaixa";
 
-type AtributosReceber = {
-    id: number;
-    idVenda: number;
-    idCliente: number;
-    parcela: string;
-    vlrParcela: number;
-    dataEmissao: Date;
-    quitado: number;
-    dataQuitacao: Date;
-    idOperador: number;
-    dataVencimento: Date;
-    selecionado: number;
-    idDevolucao: number;
-    entrada: number;
-    cancelada: number;
-    dtCancelamento: Date;
-    idProcesso: number;
-    obs: string;
-    origem: string;
-    faturaLocacao: number;
-}
-
-type AtributosNovoReceber = Optional<AtributosReceber, "id">
-
-export class Receber extends Model<AtributosReceber, AtributosNovoReceber> {
-    declare id: number;
+export class Receber extends Model< InferAttributes<Receber, { omit: "baixasParciais" }>, InferCreationAttributes<Receber, {omit: "baixasParciais"}>> {
+    declare id: CreationOptional<number>;;
     declare idVenda: number;
     declare idCliente: number;
     declare parcela: string;
@@ -44,4 +21,10 @@ export class Receber extends Model<AtributosReceber, AtributosNovoReceber> {
     declare obs: string;
     declare origem: string;
     declare faturaLocacao: number;
+
+    declare baixasParciais?: NonAttribute<Array<AuxBaixa>>
+
+    declare static associations: {
+        baixasParciais: Association<Receber, AuxBaixa>
+    }
 }

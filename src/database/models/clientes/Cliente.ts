@@ -1,51 +1,8 @@
-import { Model, Optional } from "sequelize"
+import { Model, Optional, NonAttribute, Association, InferAttributes, InferCreationAttributes } from "sequelize"
+import { Receber } from "../receber/Receber";
 
-type AtributosCliente = {
-    id: number;
-    status: number;
-    nome: string;
-    endereco: string;
-    numero: string;
-    bairro: string;
-    complemento: string;
-    cidade: string;
-    uf: string;
-    cep: string;
-    rg: string;
-    cpf: string;
-    fone1: string;
-    fone2: string;
-    fone3: string;
-    email: string;
-    dtCadastro: Date;
-    dtAlteracao: Date;
-    idUsuario: number;
-    limite: number;
-    obs: string;
-    dtNascimento: Date;
-    localTrabalho: string;
-    foneTrabalho: string;
-    contatoTrabalho: string;
-    salario: number;
-    estadoCivil: string;
-    pessoa: string;
-    fantasia: string;
-    tipoCliente: string;
-    produtorRural: number;
-    dtVencimento: number;
-    diasVenctoVendas: number;
-    mesa: number;
-    statusMesa: string;
-    mensalidade: number;
-    vlrMensalidade: number;
-    idRespAberturaMesa: number;
-    tipoRespAberturaMesa: string;
-    foneMesa: string;
-}
-
-type AtributosNovoCliente = Optional<AtributosCliente, "id">
-
-export class Cliente extends Model<AtributosCliente, AtributosNovoCliente> {
+export class Cliente extends Model<InferAttributes<Cliente, { omit: "listaDebito" }>, InferCreationAttributes<Cliente, { omit: "listaDebito" }>> {
+    // export class Cliente extends Model<AtributosCliente, AtributosNovoCliente> {
     declare id: number;
     declare status: number;
     declare nome: string;
@@ -86,4 +43,10 @@ export class Cliente extends Model<AtributosCliente, AtributosNovoCliente> {
     declare idRespAberturaMesa: number;
     declare tipoRespAberturaMesa: string;
     declare foneMesa: string;
+
+    declare listaDebito?: NonAttribute<Array<Receber>>
+
+    declare static associations: {
+        listaDebito: Association<Cliente, Receber>
+    }
 }
