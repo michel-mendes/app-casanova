@@ -136,12 +136,13 @@ export function useRomaneioEntrega() {
 
     }
 
-    async function imprimeRomaneioNoServidor(id: string) {
+    async function imprimeRomaneioNoServidor(romaneio: IRomaneioEntrega) {
         
         try {
             setAguardandoApi(true)
 
-            const apiResponse = await fetch(`/api/imprime-romaneio-servidor/${id}`)
+            const romaneioCodificado = encodeURIComponent(JSON.stringify(romaneio))
+            const apiResponse = await fetch(`/api/imprime-romaneio-servidor/dados-romaneio/${romaneioCodificado}`)
 
             // Erro ---------------------------
             if (!apiResponse.ok) {

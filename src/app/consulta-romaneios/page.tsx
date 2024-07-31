@@ -80,7 +80,7 @@ function ConsultaEntregasPage() {
 
 function ListaEntregas({ listaRomaneios, imprimeRomaneioNoServidor }: {
     listaRomaneios: Array<IRomaneioEntrega>
-    imprimeRomaneioNoServidor: (id: string) => Promise<string | undefined>
+    imprimeRomaneioNoServidor: (romaneio: IRomaneioEntrega) => Promise<string | undefined>
 }) {
     return (
         <div className={style.lista_conteiner}>
@@ -118,7 +118,7 @@ function ListaEntregas({ listaRomaneios, imprimeRomaneioNoServidor }: {
 
 function LinhaDadosEntrega({ romaneio, imprimeRomaneioNoServidor }: {
     romaneio: IRomaneioEntrega
-    imprimeRomaneioNoServidor: (id: string) => Promise<string | undefined>
+    imprimeRomaneioNoServidor: (romaneio: IRomaneioEntrega) => Promise<string | undefined>
 }) {
 
     const [isExpanded, setIsExpanded] = useState(false)
@@ -134,7 +134,7 @@ function LinhaDadosEntrega({ romaneio, imprimeRomaneioNoServidor }: {
     async function handleCliqueBotaoImprimirServidor() {
         if (!confirm("Confirma impressão do romaneio?")) return
 
-        const resultadoImpressaoServidor = await imprimeRomaneioNoServidor(romaneio.id)
+        const resultadoImpressaoServidor = await imprimeRomaneioNoServidor(romaneio)
 
         alert(resultadoImpressaoServidor)
     }

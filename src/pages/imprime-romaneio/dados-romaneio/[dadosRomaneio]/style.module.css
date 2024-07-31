@@ -1,0 +1,135 @@
+.romaneio {
+    border: 1px solid black;
+    width: 100%;
+    font-size: 15px;
+    font-family: "Tahoma";
+}
+
+.romaneio span {
+    padding: 5px;
+}
+
+.titulo_secao {
+    display: flex;
+    justify-content: center;
+    font-weight: bold;
+    background-color: lightgray;
+}
+
+.linha_numero_venda {
+    display: flex;
+    justify-content: center;
+}
+
+.linha_cliente_e_data {
+    display: flex;
+}
+
+.celula_cliente {
+    min-width: 70px;
+    font-weight: bold;
+}
+
+.valor_nome_cliente {
+    width: 100%;
+}
+
+.celula_data_entrega {
+    text-align: center;
+    width: 170px;
+    font-weight: bold;
+}
+
+.valor_data_entrega {
+    text-align: center;
+    width: 150px;
+}
+
+.linha_colunas {
+    display: flex;
+    font-weight: bold;
+    background-color: lightgray;
+}
+
+.linha_colunas span {
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+.linha_colunas span:first-child {
+    border-left: none;
+}
+
+.linha_valores {
+    display: flex;
+}
+.linha_valores span {
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+}
+.linha_valores span:first-child {
+    border-left: none;
+}
+
+.coluna_qtde_produto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+}
+
+.coluna_nome_produto {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.coluna_obs_produto {
+    display: flex;
+    align-items: center;
+    width: 300px;
+}
+
+.linha_adicionais {
+    display: flex;
+}
+.linha_adicionais span {
+    display: flex;
+    align-items: center;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+.linha_adicionais span:first-child {
+    border-left: none;
+    border-top: none;
+    width: 200px;
+    font-weight: bold;
+}
+
+.linha_adicionais span:last-child {
+    border-top: none;
+}
+
+.linha_adicionais span:last-child {
+    width: 100%;
+}
+
+.assinatura {
+    height: 40px;
+}
+
+.mensagem_rodape {
+    display: flex;
+    justify-content: center;
+    font-weight: bold;
+}
+
+@media print
+{
+    @page
+    {
+         size: 8.5in 11in;
+         margin: 15px;
+    }
+}

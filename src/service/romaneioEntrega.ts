@@ -91,14 +91,15 @@ async function deletaRomaneioEntrega(id: string) {
     }
 }
 
-async function imprimeRomaneioNoServidor(idRomaneio: string) {
+async function imprimeRomaneioNoServidor(dadosRomaneio: string) {
     try {
-        const caminhoPdf = `romaneio-${idRomaneio}-${new Date().getTime()}.pdf`
+        const romaneioDecodificado: IRomaneioEntrega = JSON.parse( decodeURIComponent(dadosRomaneio) )
+        const caminhoPdf = `romaneio-${romaneioDecodificado.id}-${new Date().getTime()}.pdf`
         
         const browser = await puppeteer.launch({ headless: "shell" })
         const paginaRomaneio = await browser.newPage()
 
-        await paginaRomaneio.goto(`http://localhost:1005/imprime-romaneio/${idRomaneio}`, { waitUntil: "networkidle2" })
+        await paginaRomaneio.goto(`http://localhost:1005/imprime-romaneio/dados-romaneio/${dadosRomaneio}`, { waitUntil: "networkidle2" })
         await paginaRomaneio.pdf({
             path: caminhoPdf,
             format: "A5",
