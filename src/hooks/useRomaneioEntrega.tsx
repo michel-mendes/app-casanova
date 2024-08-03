@@ -56,7 +56,7 @@ export function useRomaneioEntrega() {
             
             // Erro ---------------------------
             if (!apiResponse.ok) {
-                const erroApi = await (apiResponse.json() as any).error
+                const erroApi = (await apiResponse.json() as any).error
                 
                 throw new Error(erroApi)
             }
@@ -89,7 +89,7 @@ export function useRomaneioEntrega() {
 
             // Erro ---------------------------
             if (!apiResponse.ok) {
-                const erroApi = await (apiResponse.json() as any).error
+                const erroApi = (await apiResponse.json() as any).error
                 
                 throw new Error(erroApi)
             }
@@ -121,7 +121,7 @@ export function useRomaneioEntrega() {
 
             // Erro ---------------------------
             if (!apiResponse.ok) {
-                const erroApi = await (apiResponse.json() as any).error
+                const erroApi = (await apiResponse.json() as any).error
                 
                 throw new Error(erroApi)
             }
@@ -146,7 +146,7 @@ export function useRomaneioEntrega() {
 
             // Erro ---------------------------
             if (!apiResponse.ok) {
-                const erroApi = await (apiResponse.json() as any).error
+                const erroApi = (await apiResponse.json() as any).error
                 
                 throw new Error(erroApi)
             }
@@ -155,6 +155,8 @@ export function useRomaneioEntrega() {
             const mensagemSucessoImpressao = await apiResponse.text()
 
             return mensagemSucessoImpressao
+        } catch(error: any) {
+           return error.message as string
         } finally {
             setAguardandoApi(false)
         }

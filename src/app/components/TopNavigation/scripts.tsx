@@ -98,7 +98,7 @@ function useScripts() {
                     const confirmado = confirm(`Deseja imprimir o romaneio de entrega para ${novoRomaneio.nomeCliente}?`)
 
                     if (confirmado) {
-                        const respostaImpressaoServidor = await imprimeRomaneioNoServidor(novoRomaneio.id)
+                        const respostaImpressaoServidor = await imprimeRomaneioNoServidor(novoRomaneio)
                         
                         alert( respostaImpressaoServidor )
                     }

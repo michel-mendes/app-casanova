@@ -116,7 +116,7 @@ async function imprimeRomaneioNoServidor(dadosRomaneio: string) {
             fs.rmSync(caminhoPdf, {force: true})
         }
         
-        return "Impressão OK!"
+        return `Romaneio para "${romaneioDecodificado.nomeCliente}" impresso com sucesso!`
     } catch (error: any) {
         throw new Error(`Falha ao imprimir romaneio no servidor: ${error.message}`);
     }

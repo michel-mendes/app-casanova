@@ -51,7 +51,7 @@ function useScripts() {
                 })
 
                 if (confirm("Deseja imprimir o romaneio de entrega?")) {
-                    const statusImpressão = await imprimeRomaneioNoServidor(novoRomaneio.id)
+                    const statusImpressão = await imprimeRomaneioNoServidor(novoRomaneio)
                     alert(statusImpressão)
                 }
             }

@@ -7,7 +7,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (method === "GET") {
         try {
             const dadosRomaneio = encodeURIComponent( String(query.dadosRomaneio) )
-            const resultadoImpressao = await imprimeRomaneioNoServidor(String(dadosRomaneio))
+            const resultadoImpressao = await imprimeRomaneioNoServidor( dadosRomaneio )
 
             return res.status(200).send(resultadoImpressao)
         } catch (error: any) {
