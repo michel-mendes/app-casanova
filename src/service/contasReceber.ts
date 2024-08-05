@@ -2,7 +2,7 @@ import { receberClientes } from "../database/models/_associations"
 import { receber, auxBaixas } from "@/database/models"
 import moment from "moment"
 
-interface IClienteDevedor {
+export interface IClienteDevedor {
     nome: string;
     valor: number;
 }

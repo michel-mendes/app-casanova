@@ -3,7 +3,7 @@ import useContasPagar from '@/hooks/useContasPagar'
 import { ContasPagarTotalSemanas } from '@/service/types'
 import moment from 'moment'
 
-function index() {
+function PageContasAPagar() {
     const { listaTotalSemanal, listaSemanaAtual } = useContasPagar()
 
     const [semanalTotal, setSemanalTotal] = useState<ContasPagarTotalSemanas>([])
@@ -133,4 +133,4 @@ function index() {
     )
 }
 
-export default index
+export default PageContasAPagar

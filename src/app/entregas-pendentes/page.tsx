@@ -105,8 +105,8 @@ function EntregasPendentesPage() {
                             <span>Produto</span>
                         </label>
 
-                        <Input inputType='text' fieldName='filtroCli' placeholder={{insideInput: false, text: "Filtre por cliente"}} onChange={(value) => { setFiltroCliente(String(value)) }} />
-                        <Input inputType='text' fieldName='filtroProd' placeholder={{insideInput: false, text: "Filtre por produto"}} onChange={(value) => { setFiltroProduto(String(value)) }} />
+                        <Input inputType='text' fieldName='filtroCli' placeholder={{insideInput: true, text: "Filtre por cliente"}} onChange={(value) => { setFiltroCliente(String(value)) }} />
+                        <Input inputType='text' fieldName='filtroProd' placeholder={{insideInput: true, text: "Filtre por produto"}} onChange={(value) => { setFiltroProduto(String(value)) }} />
                         <br />
                     </div>
 
