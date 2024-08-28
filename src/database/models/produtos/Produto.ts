@@ -1,6 +1,6 @@
 import { Model, Optional } from "sequelize"
 
-type AtributosProduto = {
+export type AtributosProduto = {
     id: number;
 	barras: string;
 	descricao: string;

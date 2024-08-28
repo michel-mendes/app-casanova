@@ -1,11 +1,38 @@
+import { AtributosProduto } from "@/database/models/produtos/Produto";
 import { produtos } from "@/database/models";
 import { itensVenda } from "@/database/models";
-import { Op } from "sequelize";
+import { Op, fn, where, col } from "sequelize";
 import moment from "moment";
 import fs from "fs"
 
 export {
+    listaProdutos,
     listaProdutosSemVenda
+}
+
+async function listaProdutos(termoPesquisa?: string) {
+
+    try {
+        const pesquisaId = (termoPesquisa && !isNaN(Number(termoPesquisa))) ? { [Op.like]: Number(termoPesquisa) } : null
+
+        const listaProdutos = await produtos.findAll({
+            where: {
+                [Op.or]: [
+                    where( fn("upper", col("descricao")), Op.like, fn("upper", `%${termoPesquisa}%`) ),
+                    where( fn("upper", col("referencia")), Op.like, fn("upper", `%${termoPesquisa}%`) ),
+                    where( fn("upper", col("obs")), Op.like, fn("upper", `%${termoPesquisa}%`) ),
+                    where( fn("upper", col("barras")), Op.like, fn("upper", `%${termoPesquisa}%`) ),
+                    where( fn("upper", col("id")), Op.like, pesquisaId ),
+                ],
+                status: 1
+            }
+        })
+
+        return listaProdutos
+    } catch (error: any) {
+        throw new Error(`Falha na busca de produtos: ${error.message}`)
+    }
+
 }
 
 async function listaProdutosSemVenda() {
