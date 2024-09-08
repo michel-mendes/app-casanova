@@ -3,18 +3,19 @@
 import React, { useEffect, useState, useRef } from 'react'
 
 import { useRomaneioEntrega } from '@/hooks/useRomaneioEntrega'
-import { LoadingAnimation } from '../components/LoadingAnimation'
+import { LoadingAnimation } from '../../components/LoadingAnimation'
 
-import { sortArrayOfObjects } from '../helpers'
+import { sortArrayOfObjects } from '../../helpers'
 
 import style from "./page.module.css"
 import { IRomaneioEntrega } from '@/database/models-mongoose/romaneioEntrega/IRomaneioEntrega'
-import { Input } from '../components/Input'
+import { Input } from '../../components/Input'
 
 function ConsultaEntregasPage() {
 
     const [startDate, setStartDate] = useState(new Date(Date.now()).toJSON().slice(0, 10))
     const [endDate, setEndDate] = useState(new Date(Date.now()).toJSON().slice(0, 10))
+    const [filtroNomeCliente, setFiltroNomeCliente] = useState("")
     
     const { listaRomaneios, atualizaListaRomaneios, loadingRomaneios, imprimeRomaneioNoServidor } = useRomaneioEntrega()
 
@@ -60,6 +61,7 @@ function ConsultaEntregasPage() {
                 <div className={style.date_inputs_container}>
                     <Input fieldName='' inputType='date' label='Data início' onChange={(e) => { setStartDate(e as string) }} value={startDate} />
                     <Input fieldName='' inputType='date' label='Data fim' onChange={(e) => { setEndDate(e as string) }} value={endDate} />
+                    <Input fieldName='' inputType='text' label='Nome do cliente' onChange={(e) => { setFiltroNomeCliente(e as string) }} value={filtroNomeCliente} />
                 </div>
 
                 <hr />
@@ -72,15 +74,16 @@ function ConsultaEntregasPage() {
                             <LoadingAnimation />
                         </div>
                     )
-                    : <ListaEntregas listaRomaneios={listaRomaneios} imprimeRomaneioNoServidor={imprimeRomaneioNoServidor} />
+                    : <ListaEntregas listaRomaneios={listaRomaneios} imprimeRomaneioNoServidor={imprimeRomaneioNoServidor} filtroNomeCliente={filtroNomeCliente} />
             }
         </div>
     )
 }
 
-function ListaEntregas({ listaRomaneios, imprimeRomaneioNoServidor }: {
+function ListaEntregas({ listaRomaneios, imprimeRomaneioNoServidor, filtroNomeCliente }: {
     listaRomaneios: Array<IRomaneioEntrega>
     imprimeRomaneioNoServidor: (romaneio: IRomaneioEntrega) => Promise<string | undefined>
+    filtroNomeCliente: string
 }) {
     return (
         <div className={style.lista_conteiner}>
@@ -103,6 +106,8 @@ function ListaEntregas({ listaRomaneios, imprimeRomaneioNoServidor }: {
                 {
                     listaRomaneios && listaRomaneios.length > 0
                     ? listaRomaneios.map(romaneio => {
+                        if (!romaneio.nomeCliente.toUpperCase().includes(filtroNomeCliente.toUpperCase())) return
+
                         return <LinhaDadosEntrega romaneio={romaneio} imprimeRomaneioNoServidor={imprimeRomaneioNoServidor} key={romaneio.id} />
                     })
                     : (

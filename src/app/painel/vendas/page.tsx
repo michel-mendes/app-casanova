@@ -3,10 +3,10 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { useVendas } from '@/hooks/useVendas'
 import { useEntregasFuturas } from '@/hooks/useVendaEntregaFutura'
-import { IVenda } from '../interfaces'
+import { IVenda } from '../../interfaces'
 
-import { LoadingAnimation } from '../components/LoadingAnimation'
-import { Input } from '../components/Input'
+import { LoadingAnimation } from '../../components/LoadingAnimation'
+import { Input } from '../../components/Input'
 
 import moment from 'moment'
 

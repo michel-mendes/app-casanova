@@ -18,7 +18,13 @@ function RomaneioPage() {
 
             <div className={style.romaneios_container}>
                 {
-                    scripts.romaneios.map(romaneio => {
+                    scripts.romaneios.length < 1
+                    ? (
+                        <div className={style.container_sem_romaneio}>
+                            <p>Não há nenhum romaneio para preenchimento no momento</p>
+                        </div>
+                    )
+                    : scripts.romaneios.map(romaneio => {
                         return (
                             <div className={style.romaneio} key={romaneio.idVenda}>
 

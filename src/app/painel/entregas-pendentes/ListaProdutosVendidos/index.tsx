@@ -18,6 +18,9 @@ export function ListaProdutosPendentesEntrega({ listaEntregasPendentes, mostraCl
         // Itera cada entrega na lista
         for (const entrega of listaEntregasPendentes) {
 
+            // Não contabiliza produtos com entrega finalizada...
+            if (entrega.finalizada) continue
+
             // Itera cada produto da entrega
             for (const produto of entrega.itensRestantes) {
 

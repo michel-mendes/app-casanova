@@ -6,7 +6,7 @@ import { ListaClientesEmDebito } from './ListaClientesEmDebito'
 
 import { useScripts } from "./scripts"
 import style from "./page.module.css"
-import { LoadingAnimation } from '../components/LoadingAnimation'
+import { LoadingAnimation } from '../../components/LoadingAnimation'
 
 function PageContasReceber() {
 
@@ -37,7 +37,7 @@ function PageContasReceber() {
 
             <div>
                 {
-                    carregandoContasReceber
+                    (carregandoContasReceber)
                     ? <LoadingAnimation />
                     : <ListaClientesEmDebito lista={listaClientes} />
                 }

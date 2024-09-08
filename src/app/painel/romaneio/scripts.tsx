@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { useRomaneioEntrega } from "@/hooks/useRomaneioEntrega"
 
 import { IRomaneioEntrega } from "@/database/models-mongoose/romaneioEntrega/IRomaneioEntrega"
-import { ITempRomaneioEntrega } from "../interfaces"
+import { ITempRomaneioEntrega } from "../../interfaces"
 
 function useScripts() {
 

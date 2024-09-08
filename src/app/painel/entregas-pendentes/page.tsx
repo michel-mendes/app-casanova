@@ -5,16 +5,16 @@ import React, { useRef, useEffect, useState } from 'react'
 import { ListaProdutosPendentesEntrega } from './ListaProdutosVendidos'
 
 import { useEntregasFuturas } from '@/hooks/useVendaEntregaFutura'
-import { IEntregaFuturaProps, IItemRestanteProps, ITempItemEntregue, ITempRomaneioEntrega } from '../interfaces'
+import { IEntregaFuturaProps, IItemRestanteProps, ITempItemEntregue, ITempRomaneioEntrega } from '../../interfaces'
 
-import { LoadingAnimation } from '../components/LoadingAnimation'
+import { LoadingAnimation } from '../../components/LoadingAnimation'
 import { IEntregaPendente } from '@/database/models-mongoose/vendaEntregaFutura/IEntregaPendente'
 
-import dropdownIcon from "../images/dropdown-svgrepo-com.svg"
+import dropdownIcon from "../../images/dropdown-svgrepo-com.svg"
 
 import style from "./page.module.css"
-import { Input } from '../components/Input'
-import { sortArrayOfObjects } from '../helpers'
+import { Input } from '../../components/Input'
+import { sortArrayOfObjects } from '../../helpers'
 
 function EntregasPendentesPage() {
 

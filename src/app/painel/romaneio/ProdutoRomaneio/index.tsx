@@ -1,8 +1,8 @@
 import { useScripts } from "./scripts";
 import { IProdutoRomaneioProps } from "@/app/interfaces";
 
-import iconAdd from "../../images/add-circle-svgrepo-com.svg"
-import iconRemove from "../../images/minus-circle-svgrepo-com.svg"
+import iconAdd from "../../../images/add-circle-svgrepo-com.svg"
+import iconRemove from "../../../images/minus-circle-svgrepo-com.svg"
 
 import style from "./index.module.css"
 
