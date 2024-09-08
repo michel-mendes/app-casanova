@@ -17,16 +17,17 @@ interface IInputProps {
     widthInPixels?: number;
     refObject?: RefObject<HTMLInputElement>;
     onChange?: (value: string | number) => void,
+    onPressReturnKey?: () => void,
 }
 
-function Input({ label, inputType, value, fieldName, placeholder, onChange }: IInputProps) {
+function Input({ label, inputType, value, fieldName, placeholder, onChange, onPressReturnKey }: IInputProps) {
 
     const labelFor = fieldName
-    const iconType: {src: string} = inputType == 'date'
-                                        ? calendarIcon
-                                        : inputType == "text"
-                                        ? textIcon
-                                        : ""
+    const iconType: { src: string } = inputType == 'date'
+        ? calendarIcon
+        : inputType == "text"
+            ? textIcon
+            : ""
 
     return (
         <div className={style.form_group}>
@@ -52,6 +53,11 @@ function Input({ label, inputType, value, fieldName, placeholder, onChange }: II
                         (!onChange) ? undefined : (event) => {
                             onChange(event.target.value)
                         }}
+                    onKeyDown={(e) => {
+                        if (e.code == "13" || e.keyCode == 13 || e.key == "13") {
+                            if (onPressReturnKey) { onPressReturnKey() }
+                        }
+                    }}
                 />
             </div>
 

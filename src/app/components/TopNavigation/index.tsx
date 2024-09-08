@@ -41,28 +41,28 @@ function TopNavigation() {
                 <img className={style.logo} src={novaLogo.src} alt="Logo" />
 
                 <div className={style.adicionar_entrega_container}>
-                    <Input placeholder={{ insideInput: true, text: "Adicionar entrega futura" }} inputType='text' fieldName='inputNumeroVenda' />
+                    <Input placeholder={{ insideInput: true, text: "Adicionar entrega futura" }} inputType='text' fieldName='inputNumeroVenda' onPressReturnKey={() => {handleCliqueBotaoAdicionarEntrega("inputNumeroVenda")}}/>
                     {
-                        (aguardandoApiVendas || aguardandoApiEntregaFutura)
+                        (aguardandoApiVendas || aguardandoApiEntregaFutura || aguardandoApiRomaneio)
                             ? <LoadingAnimation />
                             : <img className={style.icone_dicionar} src={addIcon.src} alt="Adicionar entrega futura" onClick={() => {handleCliqueBotaoAdicionarEntrega("inputNumeroVenda")}} />
                     }
                 </div>
 
                 <div className={style.adicionar_entrega_container}>
-                    <Input placeholder={{ insideInput: true, text: "Gerar romaneio de entrega única" }} inputType='text' fieldName='inputNumeroVenda2' />
+                    <Input placeholder={{ insideInput: true, text: "Gerar romaneio de entrega única" }} inputType='text' fieldName='inputNumeroVenda2' onPressReturnKey={() => {handleCliqueBotaoGeraRomaneioEntrega("inputNumeroVenda2")}}/>
                     {
-                        (aguardandoApiVendas || aguardandoApiEntregaFutura)
+                        (aguardandoApiVendas || aguardandoApiEntregaFutura || aguardandoApiRomaneio)
                             ? <LoadingAnimation />
                             : <img className={style.icone_dicionar} src={addIcon.src} alt="Imprimir romaneio" onClick={() => {handleCliqueBotaoGeraRomaneioEntrega("inputNumeroVenda2")}}/>
                     }
                 </div>
 
-                <Link href={"/entregas-pendentes"}>Entregas pendentes</Link>
-                <Link href={"/consulta-romaneios"}>Romaneios</Link>
-                {/* <Link href={"/vendas"}>Vendas</Link> */}
+                <Link href={"/painel/entregas-pendentes"}>Entregas pendentes</Link>
+                <Link href={"/painel/consulta-romaneios"}>Romaneios</Link>
+                {/* <Link href={"/painel/vendas"}>Vendas</Link> */}
 
-                <Link href={"/romaneio"}>
+                <Link href={"/painel/romaneio"}>
                     <div className={style.icone_caminhao_container}>
                         <img className={style.icone_caminhao} src={truck.src} alt="Entregas" />
                         {
@@ -83,7 +83,7 @@ function TopNavigation() {
 
                 <img src={novaLogo.src} alt="" className={style.logo} />
 
-                <Link href={"/romaneio"}>
+                <Link href={"/painel/romaneio"}>
                     <div className={style.icone_caminhao_container}>
                         <img className={style.icone_caminhao} src={truck.src} alt="Entregas" />
                         {
@@ -121,12 +121,12 @@ function TopNavigation() {
 
                         <hr />
 
-                        <Link href={"/entregas-pendentes"} className={style.mobile_menu_link_container} onClick={handleCliqueBotaoHamburgerMenu}>
+                        <Link href={"/painel/entregas-pendentes"} className={style.mobile_menu_link_container} onClick={handleCliqueBotaoHamburgerMenu}>
                             <img src={sandClockIcon.src} alt="" className={style.mobile_menu_link_icon} />
                             <span>Entregas pendentes</span>
                         </Link>
 
-                        <Link href={"/consulta-romaneios"} className={style.mobile_menu_link_container} onClick={handleCliqueBotaoHamburgerMenu}>
+                        <Link href={"/painel/consulta-romaneios"} className={style.mobile_menu_link_container} onClick={handleCliqueBotaoHamburgerMenu}>
                             <img src={deliveryTruckTime.src} alt="" className={style.mobile_menu_link_icon} />
                             <span>Imprimir romaneios</span>
                         </Link>
