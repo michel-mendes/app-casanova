@@ -3,21 +3,23 @@
 import React, { useRef } from 'react'
 
 import { ListaClientesEmDebito } from './ListaClientesEmDebito'
+import { strToHex, hexToStr } from '@/app/helpers'
+
+import { LoadingAnimation } from '../../components/LoadingAnimation'
 
 import { useScripts } from "./scripts"
 import style from "./page.module.css"
-import { LoadingAnimation } from '../../components/LoadingAnimation'
 
 function PageContasReceber() {
 
-    const { handleClickBotaoAtualizarLista, carregandoContasReceber, listaClientes } = useScripts()
+    const { handleClickBotaoAtualizarLista, handleClickImprimeRelatorio, carregandoContasReceber, listaClientes } = useScripts()
 
     const selectTipoListaRef = useRef<HTMLSelectElement>(null)
 
     return (
         <div className={style.page_container}>
 
-            <div>
+            <div className={style.toolbar_container}>
 
                 <label>
                     <p>Exibindo a lista</p>
@@ -31,6 +33,7 @@ function PageContasReceber() {
                 </label>
 
                 <button onClick={() => { handleClickBotaoAtualizarLista( selectTipoListaRef.current?.value! as any ) }}>Atualizar</button>
+                <button disabled={listaClientes.length == 0} onClick={handleClickImprimeRelatorio}>Imprimir relatório</button>
 
             </div>
 
@@ -42,6 +45,7 @@ function PageContasReceber() {
                     : <ListaClientesEmDebito lista={listaClientes} />
                 }
             </div>
+
         </div>
     )
 }

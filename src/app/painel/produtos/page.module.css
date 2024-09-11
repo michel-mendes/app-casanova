@@ -16,3 +16,9 @@
 .page_container h1 {
     text-align: center;
 }
+
+.contaier_pesquisa {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}

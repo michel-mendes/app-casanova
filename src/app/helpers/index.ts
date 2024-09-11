@@ -12,6 +12,20 @@ interface ICadastroNovaEntregaFuturaArgs {
     apiAlteraVenda: (id: number, dadosVenda: IVenda) => Promise<IVenda>
 }
 
+// Converte string para Hexadecimal
+export function strToHex(dadoString: string) {
+    const stringConvertidoEmHex = Buffer.from(dadoString, 'utf-8').toString('hex');
+
+    return stringConvertidoEmHex
+}
+
+// Convert Hexadecimal para string
+export function hexToStr(dadoHex: string) {
+    const hexConvertidoEmString = Buffer.from(dadoHex, 'hex').toString('utf-8');
+
+    return hexConvertidoEmString
+}
+
 // Sort any array of objects by their object properties
 // Ex: const sortedArray = sortArrayOfObjects<myArrayType>(myArrayToBeSorted, "propertyToBeSorted", true || false);
 export function sortArrayOfObjects<T extends ISortableObject>(

@@ -2,6 +2,8 @@ import { useContasReceber } from "@/hooks/useContasReceber"
 import { IClienteDevedor } from "@/service/contasReceber"
 import { useEffect, useState } from "react"
 
+import { strToHex } from "@/app/helpers"
+
 type TipoLista =    "ClientesExcetoPerdidos" |
                     "ClientesIncluindoPerdios" |
                     "ClientesVencidos30D" |
@@ -27,6 +29,12 @@ export function useScripts() {
 
         await atualizaListas()
         setTipoLista(tipoSelecionado)
+    }
+
+    function handleClickImprimeRelatorio() {
+        const dadosRelatorio = strToHex( JSON.stringify(listaClientes) )
+        
+        window.open(`/relatorio/contas-receber/${dadosRelatorio}`, "_blank", "width=auto, height=auto")
     }
 
     useEffect(() => {
@@ -58,6 +66,7 @@ export function useScripts() {
 
     return {
         handleClickBotaoAtualizarLista,
+        handleClickImprimeRelatorio,
         carregandoContasReceber,
         listaClientes,
     }

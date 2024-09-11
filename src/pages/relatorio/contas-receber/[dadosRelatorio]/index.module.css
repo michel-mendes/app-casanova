@@ -1,0 +1,58 @@
+.page_container {
+    font-family: "Inter", sans-serif;
+    font-size: 11px;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.titulo_relatorio {
+    width: 100%;
+}
+
+.toolbar_container {
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+}
+
+.relatorio_container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    flex-wrap: wrap;
+    column-gap: 10px;
+}
+
+.linha_dados_cliente {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 2px;
+    border: 1px solid silver;
+}
+
+@media print
+{
+    @page
+    {
+         size: 210mm 297mm;
+         margin: 15px;
+         margin-top: 25px;
+    }
+
+    .page_container {
+        flex-direction: row;
+    }
+
+    .toolbar_container {
+        display: none;
+    }
+
+    .page_container {
+        max-height: 280mm;
+    }
+}

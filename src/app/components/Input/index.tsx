@@ -42,7 +42,7 @@ function Input({ label, inputType, value, fieldName, placeholder, onChange, onPr
 
                 <input
                     className={style.input}
-                    name={fieldName}
+                    name={labelFor}
                     type={inputType}
                     value={value}
                     id={labelFor}

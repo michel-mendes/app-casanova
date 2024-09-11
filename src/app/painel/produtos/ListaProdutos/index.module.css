@@ -1,0 +1,49 @@
+.tabela_produtos {
+    border: 1px solid silver;
+    border-radius: 5px;
+    /* border-top-left-radius: 5px;
+    border-top-right-radius: 5px; */
+    border-spacing: 0;
+}
+
+.tabela_produtos thead th {
+    padding: 10px;
+}
+
+.tabela_produtos tbody .coluna_dados_produto {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.tabela_produtos tbody .container_dados_produto_mobile {
+    display: none;
+}
+
+.tabela_produtos tbody td {
+    border-top: 1px solid silver;
+    padding: 10px;
+}
+
+.tabela_produtos tbody tr:last-child td {
+    border-bottom: 1px solid silver;
+}
+
+.tabela_produtos tfoot td {
+    padding: 10px;
+}
+
+@media (max-width: 700px) {
+    .coluna_vista,
+    .coluna_prazo,
+    .coluna_estoque,
+    .coluna_status {
+        display: none;
+    }
+
+    .container_dados_produto_mobile {
+        display: flex !important;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
