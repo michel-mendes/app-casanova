@@ -7,13 +7,18 @@ import fs from "fs"
 
 export {
     listaProdutos,
-    listaProdutosSemVenda
+    listaProdutosSemVenda,
+    listaTodosProdutos
 }
 
 async function listaProdutos(termoPesquisa?: string) {
 
     try {
         const pesquisaId = (termoPesquisa && !isNaN(Number(termoPesquisa))) ? { [Op.like]: Number(termoPesquisa) } : null
+        
+        if (!termoPesquisa) {
+            termoPesquisa = ""
+        }
 
         const listaProdutos = await produtos.findAll({
             where: {
@@ -57,4 +62,14 @@ async function listaProdutosSemVenda() {
     fs.writeFileSync("arquivo.csv", produtosSemVenda)
 
     return listaProdutos
+}
+
+async function listaTodosProdutos() {
+    try {
+        const listaTodosProdutos = await produtos.findAll()
+
+        return listaTodosProdutos
+    } catch (error: any) {
+        throw new Error(`Falha na busca de todos os produtos: ${error.message}`)
+    }   
 }
