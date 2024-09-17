@@ -13,8 +13,8 @@ import config from "./config/config";
 let sequelize;
 
 switch (process.env.NODE_ENV) {
-    case "production": sequelize = new Sequelize(config.production)
-    case "test": sequelize = new Sequelize(config.test)
+    case "production": sequelize = new Sequelize(config.production); break;
+    case "test": sequelize = new Sequelize(config.test); break;
     default: sequelize = new Sequelize(config.development)
 }
 

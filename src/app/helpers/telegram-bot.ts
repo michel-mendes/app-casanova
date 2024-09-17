@@ -11,7 +11,8 @@ export const telegram = {
 
 async function sendMessage(text: string) {
     try {
-        await telegramBot.sendMessage(chatId, text, {parse_mode: "HTML"})
+        await telegramBot.sendMessage(chatId, text)
+        // await telegramBot.sendMessage(chatId, text, {parse_mode: "HTML"})
     } catch (error: any) {
         console.log(`Erro ao enviar mensagem via Telegram: '${error}'`)
     }

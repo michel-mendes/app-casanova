@@ -37,7 +37,6 @@ export default {
     host,
     port,
     dialect,
-    logging: false,
     dialectOptions: {
       instanceName: "MSSQLSERVER",
       options: {
@@ -57,6 +56,7 @@ export default {
     host,
     port,
     dialect,
+    logging: false,
     dialectOptions: {
       ssl: true,
       instanceName: "MSSQLSERVER",

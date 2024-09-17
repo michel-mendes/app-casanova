@@ -62,7 +62,7 @@ async function sincronizaProdutosEstoqueMonitorado() {
     try {
         connectDatabaseMongoDB()
 
-        let notificacaoTelegram = "Notificação de Estoque Casa Nova Acabamentos\n\n"
+        let notificacaoTelegram: string = ""
 
         const produtosMonitorados = await produtoEstoqueMonitoradoCRUD.findDocuments()
         const todosProdutos = await produtos.findAll()
@@ -91,7 +91,8 @@ async function sincronizaProdutosEstoqueMonitorado() {
             // Produto cadastrado no monitoramento
             else {
  
-                notificacaoTelegram += checaEstoqueENotifica(produtoMonitorado, produto)
+                const notificacaoProduto = checaEstoqueENotifica(produtoMonitorado, produto)
+                notificacaoTelegram += (notificacaoProduto) ? notificacaoProduto : ""
 
                 if (produtoMonitorado.idProduto !== produto.id ||
                     produtoMonitorado.barras !== produto.barras ||
@@ -113,7 +114,11 @@ async function sincronizaProdutosEstoqueMonitorado() {
 
         console.log(`[${new Date(Date.now()).toLocaleString()}] - Sincronização de produtos completa!`)
 
-        telegram.sendMessage(notificacaoTelegram)
+        if (notificacaoTelegram.length > 0) {
+            notificacaoTelegram = `Notificação de Estoque Casa Nova Acabamentos\n${notificacaoTelegram}`
+
+            telegram.sendMessage(notificacaoTelegram)
+        }
     } catch (error: any) {
         throw new Error(`Erro ao sincronizar produtos com estoque monitorado: ${error.message}`)
     }
@@ -123,21 +128,21 @@ async function sincronizaProdutosEstoqueMonitorado() {
 // Helpers
 function checaEstoqueENotifica(produtoMonitorado: IProdutoEstoqueMonitorado, produto: AtributosProduto) {
 
-    if (produtoMonitorado.estoque !== produto.estoque) {
+    if (produtoMonitorado.estoque > produto.estoque) {
 
         if (produto.estoque <= 0) {
-            return `Produto sem estoque: [${produto.barras}] ${produto.descricao}\n`
+            return `\n--- Produto sem estoque:\n   ${produto.estoque} ${String(produto.unidade).toLowerCase()} x [${produto.barras}] ${produto.descricao}`
         }
         else if (produto.estoque <= 10) {
-            return `Produto com pouco estoque (<10 ${produto.unidade}): [${produto.barras}] ${produto.descricao}\n`
+            return `\n--- Pouco estoque (abaixo de 10$                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {produto.unidade}):\n   ${produto.estoque} ${String(produto.unidade).toLowerCase()} x [${produto.barras}] ${produto.descricao}`
         }
         else if (produto.estoque <= 60) {
-            return `Produto com pouco estoque (<60 ${produto.unidade}): [${produto.barras}] ${produto.descricao}\n`
+            return `\n--- Pouco estoque (abaixo de 60${produto.unidade}):\n   ${produto.estoque} ${String(produto.unidade).toLowerCase()} x [${produto.barras}] ${produto.descricao}`
         }
         else if (produto.estoque <= 100) {
-            return `Produto com pouco estoque (<100 ${produto.unidade}): [${produto.barras}] ${produto.descricao}\n`
+            return `\n--- Pouco estoque (abaixo de 100${produto.unidade}):\n   ${produto.estoque} ${String(produto.unidade).toLowerCase()} x [${produto.barras}] ${produto.descricao}`
         }
-        else return "\n"
+        else return ""
 
     }
 
