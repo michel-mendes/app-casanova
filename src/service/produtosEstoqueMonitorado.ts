@@ -131,16 +131,16 @@ function checaEstoqueENotifica(produtoMonitorado: IProdutoEstoqueMonitorado, pro
     if (produtoMonitorado.estoque > produto.estoque) {
 
         if (produto.estoque <= 0) {
-            return `\n--- Produto sem estoque:\n   ${produto.estoque} ${String(produto.unidade).toLowerCase()} x [${produto.barras}] ${produto.descricao}`
+            return `\n--- Produto sem estoque:\n   ${produto.estoque} ${String(produto.unidade).toLowerCase()} x [${produto.barras}] ${produto.descricao}\n`
         }
         else if (produto.estoque <= 10) {
-            return `\n--- Pouco estoque (abaixo de 10$                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {produto.unidade}):\n   ${produto.estoque} ${String(produto.unidade).toLowerCase()} x [${produto.barras}] ${produto.descricao}`
+            return `\n--- Pouco estoque (abaixo de 10${produto.unidade}):\n   ${produto.estoque} ${String(produto.unidade).toLowerCase()} x [${produto.barras}] ${produto.descricao}\n`
         }
         else if (produto.estoque <= 60) {
-            return `\n--- Pouco estoque (abaixo de 60${produto.unidade}):\n   ${produto.estoque} ${String(produto.unidade).toLowerCase()} x [${produto.barras}] ${produto.descricao}`
+            return `\n--- Pouco estoque (abaixo de 60${produto.unidade}):\n   ${produto.estoque} ${String(produto.unidade).toLowerCase()} x [${produto.barras}] ${produto.descricao}\n`
         }
         else if (produto.estoque <= 100) {
-            return `\n--- Pouco estoque (abaixo de 100${produto.unidade}):\n   ${produto.estoque} ${String(produto.unidade).toLowerCase()} x [${produto.barras}] ${produto.descricao}`
+            return `\n--- Pouco estoque (abaixo de 100${produto.unidade}):\n   ${produto.estoque} ${String(produto.unidade).toLowerCase()} x [${produto.barras}] ${produto.descricao}\n`
         }
         else return ""
 
