@@ -1,6 +1,7 @@
 import mongoose, { Model, model, Schema } from "mongoose"
 
 import { IEntregaPendente } from "./IEntregaPendente"
+import { IRomaneioEntrega } from "../romaneioEntrega/IRomaneioEntrega"
 
 const entregaPendenteSchema = new Schema(
     {
@@ -30,7 +31,9 @@ const entregaPendenteSchema = new Schema(
                 valorTotal: { type: Number },
                 descricao: { type: String },
             }
-        >
+        >,
+
+        romaneiosEntrega: Array<IRomaneioEntrega>
     },
     {
         toJSON: {

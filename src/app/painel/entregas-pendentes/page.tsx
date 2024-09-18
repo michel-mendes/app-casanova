@@ -18,7 +18,7 @@ import { sortArrayOfObjects } from '../../helpers'
 
 function EntregasPendentesPage() {
 
-    const { listaEntregasFuturas, setListaEntregasFuturas, loadingEntregasFuturas, atualizaListaDeEntregasFuturas, alteraEntregaPendente } = useEntregasFuturas()
+    const { listaEntregasFuturas, setListaEntregasFuturas, loadingEntregasFuturas, atualizaListaDeEntregasFuturas, alteraEntregaPendente, deletaEntregaPendente } = useEntregasFuturas()
     
     const [listaFiltrada, setListaFiltrada] = useState<Array<IEntregaPendente>>([])
     const [filtroCliente, setFiltroCliente] = useState("")
@@ -164,7 +164,7 @@ function EntregasPendentesPage() {
                                     <div className={style.conteudo_por_venda}>
                                         {
                                             listaFiltrada.map(entregaFutura => {
-                                                return <LinhaPorVenda entrega={entregaFutura} alteraEntregaPendente={alteraEntregaPendente} exibeFinalizadas={mostraFializadas} key={entregaFutura.idVenda} />
+                                                return <LinhaPorVenda entrega={entregaFutura} alteraEntregaPendente={alteraEntregaPendente} exibeFinalizadas={mostraFializadas} deletaEntregaPendente={deletaEntregaPendente} key={entregaFutura.idVenda} />
                                             })
                                         }
                                     </div>
@@ -177,7 +177,7 @@ function EntregasPendentesPage() {
     )
 }
 
-function EntregaPendente({ entregaFutura, alteraEntregaPendente }: IEntregaFuturaProps) {
+function EntregaPendente({ entregaFutura, alteraEntregaPendente, deletaEntregaPendente }: IEntregaFuturaProps) {
 
     const [popupMenuAberto, setPopupMenuAberto] = useState(false)
 
@@ -206,6 +206,18 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente }: IEntregaFutur
         setPopupMenuAberto(prevState => !prevState)
     }
 
+    async function handleCliqueBotaoCancelarEntregaPendente() {
+        try {
+            if (!confirm("Deseja realmente cancelar esta entrega pendente?")) return
+
+            const entregaCancelada = await deletaEntregaPendente(String(entregaFutura.id))
+
+            alert(`A entrega para ${entregaCancelada.nomeCliente} foi cancelada com sucesso!`)
+        } catch (error: any) {
+            alert(`Erro ao cancelar entrega pendente: ${error.message}`)
+        }
+    }
+    
     async function handleCliqueBotaoMarcaEntregaConcluida() {
         try {
             if (!confirm(`Deseja realmente finalizar a entrega do cliente "${entregaFutura.nomeCliente}"?`)) return
@@ -278,7 +290,7 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente }: IEntregaFutur
                 {
                     popupMenuAberto && (
                         <div id="myDropdown" className={style.conteudo_dropdown}>
-                            <p>Cancelar entrega</p>
+                            <p onClick={handleCliqueBotaoCancelarEntregaPendente}>Cancelar entrega</p>
                             <p onClick={handleCliqueBotaoMarcaEntregaConcluida}>Marcar entrega concluída</p>
                         </div>
                     )
@@ -367,7 +379,7 @@ function ItemRestante({ dadosItem, romaneio, setRomaneio, adicionaAoRomaneioTemp
 }
 
 
-function LinhaPorVenda({ entrega, alteraEntregaPendente, exibeFinalizadas }: { entrega: IEntregaPendente, alteraEntregaPendente: (idEntrega: string, dados: IEntregaPendente) => Promise<IEntregaPendente>, exibeFinalizadas: boolean }) {
+function LinhaPorVenda({ entrega, alteraEntregaPendente, exibeFinalizadas, deletaEntregaPendente }: { entrega: IEntregaPendente, alteraEntregaPendente: (idEntrega: string, dados: IEntregaPendente) => Promise<IEntregaPendente>, exibeFinalizadas: boolean, deletaEntregaPendente: (idEntrega: string) => Promise<IEntregaPendente> }) {
 
     const [exibindoProdutos, setExibindoProdutos] = useState(false)
     const [alturaLinha, setAlturaLinha] = useState<{ height: string } | {}>({})
@@ -404,7 +416,7 @@ function LinhaPorVenda({ entrega, alteraEntregaPendente, exibeFinalizadas }: { e
             </div>
 
             <div className={style.detalhes_linha_por_venda} ref={detalhesRef}>
-                <EntregaPendente entregaFutura={entrega} alteraEntregaPendente={alteraEntregaPendente} key={entrega.idVenda} />
+                <EntregaPendente entregaFutura={entrega} alteraEntregaPendente={alteraEntregaPendente} deletaEntregaPendente={deletaEntregaPendente} key={entrega.idVenda} />
             </div>
         </div>
     )

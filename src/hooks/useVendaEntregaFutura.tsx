@@ -11,7 +11,7 @@ export function useEntregasFuturas() {
         try {
             setLoadingEntregasFuturas(true)
             
-            const novaLista: Array<IEntregaPendente> = await (await fetch(`/api/vendasEntregaFutura`)).json()
+            const novaLista: Array<IEntregaPendente> = await (await fetch(`/api/vendas-entrega-futura`)).json()
 
             setListaEntregasFuturas(novaLista)
         } finally {
@@ -24,7 +24,7 @@ export function useEntregasFuturas() {
         try {
             setAguardandoApi(true)
 
-            const apiResponse = await fetch(`/api/vendasEntregaFutura`, {method: "POST", body: JSON.stringify(dadosEntrega)})
+            const apiResponse = await fetch(`/api/vendas-entrega-futura`, {method: "POST", body: JSON.stringify(dadosEntrega)})
             
             // Erro ---------------------------
             if (!apiResponse.ok) {
@@ -53,7 +53,7 @@ export function useEntregasFuturas() {
         try {
             setAguardandoApi(true)
 
-            const apiResponse = await fetch(`/api/vendasEntregaFutura?id=${idEntrega}`, {method: "PUT", body: JSON.stringify(dados)})
+            const apiResponse = await fetch(`/api/vendas-entrega-futura?id=${idEntrega}`, {method: "PUT", body: JSON.stringify(dados)})
 
             // Erro ---------------------------
             if (!apiResponse.ok) {
@@ -77,12 +77,42 @@ export function useEntregasFuturas() {
         }
     }
 
+    async function deletaEntregaPendente(idEntrega: string) {
+        
+        try {
+            setAguardandoApi(true)
+
+            const apiResponse = await fetch(`/api/vendas-entrega-futura/${idEntrega}`, {method: "DELETE"})
+
+            // Erro ---------------------------
+            if (!apiResponse.ok) {
+                const erroApi = await (apiResponse.json() as any).error
+
+                throw new Error(erroApi)
+            }
+            // --------------------------------
+
+            const entregaCancelada: IEntregaPendente = await apiResponse.json()
+
+            setListaEntregasFuturas(listaAtual => {
+                const novaLista = listaAtual.filter(item => (item.id !== entregaCancelada.id))
+
+                return novaLista
+            })
+
+            return entregaCancelada
+        } finally {
+            setAguardandoApi(false)
+        }
+    }
+
     return {
         listaEntregasFuturas,
         setListaEntregasFuturas,
         atualizaListaDeEntregasFuturas,
         criaNovaEntregaFutura,
         alteraEntregaPendente,
+        deletaEntregaPendente,
         loadingEntregasFuturas,
         aguardandoApiEntregaFutura: aguardandoApi
     }

@@ -17,7 +17,7 @@ function ConsultaEntregasPage() {
     const [endDate, setEndDate] = useState(new Date(Date.now()).toJSON().slice(0, 10))
     const [filtroNomeCliente, setFiltroNomeCliente] = useState("")
     
-    const { listaRomaneios, atualizaListaRomaneios, loadingRomaneios, imprimeRomaneioNoServidor } = useRomaneioEntrega()
+    const { listaRomaneios, atualizaListaRomaneios, loadingRomaneios, imprimeRomaneioNoServidor, deletaRomaneio } = useRomaneioEntrega()
 
     useEffect(() => {
         atualizaListaRomaneios({
@@ -74,15 +74,16 @@ function ConsultaEntregasPage() {
                             <LoadingAnimation />
                         </div>
                     )
-                    : <ListaEntregas listaRomaneios={listaRomaneios} imprimeRomaneioNoServidor={imprimeRomaneioNoServidor} filtroNomeCliente={filtroNomeCliente} />
+                    : <ListaEntregas listaRomaneios={listaRomaneios} imprimeRomaneioNoServidor={imprimeRomaneioNoServidor} filtroNomeCliente={filtroNomeCliente} deletaRomaneio={deletaRomaneio} />
             }
         </div>
     )
 }
 
-function ListaEntregas({ listaRomaneios, imprimeRomaneioNoServidor, filtroNomeCliente }: {
+function ListaEntregas({ listaRomaneios, imprimeRomaneioNoServidor, filtroNomeCliente, deletaRomaneio }: {
     listaRomaneios: Array<IRomaneioEntrega>
     imprimeRomaneioNoServidor: (romaneio: IRomaneioEntrega) => Promise<string | undefined>
+    deletaRomaneio: (idRomaneio: string) => Promise<IRomaneioEntrega>
     filtroNomeCliente: string
 }) {
     return (
@@ -108,7 +109,7 @@ function ListaEntregas({ listaRomaneios, imprimeRomaneioNoServidor, filtroNomeCl
                     ? listaRomaneios.map(romaneio => {
                         if (!romaneio.nomeCliente.toUpperCase().includes(filtroNomeCliente.toUpperCase())) return
 
-                        return <LinhaDadosEntrega romaneio={romaneio} imprimeRomaneioNoServidor={imprimeRomaneioNoServidor} key={romaneio.id} />
+                        return <LinhaDadosEntrega romaneio={romaneio} imprimeRomaneioNoServidor={imprimeRomaneioNoServidor} deletaRomaneio={deletaRomaneio} key={romaneio.id} />
                     })
                     : (
                         <div className={style.no_items_container}>
@@ -121,9 +122,10 @@ function ListaEntregas({ listaRomaneios, imprimeRomaneioNoServidor, filtroNomeCl
     )
 }
 
-function LinhaDadosEntrega({ romaneio, imprimeRomaneioNoServidor }: {
+function LinhaDadosEntrega({ romaneio, imprimeRomaneioNoServidor, deletaRomaneio }: {
     romaneio: IRomaneioEntrega
     imprimeRomaneioNoServidor: (romaneio: IRomaneioEntrega) => Promise<string | undefined>
+    deletaRomaneio: (idRomaneio: string) => Promise<IRomaneioEntrega>
 }) {
 
     const [isExpanded, setIsExpanded] = useState(false)
@@ -142,6 +144,19 @@ function LinhaDadosEntrega({ romaneio, imprimeRomaneioNoServidor }: {
         const resultadoImpressaoServidor = await imprimeRomaneioNoServidor(romaneio)
 
         alert(resultadoImpressaoServidor)
+    }
+
+    async function handleCliqueCancelaRomaneio() {
+        if (!confirm("Deseja realmente cancelar esse romaneio de entrega?")) return
+
+        try {
+            const romaneioDeletado = await deletaRomaneio(romaneio.id)
+
+            alert(`Romaneio de entrega para ${romaneioDeletado.nomeCliente} cancelado!`)
+        } catch (error: any) {
+            alert(`Erro ao deletar romaneio: ${error.message}`)
+        }
+
     }
 
     useEffect(() => {
@@ -199,6 +214,10 @@ function LinhaDadosEntrega({ romaneio, imprimeRomaneioNoServidor }: {
                 <div className={style.button_container}>
                     <button onClick={handleCliqueBotaoImprimirServidor} className={style.imprime_romaneio}>
                         <span>Imprimir romaneio</span>
+                    </button>
+
+                    <button onClick={handleCliqueCancelaRomaneio} className={style.cancela_romaneio}>
+                        <span>Cancelar romaneio de entrega</span>
                     </button>
                 </div>
             </div>

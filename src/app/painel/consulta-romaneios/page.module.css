@@ -143,6 +143,7 @@
 .button_container {
     display: flex;
     justify-content: center;
+    gap: 20px;
     width: 100%;
     padding: 5px;
 }
@@ -162,6 +163,23 @@
 .imprime_romaneio:hover {
     transition: background-color .3s;
     background-color: #2359aa;
+}
+
+.cancela_romaneio {
+    padding: 10px;
+    background-color: #fa345f;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    font: inherit;
+    /* font-weight: bold; */
+    cursor: pointer;
+    transition: background-color .3s;
+}
+
+.cancela_romaneio:hover {
+    transition: background-color .3s;
+    background-color: #aa2323;
 }
 
 @media (max-width: 480px) {

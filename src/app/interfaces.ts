@@ -30,6 +30,7 @@ export interface ITempRomaneioEntrega {
 export interface IEntregaFuturaProps {
     entregaFutura: IEntregaPendente,
 	alteraEntregaPendente: (idEntrega: string, dados: IEntregaPendente) => Promise<IEntregaPendente>
+	deletaEntregaPendente: (idEntrega: string) => Promise<IEntregaPendente>
 }
 
 export interface IItemRestanteProps {
