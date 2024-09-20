@@ -4,6 +4,8 @@ import { RomaneioEntrega } from "@/database/models-mongoose/romaneioEntrega"
 import { IEntregaPendente } from "@/database/models-mongoose/vendaEntregaFutura/IEntregaPendente"
 import { GenericModelCRUD } from "@/database/classes/GenericModelCRUD"
 
+import { vendas } from "@/database/models"
+
 const vendaEntregaFuturaCRUD = new GenericModelCRUD(EntregaPendente)
 const romaneiosEntregaCRUD = new GenericModelCRUD(RomaneioEntrega)
 
@@ -69,8 +71,21 @@ async function deletaEntregaPendente(idEntrega: string) {
 
         const entregaPendenteCancelada = await vendaEntregaFuturaCRUD.deleteDocument(idEntrega)
 
+        await desmarcaEntregaFuturaNaVenda(entregaPendenteCancelada.idVenda)
+
         return entregaPendenteCancelada
     } catch (error: any) {
         throw new Error(`Erro ao deletar entrega pendente: ${error.message}`)
+    }
+}
+
+// Helpers
+async function desmarcaEntregaFuturaNaVenda(idVenda: number) {
+    const venda = await vendas.findByPk(idVenda)
+
+    if (venda) {
+        venda.entregaFutura = 0
+
+        await venda.save()
     }
 }

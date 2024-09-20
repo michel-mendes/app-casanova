@@ -169,7 +169,7 @@ async function atualizaProdutosDaEntrega(romaneioEntrega: IRomaneioEntrega, entr
         entregaPendente.status = `${percentualConcluido}% entregue`
         
         // Marca entrega finalizada se todos os produtos tiverem sido entregues
-        entregaPendente.finalizada = Number(entregaPendente.quantidadeEntregue) == Number(entregaPendente.quantidadeTotalProdutos)
+        entregaPendente.finalizada = Number(entregaPendente.quantidadeEntregue) >= Number(entregaPendente.quantidadeTotalProdutos)
 
         // Salva entrega pendente
         await entregaPendente.save()
