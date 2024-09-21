@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 
 import { AtributosProduto } from '@/database/models/produtos/Produto'
 
@@ -36,9 +37,9 @@ function ListaProdutos({ listaProdutos }: IListaProdutosProps) {
                             return (
                                 <tr key={produto.id}>
                                     <td className={style.coluna_dados_produto}>
-                                        <span>
+                                        <Link href={`/painel/produtos/editar/${produto.id}`}>
                                             <b>{produto.descricao}</b>
-                                        </span>
+                                        </Link>
 
                                         <div className={style.container_dados_produto_mobile}>
                                             <span>Código: {produto.barras}</span>
@@ -61,12 +62,12 @@ function ListaProdutos({ listaProdutos }: IListaProdutosProps) {
                         })
                 }
             </tbody>
-            
+
 
             {/* Footer */}
             <tfoot>
                 <tr>
-                    <td>{listaProdutos.length} { listaProdutos.length > 1 ? "produtos" : "produto" }</td>
+                    <td>{listaProdutos.length} {listaProdutos.length > 1 ? "produtos" : "produto"}</td>
                 </tr>
             </tfoot>
 
