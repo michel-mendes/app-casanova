@@ -47,9 +47,10 @@ function ListaProdutos({ listaProdutos }: IListaProdutosProps) {
                                         </div>
 
                                         <div className={style.container_dados_produto_mobile}>
-                                            <span>À vista: {Number(produto.vlrVista).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                            <span>À prazo: {Number(produto.vlrPrazo).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                            <span>Estoque: {Number(produto.estoque).toLocaleString(undefined, { maximumFractionDigits: 2 })} {produto.unidade}</span>
+                                            {/* <span><b>Custo:</b> {Number(produto.vlrCusto).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span> */}
+                                            <span><b>À vista:</b> {Number(produto.vlrVista).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                            <span><b>À prazo:</b> {Number(produto.vlrPrazo).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                            <span><b>Estoque:</b> {Number(produto.estoque).toLocaleString(undefined, { maximumFractionDigits: 2 })} {produto.unidade}</span>
                                         </div>
                                     </td>
 

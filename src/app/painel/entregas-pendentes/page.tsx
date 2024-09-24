@@ -304,8 +304,8 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente, deletaEntregaPe
             <table className={style.tabela_produtos_pendentes}>
                 <thead>
                     <tr>
-                        <th className={style.col_id_produto}>Código do produto</th>
-                        <th>Quantidade</th>
+                        <th className={style.col_id_produto}>Cód. produto</th>
+                        <th>Restante a entregar</th>
                         <th>Descrição</th>
                         <th>Romaneio de entrega</th>
                     </tr>

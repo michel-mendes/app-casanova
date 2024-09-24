@@ -1,5 +1,5 @@
 export async function register() {
-    setInterval(sincronizaProdutos, 20000)
+    setInterval(sincronizaProdutos, 60000)
 }
 
 async function sincronizaProdutos() {

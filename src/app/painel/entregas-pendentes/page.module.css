@@ -228,7 +228,8 @@
 }
 
 .linha_produto_pendente[entregue-total="true"] {
-    opacity: .5;
+    /* opacity: .5; */
+    text-decoration: line-through;
 }
 
 .col_button_container {
