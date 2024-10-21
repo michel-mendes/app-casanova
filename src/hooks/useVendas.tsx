@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { IVenda } from "@/app/interfaces";
+import { AtributosVendaNuvem } from "@/database/models-mongoose/venda/IVendaNuvem";
 
 export function useVendas() {
     const [listaVendas, setListaVendas] = useState<Array<IVenda>>([])
@@ -64,11 +65,82 @@ export function useVendas() {
 
     }
 
+    async function exportaVendaParaNuvem(dadosVenda: AtributosVendaNuvem) {
+
+        try {
+            setAguardandoApi(true)
+
+            const apiResponse = await fetch(`/api/nuvem/vendas`, { method: "POST", body: JSON.stringify(dadosVenda) })
+
+            // Erro ---------------------------
+            if (!apiResponse.ok) {
+                const erroApi = (await apiResponse.json()).error
+                
+                throw new Error(erroApi)
+            }
+            // --------------------------------
+
+            const novaVendaNuvem = (await apiResponse.json()) as AtributosVendaNuvem
+
+            return novaVendaNuvem
+        } finally {
+            setAguardandoApi(false)
+        }
+
+    }
+
+    async function exportaTodasParaNuvem() {
+        try {
+            setAguardandoApi(true)
+
+            const apiResponse = await fetch(`/api/vendas/exporta-todas-para-nuvem`)
+
+            // Erro ---------------------------
+            if (!apiResponse.ok) {
+                const erroApi = (await apiResponse.json()).error
+                
+                throw new Error(erroApi)
+            }
+            // --------------------------------
+
+            const resultadoExportacao = (await apiResponse.text())
+
+            return resultadoExportacao
+        } finally {
+            setAguardandoApi(false)
+        }
+    }
+
+    async function exportaVendasRecentes() {
+        try {
+            setAguardandoApi(true)
+
+            const apiResponse = await fetch(`/api/vendas/exporta-vendas-recentes`)
+
+            // Erro ---------------------------
+            if (!apiResponse.ok) {
+                const erroApi = (await apiResponse.json()).error
+                
+                throw new Error(erroApi)
+            }
+            // --------------------------------
+
+            const resultadoExportacao = (await apiResponse.text())
+
+            return resultadoExportacao
+        } finally {
+            setAguardandoApi(false)
+        }
+    }
+
     return {
         listaVendas,
         atualizaLista,
         localizaVenda,
         alteraVenda,
+        exportaVendaParaNuvem,
+        exportaTodasParaNuvem,
+        exportaVendasRecentes,
         loadingVendas,
         aguardandoApiVendas: aguardandoApi
     }

@@ -2,13 +2,23 @@ import { AtributosProduto } from "@/database/models/produtos/Produto";
 import { produtos } from "@/database/models";
 import { itensVenda } from "@/database/models";
 import { Op, fn, where, col } from "sequelize";
-import moment from "moment";
 import fs from "fs"
+
+import { FilaAtualizacaoProdutos } from "@/database/models-mongoose/filaAtualizacaoProdutos";
+import { GenericModelCRUD } from "@/database/classes/GenericModelCRUD";
+import { Console } from "console";
+import { IFilaAtualizacaoProdutos } from "@/database/models-mongoose/filaAtualizacaoProdutos/IFilaAtualizacaoProdutos";
+
+const filaAtualizacaoProdutos = new GenericModelCRUD(FilaAtualizacaoProdutos)
 
 export {
     listaProdutos,
+    listaCompletaProdutosSomenteIdeDescricao,
     listaProdutosSemVenda,
-    listaTodosProdutos
+    listaTodosProdutos,
+    localizaProdutoPorCodigo,
+    alteraProduto,
+    aplicaAlteracoesPendentesNuvem
 }
 
 async function listaProdutos(termoPesquisa?: string) {
@@ -38,6 +48,23 @@ async function listaProdutos(termoPesquisa?: string) {
         throw new Error(`Falha na busca de produtos: ${error.message}`)
     }
 
+}
+
+async function listaCompletaProdutosSomenteIdeDescricao() {
+    try {
+        const listaProdutos = await produtos.findAll()
+
+        const listaProdutosSomenteId = listaProdutos.map(item => {
+            return {
+                idProduto: item.id,
+                descricao: item.descricao
+            }
+        })
+
+        return listaProdutosSomenteId
+    } catch (error: any) {
+        throw new Error(`Falha ao gerar lista completa de Ids de produtos: ${error.message}`)
+    }
 }
 
 async function listaProdutosSemVenda() {
@@ -72,4 +99,64 @@ async function listaTodosProdutos() {
     } catch (error: any) {
         throw new Error(`Falha na busca de todos os produtos: ${error.message}`)
     }   
+}
+
+async function localizaProdutoPorCodigo(idProduto: number) {
+    try {
+        const produto = await produtos.findByPk(idProduto)
+
+        if (!produto) {
+            throw new Error("Produto inexistente!")
+        }
+
+        return produto
+    } catch (error: any) {
+        throw new Error(`Falha ao localizar produto: ${error.message}`)
+    }
+}
+
+async function alteraProduto(idProduto: number, dadosProduto: AtributosProduto) {
+    try {
+        const {id, ...dadosAlterados} = dadosProduto
+
+        const produto = await produtos.findByPk(idProduto)
+
+        if (!produto) {
+            throw new Error("Produto inexistente!")
+        }
+
+        produto.set(dadosAlterados)
+        await produto.save()
+
+        return produto
+    } catch (error: any) {
+        throw new Error(`Falha ao alterar dados do produto: ${error.message}`)
+    }
+}
+
+async function aplicaAlteracoesPendentesNuvem() {
+    try {
+        const filaAtualizacoes = await filaAtualizacaoProdutos.findDocuments()
+
+        // Se não houver produtos com alterações pendentes, finalizar a função
+        if (filaAtualizacoes.length < 1) return
+        // ---------------------------------------
+        
+        for (const produtoFila of filaAtualizacoes) {
+            const produtoLocal = await produtos.findByPk(produtoFila.idProduto)
+            if (!produtoLocal) continue
+
+            const atributosAlterados = (produtoFila.toJSON() as IFilaAtualizacaoProdutos).atributosAlterados
+            
+            produtoLocal.set(atributosAlterados)
+            await produtoLocal.save()
+
+            // Remove produto da fila de alterações
+            await produtoFila.deleteOne()
+
+            console.log(`O produto cód. ${produtoLocal.id} recebeu alterações vindas da nuvem. Atributos alterados: ${JSON.stringify(atributosAlterados)}`)
+        }
+    } catch (error: any) {
+        throw new Error(`Falha aplicar alterações da fila nos produtos do BD local: ${error.message}`)
+    }
 }

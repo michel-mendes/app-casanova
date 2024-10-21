@@ -60,6 +60,7 @@ function TopNavigation() {
 
                 <Link href={"/painel/entregas-pendentes"}>Entregas pendentes</Link>
                 <Link href={"/painel/consulta-romaneios"}>Romaneios</Link>
+                <Link href={"/painel/produtos"}>Produtos</Link>
                 {/* <Link href={"/painel/vendas"}>Vendas</Link> */}
 
                 <Link href={"/painel/romaneio"}>
@@ -130,6 +131,12 @@ function TopNavigation() {
                             <img src={deliveryTruckTime.src} alt="" className={style.mobile_menu_link_icon} />
                             <span>Imprimir romaneios</span>
                         </Link>
+
+                        <Link href={"/painel/produtos"} className={style.mobile_menu_link_container} onClick={handleCliqueBotaoHamburgerMenu}>
+                            {/* <img src={deliveryTruckTime.src} alt="" className={style.mobile_menu_link_icon} /> */}
+                            <span>Produtos</span>
+                        </Link>
+
 
                         <div className={style.close_menu_button} onClick={handleCliqueBotaoHamburgerMenu} id='closeMenuButton'>
                             <img src={closeHamburgerIcon.src} alt="" className={style.close_hamburger_icon} />

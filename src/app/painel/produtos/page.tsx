@@ -1,8 +1,10 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { useProdutos } from '@/hooks/useProdutos'
+import { useEntregasFuturas } from '@/hooks/useVendaEntregaFutura'
+
 import { ListaProdutos } from './ListaProdutos'
 
 import { Input } from '@/app/components/Input'
@@ -12,22 +14,29 @@ import style from "./page.module.css"
 function ProdutosPage() {
 
     const { listaProdutos, atualizaListaProdutos } = useProdutos()
+    const {listaEntregasFuturas, atualizaListaDeEntregasFuturas, aguardandoApiEntregaFutura} = useEntregasFuturas()
+
+    function handleClicaBotaoAtualizaLista() {
+        const inputPesquisa = document.getElementById("inputPesquisa") as HTMLInputElement
+
+        atualizaListaProdutos(inputPesquisa.value)
+    }
+
+    useEffect(() => {atualizaListaDeEntregasFuturas()}, [])
 
     return (
         <div className={style.page_container}>
             <h1>Busca de Produtos</h1>
 
-            <div className={style.contaier_pesquisa}>
-                <Input inputType='text' fieldName='inputPesquisa' autocomplete={false} placeholder={{insideInput: true, text: "Busque por nome, código, observações..."}} />
+            <div className={style.container_pesquisa}>
+                <span>
+                    <Input inputType='text' fieldName='inputPesquisa' autocomplete={false} placeholder={{insideInput: true, text: "Busque por nome, código, observações..."}} onPressReturnKey={handleClicaBotaoAtualizaLista}/>
+                </span>
         
-                <button onClick={() => {
-                    const inputPesquisa = document.getElementById("inputPesquisa") as HTMLInputElement
-
-                    atualizaListaProdutos(inputPesquisa.value)
-                }}>Buscar</button>
+                <button onClick={handleClicaBotaoAtualizaLista}>Atualizar</button>
             </div>
 
-            <ListaProdutos listaProdutos={listaProdutos} />
+            <ListaProdutos listaProdutos={listaProdutos} listaEntregasFuturas={listaEntregasFuturas} />
 
         </div>
     )

@@ -82,9 +82,9 @@ async function sincronizaProdutosEstoqueMonitorado() {
                         estoque: produto.estoque
                     } as any)
                 
-                    console.log(`[${i + 1} / ${todosProdutos.length}] - Produto "${novoProdutoMonitorado.descricao}" cadastrado na lista de monitoramento de estoque`)
+                    // console.log(`[${i + 1} / ${todosProdutos.length}] - Produto "${novoProdutoMonitorado.descricao}" cadastrado na lista de monitoramento de estoque`)
                 } catch (error: any) {
-                    console.log(`[${i + 1} / ${todosProdutos.length}] - Erro ao cadatrar o produto "${produto.descricao}": '${error}'`)
+                    console.log(`${new Date(Date.now()).toLocaleTimeString()} - Erro ao cadatrar o produto na lista de monitoramento de estoque: ${error.message}`)
                 }
             }
 
@@ -112,7 +112,7 @@ async function sincronizaProdutosEstoqueMonitorado() {
 
         }
 
-        console.log(`[${new Date(Date.now()).toLocaleString()}] - Sincronização de produtos completa!`)
+        // console.log(`[${new Date(Date.now()).toLocaleString()}] - Sincronização de produtos completa!`)
 
         if (notificacaoTelegram.length > 0) {
             notificacaoTelegram = `Notificação de Estoque Casa Nova Acabamentos\n${notificacaoTelegram}`

@@ -11,6 +11,9 @@ import { EntregaPendente } from "@/database/models-mongoose/vendaEntregaFutura"
 import { IEntregaPendente, IItemRestante } from "@/database/models-mongoose/vendaEntregaFutura/IEntregaPendente"
 import { FilterQuery } from "mongoose"
 
+// Controle de estoque de produtos que ficam com entrega pendente
+import { produtos } from "@/database/models"
+
 const romaneioEntregaCRUD = new GenericModelCRUD(RomaneioEntrega)
 const entregaPendenteCRUD = new GenericModelCRUD(EntregaPendente)
 
@@ -66,6 +69,9 @@ async function novoRomaneioEntrega(dadosRomaneio: IRomaneioEntrega) {
 
         const romaneioCadastrado: IRomaneioEntrega = await romaneioEntregaCRUD.insertDocument(dadosRomaneio)
 
+        // Atualiza estoque no banco de dados local
+        await voltaEstoqueFisicoProdutosEntregaFutura(romaneioCadastrado, "NOVA_ENTREGA")
+
         // Remove da entrega pendente os produtos que constam no novo romaneio
         await atualizaProdutosDaEntrega(romaneioCadastrado, entregaPendente, "NOVO_ROMANEIO")
 
@@ -81,6 +87,9 @@ async function deletaRomaneioEntrega(id: string) {
         
         const romaneioDeletado = await romaneioEntregaCRUD.deleteDocument(id)
         const entregaPendente = await entregaPendenteCRUD.findDocumentById(String(romaneioDeletado.idEntregaPendente))
+
+        // Atualiza estoque no banco de dados local
+        await voltaEstoqueFisicoProdutosEntregaFutura(romaneioDeletado, "CANCELAMENTO_ENTREGA")
 
         // Retorna para a entrega pendente os produtos que constam no romaneio cancelado
         await atualizaProdutosDaEntrega(romaneioDeletado, entregaPendente, "ROMANEIO_CANCELADO")
@@ -202,4 +211,21 @@ function geraNumeroRomaneio(entregaPendente: IEntregaPendente | null, dadosRoman
     }
 
     return numeroRomaneio
+}
+
+async function voltaEstoqueFisicoProdutosEntregaFutura(romaneioEntrega: IRomaneioEntrega, motivo: "NOVA_ENTREGA" | "CANCELAMENTO_ENTREGA") {
+    for (const produtoRomaneio of romaneioEntrega.itensEntrega) {
+        const produtoFisico = await produtos.findByPk(produtoRomaneio.idProduto)
+        if (!produtoFisico) continue
+
+        const estoqueQuantidadeRetornada = (motivo == "NOVA_ENTREGA")
+                                            // Subtrai estoque já que o produto está sendo entregue
+                                            ? produtoFisico.estoque - produtoRomaneio.qtde
+                                            // Soma o estoque já que o romaneio está sendo cancelado
+                                            : produtoFisico.estoque + produtoRomaneio.qtde
+
+        produtoFisico.set("estoque", estoqueQuantidadeRetornada)
+
+        await produtoFisico.save()
+    }
 }

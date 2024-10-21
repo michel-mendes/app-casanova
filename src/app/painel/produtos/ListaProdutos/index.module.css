@@ -33,6 +33,30 @@
     padding: 10px;
 }
 
+.linha_produto:hover {
+    background-color: rgba(0, 0, 0, .6);
+    color: white;
+}
+
+.linha_produto[possui-venda="true"] {
+    background-color: yellow;
+}
+
+.coluna_estoque_disponivel {
+    font-weight: bold;
+    font-size: 11px;
+    background-color: rgb(240, 119, 119);
+    /* color: white; */
+}
+
+.coluna_estoque_disponivel,
+.coluna_vista,
+.coluna_prazo,
+.coluna_estoque,
+.coluna_status {
+    text-align: center;
+}
+
 @media (max-width: 700px) {
     .coluna_vista,
     .coluna_prazo,

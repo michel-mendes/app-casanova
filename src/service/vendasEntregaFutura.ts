@@ -6,6 +6,9 @@ import { GenericModelCRUD } from "@/database/classes/GenericModelCRUD"
 
 import { vendas } from "@/database/models"
 
+// Controle de estoque de produtos que ficam com entrega pendente
+import { produtos } from "@/database/models"
+
 const vendaEntregaFuturaCRUD = new GenericModelCRUD(EntregaPendente)
 const romaneiosEntregaCRUD = new GenericModelCRUD(RomaneioEntrega)
 
@@ -39,6 +42,8 @@ async function createNewVendasEntregaFutura(vefData: IEntregaPendente) {
 
         const createdVendaEntregaFutura = await vendaEntregaFuturaCRUD.insertDocument(vefData)
 
+        await voltaEstoqueFisicoProdutosEntregaFutura(createdVendaEntregaFutura, "NOVA_ENTREGA")
+
         return createdVendaEntregaFutura
     } catch (error: any) {
         throw new Error(`Falha ao cadastrar nova entrega futura: ${error.message}`)
@@ -71,6 +76,7 @@ async function deletaEntregaPendente(idEntrega: string) {
 
         const entregaPendenteCancelada = await vendaEntregaFuturaCRUD.deleteDocument(idEntrega)
 
+        await voltaEstoqueFisicoProdutosEntregaFutura(entregaPendenteCancelada, "CANCELAMENTO_ENTREGA")
         await desmarcaEntregaFuturaNaVenda(entregaPendenteCancelada.idVenda)
 
         return entregaPendenteCancelada
@@ -87,5 +93,23 @@ async function desmarcaEntregaFuturaNaVenda(idVenda: number) {
         venda.entregaFutura = 0
 
         await venda.save()
+    }
+}
+
+async function voltaEstoqueFisicoProdutosEntregaFutura(entregaFutura: IEntregaPendente, motivo: "NOVA_ENTREGA" | "CANCELAMENTO_ENTREGA") {
+    
+    for (const produtoEntregaFutura of entregaFutura.itensRestantes) {
+        const produtoFisico = await produtos.findByPk(produtoEntregaFutura.idProduto)
+        if (!produtoFisico) continue
+
+        const estoqueQuantidadeRetornada = (motivo == "NOVA_ENTREGA")
+                                            // Soma estoque já que o produto ainda não foi entregue
+                                            ? produtoFisico.estoque + produtoEntregaFutura.qtde
+                                            // Subtrai o estoque já que teoricamente a entrega futura foi cancelada
+                                            : produtoFisico.estoque - produtoEntregaFutura.qtde
+
+        produtoFisico.set("estoque", estoqueQuantidadeRetornada)
+
+        await produtoFisico.save()
     }
 }

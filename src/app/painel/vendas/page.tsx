@@ -11,12 +11,13 @@ import { Input } from '../../components/Input'
 import moment from 'moment'
 
 import style from "./page.module.css"
+import { AtributosVendaNuvem } from '@/database/models-mongoose/venda/IVendaNuvem'
 
 function VendasPage() {
     const [startDate, setStartDate] = useState(new Date(Date.now()).toJSON().slice(0, 10))
     const [endDate, setEndDate] = useState(new Date(Date.now()).toJSON().slice(0, 10))
 
-    const { listaVendas, atualizaLista, alteraVenda, loadingVendas } = useVendas()
+    const { listaVendas, atualizaLista, alteraVenda, exportaVendaParaNuvem, loadingVendas } = useVendas()
     const { criaNovaEntregaFutura } = useEntregasFuturas();
 
     const vendaRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -143,6 +144,18 @@ function VendasPage() {
                                                             ? <span>--</span>
                                                             : <button onClick={() => { handleClickNovaEntregaFutura(venda.id!) }}>Cadastrar entrega futura</button>
                                                     }
+                                                    <button>
+                                                        <span onClick={async () => {
+                                                            try {
+                                                                const novaVendaNuvem = await exportaVendaParaNuvem({...venda as AtributosVendaNuvem, idVenda: venda.id})
+
+                                                                alert("Venda exportada com sucesso. Confira os dados no console.")
+                                                                console.log(novaVendaNuvem)
+                                                            } catch (error: any) {
+                                                                alert(`Erro ao exportar venda: ${error.message}`)
+                                                            }
+                                                        }}>Expotar para Nuvem</span>
+                                                    </button>
                                                 </td>
                                             </tr>
 

@@ -33,9 +33,78 @@ export function useProdutos() {
         }
     }
 
+    async function localizaProdutoPorCodigo(idProduto: number) {
+        try {
+            setAguardandoApi(true)
+
+            const apiResponse = await fetch(`/api/produtos/${idProduto}`)
+
+            // Erro ---------------------------
+            if (!apiResponse.ok) {
+                const erroApi = await (apiResponse.json() as any).error
+
+                throw new Error(erroApi)
+            }
+            // --------------------------------
+
+            const produtoEncontrado: AtributosProduto = (await apiResponse.json())
+
+            return produtoEncontrado
+        } finally {
+            setAguardandoApi(false)
+        }
+    }
+
+    async function alteraProduto(idProduto: number, dadosProduto: AtributosProduto) {
+        try {
+            setAguardandoApi(true)
+
+            const apiResponse = await fetch(`/api/produtos/${idProduto}`, { method: "PUT", body: JSON.stringify(dadosProduto) })
+
+            // Erro ---------------------------
+            if (!apiResponse.ok) {
+                const erroApi = await (apiResponse.json() as any).error
+
+                throw new Error(erroApi)
+            }
+            // --------------------------------
+
+            const produtoAlterado: AtributosProduto = (await apiResponse.json())
+
+            return produtoAlterado
+        } finally {
+            setAguardandoApi(false)
+        }
+    }
+
+    // Utilizado apenas para testes
+    async function aplicaAlteracoesFila() {
+        try {
+            setAguardandoApi(true)
+
+            const apiResponse = await fetch(`/api/produtos/aplica-alteracoes-fila`)
+
+            // Erro ---------------------------
+            if (!apiResponse.ok) {
+                const erroApi = await (apiResponse.json() as any).error
+
+                throw new Error(erroApi)
+            }
+            // --------------------------------
+
+            alert("Alterações aplicadas com sucesso!")
+        } finally {
+            setAguardandoApi(false)
+        }
+    }
+    // -----------------------------------
+
     return {
         listaProdutos,
         atualizaListaProdutos,
+        localizaProdutoPorCodigo,
+        alteraProduto,
+        aplicaAlteracoesFila,
         carregandoProdutos,
         aguardandoApiProdutos: aguardandoApi,
         erroApi
