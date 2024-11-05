@@ -15,6 +15,26 @@
     flex-direction: column;
     gap: 5px;
 }
+.tabela_produtos tbody .coluna_dados_produto .container_nome_produto {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tabela_produtos tbody .coluna_dados_produto .container_nome_produto .botao_copiar_dados_etiqueta {
+    margin: 0;
+    padding: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* border: 1px solid black; */
+    border-radius: 15px;
+}
+
+.tabela_produtos tbody .coluna_dados_produto .container_nome_produto .botao_copiar_dados_etiqueta:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, .3);
+}
 
 .tabela_produtos tbody .container_dados_produto_mobile {
     display: none;
@@ -40,6 +60,10 @@
 
 .linha_produto[possui-venda="true"] {
     background-color: yellow;
+}
+.linha_produto[possui-venda="true"]:hover {
+    color: black;
+    filter: brightness(.85);
 }
 
 .coluna_estoque_disponivel {

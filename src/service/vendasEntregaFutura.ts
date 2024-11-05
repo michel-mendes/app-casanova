@@ -102,11 +102,14 @@ async function voltaEstoqueFisicoProdutosEntregaFutura(entregaFutura: IEntregaPe
         const produtoFisico = await produtos.findByPk(produtoEntregaFutura.idProduto)
         if (!produtoFisico) continue
 
-        const estoqueQuantidadeRetornada = (motivo == "NOVA_ENTREGA")
+        let estoqueQuantidadeRetornada = (motivo == "NOVA_ENTREGA")
                                             // Soma estoque já que o produto ainda não foi entregue
                                             ? produtoFisico.estoque + produtoEntregaFutura.qtde
                                             // Subtrai o estoque já que teoricamente a entrega futura foi cancelada
                                             : produtoFisico.estoque - produtoEntregaFutura.qtde
+
+        // Esta linha evita erro interno de tratamento de dados no Sequelize
+        estoqueQuantidadeRetornada = estoqueQuantidadeRetornada.toFixed(3) as any
 
         produtoFisico.set("estoque", estoqueQuantidadeRetornada)
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { IoPricetagsOutline } from "react-icons/io5"
 
 import { AtributosProduto } from '@/database/models/produtos/Produto'
 import { IEntregaPendente } from '@/database/models-mongoose/vendaEntregaFutura/IEntregaPendente'
@@ -73,9 +74,14 @@ function ListaProdutos({ listaProdutos, listaEntregasFuturas }: IListaProdutosPr
                     <th className={style.coluna_estoque}>{(listaEntregasFuturas && listaEntregasFuturas.length > 0)? "Estoque físico" : "Estoque"}</th>
                     {
                         (listaEntregasFuturas && listaEntregasFuturas.length > 0) && (
-                            <th className={style.coluna_estoque_disponivel}>
-                                Estoque disponível
-                            </th>
+                            <>
+                                <th>
+                                    Vendido
+                                </th>
+                                <th className={style.coluna_estoque_disponivel}>
+                                    Estoque disponível
+                                </th>
+                            </>
                         )
                     }
                     <th className={style.coluna_status}>Status</th>
@@ -98,21 +104,17 @@ function ListaProdutos({ listaProdutos, listaEntregasFuturas }: IListaProdutosPr
                             return (
                                 <tr className={style.linha_produto} key={produto.id} possui-venda={(produtoVendido ? "true" : "false")}>
                                     <td className={style.coluna_dados_produto}>
-                                        <Link href={`/painel/produtos/editar/${produto.id}`}>
-                                            <b>{produto.descricao}</b>
-                                            {
-                                                (produtoVendido) && (
-                                                    <>
-                                                    <hr />
-                                                    <p>
-                                                        <span>
-                                                            <b>PRODUTO VENDIDO: {Number(produtoVendido.totalVendido).toLocaleString(undefined, {maximumFractionDigits: 2})} {produtoVendido.unidade}</b>
-                                                        </span>
-                                                    </p>
-                                                    </>
-                                                )
-                                            }
-                                        </Link>
+                                        <div className={style.container_nome_produto}>
+                                            <Link href={`/painel/produtos/editar/${produto.id}`}>
+                                                <b>{produto.descricao}</b>
+                                            </Link>
+                                            
+                                            <span className={style.botao_copiar_dados_etiqueta} title='Copia dados do produto para gerar etiqueta'>
+                                                <IoPricetagsOutline size={"16px"} onClick={async () => {
+                                                    await formataDadosParaEtiqueta(produto)
+                                                }}/>
+                                            </span>
+                                        </div>
 
                                         <div className={style.container_dados_produto_mobile}>
                                             <span>Código: {produto.barras}</span>
@@ -134,10 +136,16 @@ function ListaProdutos({ listaProdutos, listaEntregasFuturas }: IListaProdutosPr
                                     {
                                         (produtoVendido)
                                         ? (
-                                            <td className={style.coluna_estoque_disponivel}>{Number(produto.estoque - produtoVendido.totalVendido!).toLocaleString(undefined, {maximumFractionDigits: 2})} {produto.unidade}</td>
+                                            <>
+                                                <td className={style.coluna_estoque}>{Number(produtoVendido.totalVendido).toLocaleString(undefined, {maximumFractionDigits: 2})} {produtoVendido.unidade}</td>
+                                                <td className={style.coluna_estoque_disponivel}>{Number(produto.estoque - produtoVendido.totalVendido!).toLocaleString(undefined, {maximumFractionDigits: 2})} {produto.unidade}</td>
+                                            </>
                                         )
                                         : (listaEntregasFuturas && listaEntregasFuturas.length > 0) ? (
-                                            <td className={style.coluna_estoque_disponivel}>{Number(produto.estoque).toLocaleString(undefined, {maximumFractionDigits: 2})} {produto.unidade}</td>
+                                            <>
+                                                <td className={style.coluna_estoque}>-</td>
+                                                <td className={style.coluna_estoque_disponivel}>{Number(produto.estoque).toLocaleString(undefined, {maximumFractionDigits: 2})} {produto.unidade}</td>
+                                            </>
                                         )
                                         : null
                                     }
@@ -159,6 +167,34 @@ function ListaProdutos({ listaProdutos, listaEntregasFuturas }: IListaProdutosPr
 
         </table>
     )
+}
+
+async function formataDadosParaEtiqueta(produto: AtributosProduto) {
+    const codigo = `${produto.id}`
+    const descricaoLinha1 = `${produto.descricao.match(/.{1,36}/g) || []}`.replace(",", `</br><span style="color: white; font-size: 5pt;">.</span>`)
+    const aVista = `R$ ${Number(produto.vlrVista).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`
+    const aPrazo = `R$ ${Number(produto.vlrPrazo).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`
+    const espacoPrecos = "".padStart(25 - aVista.length - aPrazo.length, ".")
+
+    const html = `
+    <div style="font-family: Consolas;">
+        <span style="color: white; font-size: 5pt;">.</span><span>Código: ${codigo}</span></br>
+        <span style="color: white; font-size: 5pt;">.</span><span style="font-size: 9pt;">${descricaoLinha1}</span></br>
+        <span style="color: white; font-size: 5pt;">.</span></br>
+        <span style="color: white; font-size: 5pt;">.</span><span>À Vista&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;À Prazo</span>
+        <span style="color: white; font-size: 5pt;">.</span><span><b style="font-size: 14pt">${aVista}</b><span style="color: white">${espacoPrecos}</span><b style="font-size: 14pt">${aPrazo}</b></span>
+    </div>
+    `
+
+    const blob = new Blob([html], {type: "text/html"})
+    const clipboarItem = new ClipboardItem({"text/html": blob})
+
+    try {
+        await navigator.clipboard.write([clipboarItem])
+        alert("Dados copiados para a área de transferência!")
+    } catch (error: any) {
+        alert(`Erro ao copiar dados: "${error.message}"`)
+    }
 }
 
 export { ListaProdutos }
