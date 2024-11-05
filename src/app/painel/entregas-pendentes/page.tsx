@@ -4,6 +4,8 @@ import React, { useRef, useEffect, useState } from 'react'
 
 import { ListaProdutosPendentesEntrega } from './ListaProdutosVendidos'
 
+import { useModal } from '@/hooks/useModal'
+
 import { useEntregasFuturas } from '@/hooks/useVendaEntregaFutura'
 import { IEntregaFuturaProps, IItemRestanteProps, ITempItemEntregue, ITempRomaneioEntrega } from '../../interfaces'
 
@@ -18,7 +20,11 @@ import { sortArrayOfObjects } from '../../helpers'
 
 function EntregasPendentesPage() {
 
+    const modal = useModal()
+
     const { listaEntregasFuturas, setListaEntregasFuturas, loadingEntregasFuturas, atualizaListaDeEntregasFuturas, alteraEntregaPendente, deletaEntregaPendente } = useEntregasFuturas()
+
+    const [dadosEntregaModal, setDadosEntregaModal] = useState<IEntregaPendente>()
     
     const [listaFiltrada, setListaFiltrada] = useState<Array<IEntregaPendente>>([])
     const [filtroCliente, setFiltroCliente] = useState("")
@@ -164,7 +170,15 @@ function EntregasPendentesPage() {
                                     <div className={style.conteudo_por_venda}>
                                         {
                                             listaFiltrada.map(entregaFutura => {
-                                                return <LinhaPorVenda entrega={entregaFutura} alteraEntregaPendente={alteraEntregaPendente} exibeFinalizadas={mostraFializadas} deletaEntregaPendente={deletaEntregaPendente} key={entregaFutura.idVenda} />
+                                                return <LinhaPorVenda
+                                                            entrega={entregaFutura}
+                                                            alteraEntregaPendente={alteraEntregaPendente}
+                                                            exibeFinalizadas={mostraFializadas}
+                                                            deletaEntregaPendente={deletaEntregaPendente}
+                                                            setDadosEntregaPendente={setDadosEntregaModal}
+                                                            openModalFunction={modal.openModal}
+                                                            key={entregaFutura.idVenda}
+                                                        />
                                             })
                                         }
                                     </div>
@@ -173,6 +187,10 @@ function EntregasPendentesPage() {
                             : <ListaProdutosPendentesEntrega listaEntregasPendentes={listaFiltrada} mostraClientes={mostraClientes} />
                 }
             </div>
+
+            <modal.ModalComponent modalTitle={`Visualização de entrega pendente (Venda nº ${dadosEntregaModal?.idVenda})`} modalButtons={{cancelButton: {customCaption: "Fechar (ESC)", onClick: () => {modal.closeModal()}}}}>
+                <EntregaPendente entregaFutura={dadosEntregaModal!} alteraEntregaPendente={alteraEntregaPendente} deletaEntregaPendente={deletaEntregaPendente} />
+            </modal.ModalComponent>
         </div>
     )
 }
@@ -379,7 +397,7 @@ function ItemRestante({ dadosItem, romaneio, setRomaneio, adicionaAoRomaneioTemp
 }
 
 
-function LinhaPorVenda({ entrega, alteraEntregaPendente, exibeFinalizadas, deletaEntregaPendente }: { entrega: IEntregaPendente, alteraEntregaPendente: (idEntrega: string, dados: IEntregaPendente) => Promise<IEntregaPendente>, exibeFinalizadas: boolean, deletaEntregaPendente: (idEntrega: string) => Promise<IEntregaPendente> }) {
+function LinhaPorVenda({ entrega, alteraEntregaPendente, exibeFinalizadas, deletaEntregaPendente, setDadosEntregaPendente, openModalFunction }: { entrega: IEntregaPendente, alteraEntregaPendente: (idEntrega: string, dados: IEntregaPendente) => Promise<IEntregaPendente>, exibeFinalizadas: boolean, deletaEntregaPendente: (idEntrega: string) => Promise<IEntregaPendente>, setDadosEntregaPendente: React.Dispatch<React.SetStateAction<IEntregaPendente | undefined>>, openModalFunction: () => void }) {
 
     const [exibindoProdutos, setExibindoProdutos] = useState(false)
     const [alturaLinha, setAlturaLinha] = useState<{ height: string } | {}>({})
@@ -390,7 +408,9 @@ function LinhaPorVenda({ entrega, alteraEntregaPendente, exibeFinalizadas, delet
     const entregaFinalizada = (Number(entrega.quantidadeEntregue).toFixed(2) == Number(entrega.quantidadeTotalProdutos).toFixed(2)) || entrega.finalizada
 
     function handleClicaLinha() {
-        setExibindoProdutos(prevState => !prevState)
+        // setExibindoProdutos(prevState => !prevState)
+        setDadosEntregaPendente(entrega)
+        openModalFunction()
     }
 
     useEffect(() => {
@@ -407,7 +427,12 @@ function LinhaPorVenda({ entrega, alteraEntregaPendente, exibeFinalizadas, delet
     if (exibeFinalizadas == false && entregaFinalizada) return null
 
     return (
-        <div className={style.linha_por_venda} style={alturaLinha} entrega-finalizada={(entregaFinalizada) ? "true" : "false"} ref={linhaRef}>
+        <div
+            className={style.linha_por_venda}
+            style={alturaLinha}
+            entrega-finalizada={(entregaFinalizada) ? "true" : "false"}
+            ref={linhaRef}
+        >
             <div className={style.container_nomes_colunas} onClick={handleClicaLinha}>
                 <span className={style.col_venda}>{entrega.idVenda}</span>
                 <span className={style.col_data}>{new Date(entrega.dataEmissao).toLocaleDateString()}</span>
