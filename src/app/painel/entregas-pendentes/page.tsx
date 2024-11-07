@@ -197,6 +197,8 @@ function EntregasPendentesPage() {
 
 function EntregaPendente({ entregaFutura, alteraEntregaPendente, deletaEntregaPendente }: IEntregaFuturaProps) {
 
+    const [abaAtiva, setAbaAtiva] = useState<"DetalhesEntrega" | "ListaRomaneios">("DetalhesEntrega")
+    
     const [popupMenuAberto, setPopupMenuAberto] = useState(false)
 
     const [romaneioEntrega, setRomaneioEntrega] = useState<ITempRomaneioEntrega>({
@@ -296,47 +298,64 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente, deletaEntregaPe
 
     return (
         // <tr>
-        <div className={style.conteiner_tabela}>
+        <>
+            <div className={style.container_abas_entrega_futura}>
+                <span onClick={() => {setAbaAtiva("DetalhesEntrega")}}>Itens restantes</span>
+                <span onClick={() => {setAbaAtiva("ListaRomaneios")}}>Lista de entregas ({entregaFutura.romaneiosEntrega.length})</span>
+            </div>
 
-            <div className={style.conteiner_dropdown}>
-
-                <button className={style.botao_dropdown} onClick={handleCliqueBotaoMenuPopup}>
-                    <p>Mais opções</p>
-                    <img src={dropdownIcon.src} alt="" />
-                </button>
-
-                {
-                    popupMenuAberto && (
-                        <div id="myDropdown" className={style.conteudo_dropdown}>
-                            <p onClick={handleCliqueBotaoCancelarEntregaPendente}>Cancelar entrega</p>
-                            <p onClick={handleCliqueBotaoMarcaEntregaConcluida}>Marcar entrega concluída</p>
-                        </div>
+            {
+                (abaAtiva == "ListaRomaneios")
+                    ? (
+                        <ListaRomaneios entregaPendente={entregaFutura} />
                     )
-                }
-            </div>
+                    : (
 
-            <div className={style.detalhes_entrega}>
-                <p><b>Nome do cliente:</b> <span>{entregaFutura.nomeCliente}</span> <button onClick={handleClickAlteraNome}>Alterar nome do cliente</button></p>
-                <p><b>Endereço de entrega:</b> <span>{entregaFutura.endereco}</span> <button onClick={handleClickAlteraEnderecoEntrega}>Alterar endereço de entrega</button></p>
-            </div>
-            <table className={style.tabela_produtos_pendentes}>
-                <thead>
-                    <tr>
-                        <th className={style.col_id_produto}>Cód. produto</th>
-                        <th>Restante a entregar</th>
-                        <th>Descrição</th>
-                        <th>Romaneio de entrega</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        entregaFutura.itensRestantes.map((dadosItem, itemIndex) => {
-                            return <ItemRestante key={itemIndex} dadosItem={dadosItem} romaneio={romaneioEntrega} setRomaneio={setRomaneioEntrega} adicionaAoRomaneioTemporario={adicionaAoRomaneioTemporario} />
-                        })
-                    }
-                </tbody>
-            </table>
-        </div>
+                        <div className={style.conteiner_tabela}>
+
+                            <div className={style.conteiner_dropdown}>
+
+                                <button className={style.botao_dropdown} onClick={handleCliqueBotaoMenuPopup}>
+                                    <p>Mais opções</p>
+                                    <img src={dropdownIcon.src} alt="" />
+                                </button>
+
+                                {
+                                    popupMenuAberto && (
+                                        <div id="myDropdown" className={style.conteudo_dropdown}>
+                                            <p onClick={handleCliqueBotaoCancelarEntregaPendente}>Cancelar entrega</p>
+                                            <p onClick={handleCliqueBotaoMarcaEntregaConcluida}>Marcar entrega concluída</p>
+                                        </div>
+                                    )
+                                }
+                            </div>
+
+                            <div className={style.detalhes_entrega}>
+                                <p><b>Nome do cliente:</b> <span>{entregaFutura.nomeCliente}</span> <button onClick={handleClickAlteraNome}>Alterar nome do cliente</button></p>
+                                <p><b>Endereço de entrega:</b> <span>{entregaFutura.endereco}</span> <button onClick={handleClickAlteraEnderecoEntrega}>Alterar endereço de entrega</button></p>
+                            </div>
+                            <table className={style.tabela_produtos_pendentes}>
+                                <thead>
+                                    <tr>
+                                        <th className={style.col_id_produto}>Cód. produto</th>
+                                        <th>Restante a entregar</th>
+                                        <th>Descrição</th>
+                                        <th>Romaneio de entrega</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        entregaFutura.itensRestantes.map((dadosItem, itemIndex) => {
+                                            return <ItemRestante key={itemIndex} dadosItem={dadosItem} romaneio={romaneioEntrega} setRomaneio={setRomaneioEntrega} adicionaAoRomaneioTemporario={adicionaAoRomaneioTemporario} />
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                    )
+            }
+        </>
         // </tr>
     )
 }
@@ -393,6 +412,59 @@ function ItemRestante({ dadosItem, romaneio, setRomaneio, adicionaAoRomaneioTemp
                 }
             </td>
         </tr>
+    )
+}
+
+interface listaRomaneioProps {
+    entregaPendente: IEntregaPendente
+}
+
+function ListaRomaneios({entregaPendente}: listaRomaneioProps) {
+
+    const romaneios = entregaPendente.romaneiosEntrega
+
+    return (
+        <div>
+            {
+                romaneios.map((romaneio, index) => {
+
+                    const itensEntrega = romaneio.itensEntrega
+
+                    return (
+                        <div key={romaneio.id}>
+                            <div>
+                                <p>
+                                    <span>{index + 1}ª entrega em {new Date(romaneio.dataEntrega).toLocaleString()}:</span>
+                                </p>
+                            </div>
+
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Quantidade</th>
+                                        <th>Produto</th>
+                                        <th>Observações do produto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        itensEntrega.map(produto => {
+                                            return (
+                                                <tr>
+                                                    <td>{produto.qtde} {produto.unidade}</td>
+                                                    <td>{produto.descricao}</td>
+                                                    <td>{produto.observacoes}</td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    )
+                })
+            }
+        </div>
     )
 }
 

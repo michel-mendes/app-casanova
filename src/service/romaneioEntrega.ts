@@ -75,6 +75,9 @@ async function novoRomaneioEntrega(dadosRomaneio: IRomaneioEntrega) {
         // Remove da entrega pendente os produtos que constam no novo romaneio
         await atualizaProdutosDaEntrega(romaneioCadastrado, entregaPendente, "NOVO_ROMANEIO")
 
+        entregaPendente!.romaneiosEntrega = [...entregaPendente!.romaneiosEntrega, romaneioCadastrado]
+        await entregaPendente?.save()
+
         return romaneioCadastrado
     } catch (error: any) {
         throw new Error(`Falha ao criar novo romaneio: ${error.message}`)
@@ -86,13 +89,18 @@ async function deletaRomaneioEntrega(id: string) {
         await connectDatabaseMongoDB()
         
         const romaneioDeletado = await romaneioEntregaCRUD.deleteDocument(id)
-        const entregaPendente = await entregaPendenteCRUD.findDocumentById(String(romaneioDeletado.idEntregaPendente))
+        const entregaPendente = await buscaEntregaPendenteComListaDeRomaneios(romaneioDeletado)
 
         // Atualiza estoque no banco de dados local
         await voltaEstoqueFisicoProdutosEntregaFutura(romaneioDeletado, "CANCELAMENTO_ENTREGA")
 
         // Retorna para a entrega pendente os produtos que constam no romaneio cancelado
         await atualizaProdutosDaEntrega(romaneioDeletado, entregaPendente, "ROMANEIO_CANCELADO")
+
+        const listaRomaneiosAtualizada = entregaPendente!.romaneiosEntrega.filter(romaneio => romaneio.id !== romaneioDeletado.id)
+
+        entregaPendente!.romaneiosEntrega = [...listaRomaneiosAtualizada]
+        await entregaPendente!.save()
         
         return romaneioDeletado
     } catch (error: any) {
