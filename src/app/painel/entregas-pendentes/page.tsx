@@ -13,6 +13,7 @@ import { LoadingAnimation } from '../../components/LoadingAnimation'
 import { IEntregaPendente } from '@/database/models-mongoose/vendaEntregaFutura/IEntregaPendente'
 
 import dropdownIcon from "../../images/dropdown-svgrepo-com.svg"
+import { CiEdit } from "react-icons/ci";
 
 import style from "./page.module.css"
 import { Input } from '../../components/Input'
@@ -302,6 +303,23 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente, deletaEntregaPe
             <div className={style.container_abas_entrega_futura}>
                 <span onClick={() => {setAbaAtiva("DetalhesEntrega")}}>Itens restantes</span>
                 <span onClick={() => {setAbaAtiva("ListaRomaneios")}}>Lista de entregas ({entregaFutura.romaneiosEntrega.length})</span>
+
+                <div className={style.conteiner_dropdown}>
+
+                    <button className={style.botao_dropdown} onClick={handleCliqueBotaoMenuPopup}>
+                        <p>Mais opções</p>
+                        <img src={dropdownIcon.src} alt="" />
+                    </button>
+
+                    {
+                        popupMenuAberto && (
+                            <div id="myDropdown" className={style.conteudo_dropdown}>
+                                <p onClick={handleCliqueBotaoCancelarEntregaPendente}>Cancelar entrega</p>
+                                <p onClick={handleCliqueBotaoMarcaEntregaConcluida}>Marcar entrega concluída</p>
+                            </div>
+                        )
+                    }
+                </div>
             </div>
 
             {
@@ -313,26 +331,15 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente, deletaEntregaPe
 
                         <div className={style.conteiner_tabela}>
 
-                            <div className={style.conteiner_dropdown}>
-
-                                <button className={style.botao_dropdown} onClick={handleCliqueBotaoMenuPopup}>
-                                    <p>Mais opções</p>
-                                    <img src={dropdownIcon.src} alt="" />
-                                </button>
-
-                                {
-                                    popupMenuAberto && (
-                                        <div id="myDropdown" className={style.conteudo_dropdown}>
-                                            <p onClick={handleCliqueBotaoCancelarEntregaPendente}>Cancelar entrega</p>
-                                            <p onClick={handleCliqueBotaoMarcaEntregaConcluida}>Marcar entrega concluída</p>
-                                        </div>
-                                    )
-                                }
-                            </div>
-
                             <div className={style.detalhes_entrega}>
-                                <p><b>Nome do cliente:</b> <span>{entregaFutura.nomeCliente}</span> <button onClick={handleClickAlteraNome}>Alterar nome do cliente</button></p>
-                                <p><b>Endereço de entrega:</b> <span>{entregaFutura.endereco}</span> <button onClick={handleClickAlteraEnderecoEntrega}>Alterar endereço de entrega</button></p>
+                                <p>
+                                    <span>Nome do cliente:</span> <br />
+                                    <input type='text' readOnly value={entregaFutura.nomeCliente} /> <button title='Altera o nome do cliente' onClick={handleClickAlteraNome}><CiEdit size={"16px"} /></button>
+                                </p>
+                                <p>
+                                    <span>Endereço de entrega:</span> <br />
+                                    <input type='text' readOnly value={entregaFutura.endereco} /> <button title='Altera o endereço do cliente' onClick={handleClickAlteraEnderecoEntrega}><CiEdit size={"16px"} /></button>
+                                </p>
                             </div>
                             <table className={style.tabela_produtos_pendentes}>
                                 <thead>
@@ -424,23 +431,23 @@ function ListaRomaneios({entregaPendente}: listaRomaneioProps) {
     const romaneios = entregaPendente.romaneiosEntrega
 
     return (
-        <div>
+        <div className={style.corpo_aba_romaneios}>
             {
                 romaneios.map((romaneio, index) => {
 
                     const itensEntrega = romaneio.itensEntrega
 
                     return (
-                        <div key={romaneio.id}>
-                            <div>
+                        <div key={romaneio.id} className={style.romaneio_container}>
+                            <div className={style.romaneio_header}>
                                 <p>
-                                    <span>{index + 1}ª entrega em {new Date(romaneio.dataEntrega).toLocaleString()}:</span>
+                                    <span>{index + 1}ª entrega em {new Date(romaneio.dataEntrega).toLocaleString()}</span>
                                 </p>
                             </div>
 
                             <table>
                                 <thead>
-                                    <tr>
+                                    <tr className={style.itens_romaneio_nomes_colunas}>
                                         <th>Quantidade</th>
                                         <th>Produto</th>
                                         <th>Observações do produto</th>
@@ -450,10 +457,10 @@ function ListaRomaneios({entregaPendente}: listaRomaneioProps) {
                                     {
                                         itensEntrega.map(produto => {
                                             return (
-                                                <tr>
-                                                    <td>{produto.qtde} {produto.unidade}</td>
+                                                <tr className={style.itens_romaneio_dados}>
+                                                    <td className={style.coluna_qtde}>{produto.qtde} {produto.unidade}</td>
                                                     <td>{produto.descricao}</td>
-                                                    <td>{produto.observacoes}</td>
+                                                    <td className={style.coluna_obs}>{produto.observacoes}</td>
                                                 </tr>
                                             )
                                         })

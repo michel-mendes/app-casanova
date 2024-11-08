@@ -1,8 +1,9 @@
 import { Document, ObjectId } from "mongoose"
-import mongoose from "mongoose"
 
 export type TipoAtributosProdutoNuvem = {
     imagensProduto?: Array<string>;
+	m2Caixa?: number;
+	m2Pallet?: number;
 	idProduto?: number;
 	barras?: string;
 	descricao?: string;
@@ -96,6 +97,8 @@ export type TipoAtributosProdutoNuvem = {
 
 export interface IProdutoNuvem extends Document<TipoAtributosProdutoNuvem> {
 // export class Produto extends Model<AtributosProduto, AtributosNovoProduto> {
+	m2Caixa?: number;
+	m2Pallet?: number;
 	imagensProduto?: Array<string>;
 	idProduto: number;
 	barras: string;

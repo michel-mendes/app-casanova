@@ -137,7 +137,34 @@
 }
 
 .conteiner_tabela .detalhes_entrega {
-    padding: 10px;;
+    padding: 10px;
+}
+
+.conteiner_tabela .detalhes_entrega p {
+    display: flex;
+}
+
+.conteiner_tabela .detalhes_entrega span {
+    display: inline-block;
+    padding: 5px;
+    font-weight: bold;
+    width: 180px;
+}
+
+.conteiner_tabela .detalhes_entrega input {
+    width: 100%;
+    padding: 3px;
+    font: inherit;
+}
+
+.conteiner_tabela .detalhes_entrega button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2px;
+    border-radius: 8px;
+    border-width: 1px;
+    cursor: pointer;
 }
 
 .tabela_produtos_pendentes {
@@ -172,6 +199,7 @@
 .container_abas_entrega_futura {
     display: flex;
     justify-content: space-evenly;
+    padding: 10px;
 }
 .container_abas_entrega_futura span {
     padding: 10px;
@@ -182,6 +210,42 @@
 .container_abas_entrega_futura span:hover {
     cursor: pointer;
     font-weight: bold;
+}
+
+.corpo_aba_romaneios {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.romaneio_container {
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+
+.romaneio_container table {
+    border-collapse: collapse;
+}
+
+.romaneio_header {
+    padding: 5px;
+    background-color: #e0e0e0;
+}
+
+.itens_romaneio_nomes_colunas th {
+    padding: 5px;
+}
+
+.itens_romaneio_dados td {
+    /* padding: 2px; */
+    padding: 3px 5px;
+    border: 1px solid #c0c0c0;
+}
+
+.coluna_qtde,
+.coluna_obs {
+    text-align: center;
 }
 
 .conteiner_dropdown {
@@ -276,6 +340,12 @@
     background-color: #2359aa;
 }
 
+@media (max-width: 620px) {
+    .botao_dropdown p {
+        display: none;
+    }
+}
+
 @media (max-width: 480px) {
     .page_container {
         padding: 4px
@@ -287,9 +357,5 @@
 
     .col_id_produto {
         display: none !important;
-    }
-
-    .botao_dropdown p {
-        display: none;
     }
 }

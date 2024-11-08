@@ -5,6 +5,8 @@ import { IProdutoNuvem } from "./IProdutosNuvem"
 const produtoNuvem = new Schema(
     {
         imagensProduto: { type: Map, of: mongoose.Schema.Types.String },
+		m2Caixa: { type: Number },
+		m2Pallet: { type: Number },
 		idProduto: { type: Number },
 	    barras: { type: String },
 	    descricao: { type: String },

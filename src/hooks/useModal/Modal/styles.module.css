@@ -52,6 +52,17 @@
 
 @media screen and (max-width: 480px) {
     .modal_box {
-        width: 90%;
+        /* width: 90%; */
+        border-radius: 0;
+        max-height: inherit;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+
+    .modal_box > div {
+        padding: 20px 10px;
     }
 }
