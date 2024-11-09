@@ -457,7 +457,7 @@ function ListaRomaneios({entregaPendente}: listaRomaneioProps) {
                                     {
                                         itensEntrega.map(produto => {
                                             return (
-                                                <tr className={style.itens_romaneio_dados}>
+                                                <tr className={style.itens_romaneio_dados} key={produto.idItemVenda}>
                                                     <td className={style.coluna_qtde}>{produto.qtde} {produto.unidade}</td>
                                                     <td>{produto.descricao}</td>
                                                     <td className={style.coluna_obs}>{produto.observacoes}</td>

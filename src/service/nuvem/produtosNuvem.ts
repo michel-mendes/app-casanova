@@ -6,13 +6,13 @@ import { ProdutoNuvem } from "@/database/models-mongoose/produtosNuvem"
 
 import { connectDatabaseMongoDB } from "@/database/dbConnect-mongoose"
 import { GenericModelCRUD } from "@/database/classes/GenericModelCRUD"
-import { IProdutoNuvem, TipoAtributosProdutoNuvem } from "@/database/models-mongoose/produtosNuvem/IProdutosNuvem"
+import { IProdutoNuvem, AtributosProdutoNuvem } from "@/database/models-mongoose/produtosNuvem/IProdutosNuvem"
 import { AtributosProduto } from "@/database/models/produtos/Produto";
 
 const produtoNuvemCRUD = new GenericModelCRUD(ProdutoNuvem)
 
 export {
-    listaTodosProdutosNuvem, listaCompletaProdutosSomenteIdeDescricao, novoProdutoNuvem, sincronizaProdutosLocalComNuvem
+    listaTodosProdutosNuvem, listaCompletaProdutosSomenteIdeDescricao, novoProdutoNuvem, sincronizaProdutosLocalComNuvem, localizaProdutoPorCodigo
 }
 
 async function listaTodosProdutosNuvem() {
@@ -46,7 +46,21 @@ async function listaCompletaProdutosSomenteIdeDescricao() {
     }
 }
 
-async function novoProdutoNuvem(dadosProduto: TipoAtributosProdutoNuvem) {
+async function localizaProdutoPorCodigo(codProduto: number) {
+    try {
+        await connectDatabaseMongoDB()
+
+        const produtoLocalizado = await produtoNuvemCRUD.findOneDocument({idProduto: codProduto})
+
+        if (!produtoLocalizado) { throw new Error(`Produto não encontrado`) }
+
+        return produtoLocalizado!.toJSON() as IProdutoNuvem
+    } catch (error: any) {
+        throw new Error(`Falha ao loalizar produto por código: ${error.message}`)
+    }
+}
+
+async function novoProdutoNuvem(dadosProduto: AtributosProdutoNuvem) {
     try {
         await connectDatabaseMongoDB()
 

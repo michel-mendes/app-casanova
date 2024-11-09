@@ -21,6 +21,10 @@
     gap: 10px;
 }
 
+.tabela_produtos tbody .coluna_dados_produto .container_nome_produto b {
+    cursor: pointer;
+}
+
 .tabela_produtos tbody .coluna_dados_produto .container_nome_produto .botao_copiar_dados_etiqueta {
     margin: 0;
     padding: 2px;

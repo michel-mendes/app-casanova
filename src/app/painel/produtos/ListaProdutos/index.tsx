@@ -11,9 +11,11 @@ import { IProdutoPendente } from '@/app/interfaces'
 interface IListaProdutosProps {
     listaProdutos: Array<AtributosProduto>
     listaEntregasFuturas?: Array<IEntregaPendente>
+    setIdProdutoSelecionado: React.Dispatch<React.SetStateAction<number>>
+    openModal: () => void
 }
 
-function ListaProdutos({ listaProdutos, listaEntregasFuturas }: IListaProdutosProps) {
+function ListaProdutos({ listaProdutos, listaEntregasFuturas, setIdProdutoSelecionado, openModal }: IListaProdutosProps) {
 
     const [listaProdutosVendidos, setListaProdutosVendidos] = useState<Array<IProdutoPendente>>([])
 
@@ -105,9 +107,17 @@ function ListaProdutos({ listaProdutos, listaEntregasFuturas }: IListaProdutosPr
                                 <tr className={style.linha_produto} key={produto.id} possui-venda={(produtoVendido ? "true" : "false")}>
                                     <td className={style.coluna_dados_produto}>
                                         <div className={style.container_nome_produto}>
-                                            <Link href={`/painel/produtos/editar/${produto.id}`}>
+                                            {/* <Link href={`/painel/produtos/editar/${produto.id}`}>
                                                 <b>{produto.descricao}</b>
-                                            </Link>
+                                            </Link> */}
+
+                                            <span onClick={() => {
+                                                setIdProdutoSelecionado(produto.id)
+
+                                                openModal()
+                                            }}>
+                                                <b>{produto.descricao}</b>
+                                            </span>
                                             
                                             <span className={style.botao_copiar_dados_etiqueta} title='Copia dados do produto para gerar etiqueta'>
                                                 <IoPricetagsOutline size={"16px"} onClick={async () => {

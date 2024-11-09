@@ -1,6 +1,6 @@
 import { Document, ObjectId } from "mongoose"
 
-export type TipoAtributosProdutoNuvem = {
+export type AtributosProdutoNuvem = {
     imagensProduto?: Array<string>;
 	m2Caixa?: number;
 	m2Pallet?: number;
@@ -95,7 +95,7 @@ export type TipoAtributosProdutoNuvem = {
 
 // type AtributosNovoProduto = Optional<AtributosProduto, "id">
 
-export interface IProdutoNuvem extends Document<TipoAtributosProdutoNuvem> {
+export interface IProdutoNuvem extends Document<AtributosProdutoNuvem> {
 // export class Produto extends Model<AtributosProduto, AtributosNovoProduto> {
 	m2Caixa?: number;
 	m2Pallet?: number;

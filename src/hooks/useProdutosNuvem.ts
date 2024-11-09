@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { TipoAtributosProdutoNuvem } from "@/database/models-mongoose/produtosNuvem/IProdutosNuvem"
+import { AtributosProdutoNuvem } from "@/database/models-mongoose/produtosNuvem/IProdutosNuvem"
 
 interface IProdutoNuvemDescricao_ID  {
     idProduto: number,
@@ -7,7 +7,7 @@ interface IProdutoNuvemDescricao_ID  {
 }
 
 export function useProdutosNuvem() {
-    const [listaProdutosNuvem, setListaProdutosNuvem] = useState<Array<TipoAtributosProdutoNuvem>>([])
+    const [listaProdutosNuvem, setListaProdutosNuvem] = useState<Array<AtributosProdutoNuvem>>([])
     const [loadingProdutosNuvem, setLoadingProdutosNuvem] = useState<boolean>(false)
     const [aguardandoApi, setAguardandoApi] = useState(false)
 
@@ -27,7 +27,7 @@ export function useProdutosNuvem() {
             }
             // --------------------------------
 
-            const lista: Array<TipoAtributosProdutoNuvem> = await apiResponse.json()
+            const lista: Array<AtributosProdutoNuvem> = await apiResponse.json()
 
             setListaProdutosNuvem(lista)
         } finally {
@@ -56,8 +56,30 @@ export function useProdutosNuvem() {
             setLoadingProdutosNuvem(false)
         }
     }
+
+    async function localizaProdutoPorCodigo(codProdouto: number) {
+        try {
+            setLoadingProdutosNuvem(true)
     
-    async function criaNovoProdutoNuvem(dadosProdutoNuvem: TipoAtributosProdutoNuvem) {
+            const apiResponse = await fetch(`/api/nuvem/produtos/${codProdouto}`, {method: "GET"})
+            
+            // Erro ---------------------------
+            if (!apiResponse.ok) {
+                const erroApi = (await apiResponse.json() as any).error
+                
+                throw new Error(erroApi)
+            }
+            // --------------------------------
+    
+            const produtoLocalizado: AtributosProdutoNuvem = await apiResponse.json()
+    
+            return produtoLocalizado
+        } finally {
+            setLoadingProdutosNuvem(false)
+        }
+    }
+
+    async function criaNovoProdutoNuvem(dadosProdutoNuvem: AtributosProdutoNuvem) {
         
         try {
             setAguardandoApi(true)
@@ -73,7 +95,7 @@ export function useProdutosNuvem() {
             // --------------------------------
 
             
-            const novoProdutoNuvem: TipoAtributosProdutoNuvem = await apiResponse.json()
+            const novoProdutoNuvem: AtributosProdutoNuvem = await apiResponse.json()
 
             return novoProdutoNuvem
         } finally {
@@ -97,7 +119,7 @@ export function useProdutosNuvem() {
             }
             // --------------------------------
 
-            const produtoFilaDeletado: TipoAtributosProdutoNuvem = await apiResponse.json()
+            const produtoFilaDeletado: AtributosProdutoNuvem = await apiResponse.json()
 
             return produtoFilaDeletado
         } finally {
@@ -109,6 +131,7 @@ export function useProdutosNuvem() {
     return {
         listaProdutosNuvem,
         listaProdutosDescricaoId,
+        localizaProdutoPorCodigo,
         atualizaListaProdutosNuvem,
         atualizaListaDescricaoId,
         criaNovoProdutoNuvem,
