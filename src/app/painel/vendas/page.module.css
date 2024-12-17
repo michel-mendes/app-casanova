@@ -81,3 +81,110 @@
 .table_itens_venda {
     width: 100%;
 }
+
+
+
+
+/* Estilos gerais da tabela */
+.table_vendas {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 0.7rem; /* Fonte menor, mas legível */
+}
+
+.table_vendas thead {
+    background-color: #e0e0e0; /* Cinza claro neutro */
+    color: #333; /* Texto escuro */
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.table_vendas th, .table_vendas td {
+    /* padding: 2px 6px; */
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table_vendas tbody tr:nth-child(even) {
+    background-color: #f8f8f8; /* Alternância mais suave */
+}
+
+.table_vendas tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.table_vendas .row_venda {
+    border-left: 3px solid transparent;
+}
+
+.table_vendas .row_venda:hover {
+    border-left-color: #b0b0b0; /* Destaque lateral com tom neutro */
+}
+
+.table_vendas tfoot {
+    font-weight: bold;
+    background-color: #f5f5f5;
+}
+
+/* Botão neutro */
+.col_btn_add_entrega button {
+    background-color: #d9d9d9; /* Cinza suave */
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.8rem; /* Botão menor */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.col_btn_add_entrega button:hover {
+    background-color: #c4c4c4; /* Escurecer no hover */
+}
+
+/* Tabela Detalhamento */
+.table_itens_venda {
+    width: 100%;
+    /* margin-top: 8px; */
+    border-collapse: collapse;
+    font-size: 0.8rem; /* Fonte ainda menor */
+}
+
+.table_itens_venda th, .table_itens_venda td {
+    /* padding: 6px; */
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.table_itens_venda thead {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.div_itens_venda {
+    background-color: #fdfdfd;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    /* margin-top: 6px; */
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.div_itens_venda h3 {
+    /* margin-bottom: 6px; */
+    font-size: 1rem; /* Menor */
+    color: #444;
+}
+
+.div_itens_venda span {
+    display: block;
+    /* margin-bottom: 2px; */
+    font-size: 0.85rem; /* Ajuste para caber mais texto */
+    color: #555;
+}
