@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
 import Link from 'next/link'
 import addIcon from "../../images/add-circle-svgrepo-com.svg"
@@ -31,37 +31,67 @@ function TopNavigation() {
         isMenuClosed,
         romaneioCount
     } = useScripts()
-    
+
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false) // Estado do menu suspenso
+    const dropdownRef = useRef<HTMLDivElement>(null) // Referência ao menu suspenso
+
+    const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen)
+
+    // fecha o menu ao clicar fora do dropdown "Gestão"
+    const handleClickOutside = (event: MouseEvent) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+            setIsDropdownOpen(false)
+        }
+    }
+
+    // Adicionar e remover o event listener que executa o "handleClickOutside"
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => document.removeEventListener("mousedown", handleClickOutside)
+    }, [])
+
     return (
         <>
-            
+
             {/* Barra de navegação Desktop */}
             <div className={style.navbar}>
 
                 <img className={style.logo} src={novaLogo.src} alt="Logo" />
 
                 <div className={style.adicionar_entrega_container}>
-                    <Input placeholder={{ insideInput: true, text: "Adicionar entrega futura" }} inputType='text' fieldName='inputNumeroVenda' onPressReturnKey={() => {handleCliqueBotaoAdicionarEntrega("inputNumeroVenda")}}/>
+                    <Input placeholder={{ insideInput: true, text: "Adicionar entrega futura" }} inputType='text' fieldName='inputNumeroVenda' onPressReturnKey={() => { handleCliqueBotaoAdicionarEntrega("inputNumeroVenda") }} />
                     {
                         (aguardandoApiVendas || aguardandoApiEntregaFutura || aguardandoApiRomaneio)
                             ? <LoadingAnimation />
-                            : <img className={style.icone_dicionar} src={addIcon.src} alt="Adicionar entrega futura" onClick={() => {handleCliqueBotaoAdicionarEntrega("inputNumeroVenda")}} />
+                            : <img className={style.icone_dicionar} src={addIcon.src} alt="Adicionar entrega futura" onClick={() => { handleCliqueBotaoAdicionarEntrega("inputNumeroVenda") }} />
                     }
                 </div>
 
                 <div className={style.adicionar_entrega_container}>
-                    <Input placeholder={{ insideInput: true, text: "Gerar romaneio de entrega única" }} inputType='text' fieldName='inputNumeroVenda2' onPressReturnKey={() => {handleCliqueBotaoGeraRomaneioEntrega("inputNumeroVenda2")}}/>
+                    <Input placeholder={{ insideInput: true, text: "Gerar romaneio de entrega única" }} inputType='text' fieldName='inputNumeroVenda2' onPressReturnKey={() => { handleCliqueBotaoGeraRomaneioEntrega("inputNumeroVenda2") }} />
                     {
                         (aguardandoApiVendas || aguardandoApiEntregaFutura || aguardandoApiRomaneio)
                             ? <LoadingAnimation />
-                            : <img className={style.icone_dicionar} src={addIcon.src} alt="Imprimir romaneio" onClick={() => {handleCliqueBotaoGeraRomaneioEntrega("inputNumeroVenda2")}}/>
+                            : <img className={style.icone_dicionar} src={addIcon.src} alt="Imprimir romaneio" onClick={() => { handleCliqueBotaoGeraRomaneioEntrega("inputNumeroVenda2") }} />
                     }
                 </div>
 
                 <Link href={"/painel/entregas-pendentes"}>Entregas pendentes</Link>
                 <Link href={"/painel/consulta-romaneios"}>Romaneios</Link>
-                <Link href={"/painel/produtos"}>Produtos</Link>
-                {/* <Link href={"/painel/vendas"}>Vendas</Link> */}
+                
+                {/* Item com novo menu suspenso */}
+                <div className={style.dropdown_container} ref={dropdownRef}>
+                    <div className={style.dropdown_toggle} onClick={toggleDropdown}>
+                        <span>Gestão</span>
+                    </div>
+                    {isDropdownOpen && (
+                        <div className={style.dropdown_menu}>
+                            <Link href="/painel/produtos" className={style.dropdown_item} onClick={() => setIsDropdownOpen(false)}>Produtos</Link>
+                            <Link href="/painel/vendas" className={style.dropdown_item} onClick={() => setIsDropdownOpen(false)}>Vendas</Link>
+                            <Link href="/painel/contas-receber" className={style.dropdown_item} onClick={() => setIsDropdownOpen(false)}>Contas a Receber</Link>
+                        </div>
+                    )}
+                </div>
 
                 <Link href={"/painel/romaneio"}>
                     <div className={style.icone_caminhao_container}>
@@ -95,7 +125,7 @@ function TopNavigation() {
 
                 <div className={style.menu_overlay} is-closed={String(isMenuClosed)} id='menuOverlay' onClick={handleCliqueOverlayMenu}>
                     <div className={style.menu_container} id='menuContainer'>
-                        
+
                         <div className={style.mobile_menu_input_container}>
                             <p>Adicionar venda à entrega pendente</p>
                             <div className={style.adicionar_entrega_container}>
@@ -103,7 +133,7 @@ function TopNavigation() {
                                 {
                                     (aguardandoApiVendas || aguardandoApiEntregaFutura)
                                         ? <LoadingAnimation />
-                                        : <img className={style.icone_dicionar} src={addIcon.src} alt="Adicionar entrega futura" onClick={() => {handleCliqueBotaoAdicionarEntrega("inputNumeroVenda_mobile")}} />
+                                        : <img className={style.icone_dicionar} src={addIcon.src} alt="Adicionar entrega futura" onClick={() => { handleCliqueBotaoAdicionarEntrega("inputNumeroVenda_mobile") }} />
                                 }
                             </div>
                         </div>
@@ -115,7 +145,7 @@ function TopNavigation() {
                                 {
                                     (aguardandoApiVendas || aguardandoApiRomaneio)
                                         ? <LoadingAnimation />
-                                        : <img className={style.icone_dicionar} src={addIcon.src} alt="Imprimir romaneio" onClick={() => {handleCliqueBotaoGeraRomaneioEntrega("inputNumeroVenda2_mobile")}} />
+                                        : <img className={style.icone_dicionar} src={addIcon.src} alt="Imprimir romaneio" onClick={() => { handleCliqueBotaoGeraRomaneioEntrega("inputNumeroVenda2_mobile") }} />
                                 }
                             </div>
                         </div>

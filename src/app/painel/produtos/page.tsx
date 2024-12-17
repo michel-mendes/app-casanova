@@ -18,7 +18,7 @@ function ProdutosPage() {
 
     const modalEditarProduto = useModal()
 
-    const { listaProdutos, atualizaListaProdutos } = useProdutos()
+    const { listaProdutos, atualizaListaProdutos, carregandoProdutos } = useProdutos()
     const { listaEntregasFuturas, atualizaListaDeEntregasFuturas, aguardandoApiEntregaFutura } = useEntregasFuturas()
 
     const [idProdutoSelecionado, setIdProdutoSelecionado] = useState(0)
@@ -45,6 +45,7 @@ function ProdutosPage() {
 
             <ListaProdutos
                 listaProdutos={listaProdutos}
+                carregandoProdutos={carregandoProdutos}
                 listaEntregasFuturas={listaEntregasFuturas}
                 setIdProdutoSelecionado={setIdProdutoSelecionado}
                 openModal={modalEditarProduto.openModal}    

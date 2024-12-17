@@ -89,7 +89,9 @@
     .coluna_vista,
     .coluna_prazo,
     .coluna_estoque,
-    .coluna_status {
+    .coluna_status,
+    .coluna_estoque_vendido,
+    .coluna_estoque_disponivel {
         display: none;
     }
 

@@ -2,11 +2,11 @@ import { AtributosProduto } from "@/database/models/produtos/Produto";
 import { produtos } from "@/database/models";
 import { itensVenda } from "@/database/models";
 import { Op, fn, where, col } from "sequelize";
+import { Where } from "sequelize/lib/utils";
 import fs from "fs"
 
 import { FilaAtualizacaoProdutos } from "@/database/models-mongoose/filaAtualizacaoProdutos";
 import { GenericModelCRUD } from "@/database/classes/GenericModelCRUD";
-import { Console } from "console";
 import { IFilaAtualizacaoProdutos } from "@/database/models-mongoose/filaAtualizacaoProdutos/IFilaAtualizacaoProdutos";
 
 const filaAtualizacaoProdutos = new GenericModelCRUD(FilaAtualizacaoProdutos)
@@ -21,6 +21,21 @@ export {
     aplicaAlteracoesPendentesNuvem
 }
 
+function geraListaTermosPesquisa(termoPesquisa?: string): Array<Where> {
+    if (termoPesquisa) {
+        const listaPalavras = termoPesquisa.split(" ")
+        const listaCondicoesPalavras: Array<any> = []
+
+        for (const texto of listaPalavras) (
+            listaCondicoesPalavras.push( where( fn("upper", col("descricao")), Op.like, fn("upper", `%${texto}%`) ) )
+        )
+
+        return [...listaCondicoesPalavras]
+    } else {
+        return []
+    }
+}
+
 async function listaProdutos(termoPesquisa?: string) {
 
     try {
@@ -33,7 +48,10 @@ async function listaProdutos(termoPesquisa?: string) {
         const listaProdutos = await produtos.findAll({
             where: {
                 [Op.or]: [
-                    where( fn("upper", col("descricao")), Op.like, fn("upper", `%${termoPesquisa}%`) ),
+                    // where( fn("upper", col("descricao")), Op.like, fn("upper", `%${termoPesquisa}%`) ),
+                    {
+                        [Op.and]: geraListaTermosPesquisa(termoPesquisa)
+                    },
                     where( fn("upper", col("referencia")), Op.like, fn("upper", `%${termoPesquisa}%`) ),
                     where( fn("upper", col("obs")), Op.like, fn("upper", `%${termoPesquisa}%`) ),
                     where( fn("upper", col("barras")), Op.like, fn("upper", `%${termoPesquisa}%`) ),

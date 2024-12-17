@@ -70,17 +70,62 @@
     border-bottom: 1px solid silver;
 }
 
+.container_nome_endereco {
+    width: 100%;
+}
+
 .texto_nome_cliente,
 .texto_data_entrega {
     font-weight: bold;
     font-size: 1.2em;
 }
 
+.texto_data_entrega {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.container_endereco {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.input_edita_endereco_entgega {
+    width: 100%;
+    outline: none;
+    font: inherit;
+    padding: 5px;
+}
+
 .romaneio_footer {
     padding: 20px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    gap: 15px;
     border-top: 1px solid silver;
+}
+
+.romaneio_footer label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.romaneio_footer label p {
+    width: 130px;
+}
+
+.romaneio_footer label input {
+    padding: 5px;
+    outline: none;
+    font: inherit;
+    width: 100%;
 }
 
 @media screen and (max-width: 500px) {

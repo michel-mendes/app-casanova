@@ -42,7 +42,11 @@ function EntregasPendentesPage() {
     useEffect(() => {
         const listaFiltradaClientes = listaEntregasFuturas.filter(entrega => {
 
-            if ( entrega.nomeCliente.toUpperCase().includes(filtroCliente.toUpperCase()) ) return entrega
+            if ( !isNaN(Number(filtroCliente)) && entrega.idVenda == Number(filtroCliente) ) {
+                return entrega
+            } else if ( entrega.nomeCliente.toUpperCase().includes(filtroCliente.toUpperCase()) ) {
+                return entrega
+            }
 
         })
 
@@ -112,7 +116,7 @@ function EntregasPendentesPage() {
                             <span>Produto</span>
                         </label>
 
-                        <Input inputType='text' fieldName='filtroCli' placeholder={{insideInput: true, text: "Filtre por cliente"}} onChange={(value) => { setFiltroCliente(String(value)) }} />
+                        <Input inputType='text' fieldName='filtroCli' placeholder={{insideInput: true, text: "Filtre nº venda ou cliente"}} onChange={(value) => { setFiltroCliente(String(value)) }} />
                         <Input inputType='text' fieldName='filtroProd' placeholder={{insideInput: true, text: "Filtre por produto"}} onChange={(value) => { setFiltroProduto(String(value)) }} />
                         <br />
                     </div>
