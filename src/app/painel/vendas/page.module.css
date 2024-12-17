@@ -1,5 +1,4 @@
 .div {
-    border: 3px red solid;
     font-size: .7rem;
     overflow-y: auto;
     height: 100%;
@@ -10,8 +9,14 @@
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: left;
+    justify-content: center;
+    gap: 10px;
     padding: 10px;
+    border: 1px solid black;
+}
+
+.filter_container > div {
+    flex: 3 auto auto;
 }
 
 .table_vendas {

@@ -1,6 +1,11 @@
 "use client"
 
 import React, { useRef, useState, useEffect } from 'react'
+
+import { useModal } from '@/hooks/useModal'
+
+import { FormVenda } from '@/app/components/FormVenda'
+
 import { useVendas } from '@/hooks/useVendas'
 import { useEntregasFuturas } from '@/hooks/useVendaEntregaFutura'
 import { IVenda } from '../../interfaces'
@@ -14,8 +19,13 @@ import style from "./page.module.css"
 import { AtributosVendaNuvem } from '@/database/models-mongoose/venda/IVendaNuvem'
 
 function VendasPage() {
+
+    const modalVenda = useModal()
+    const [dadosVendaModal, setDadosVendaModal] = useState<IVenda>()
+
     const [startDate, setStartDate] = useState(new Date(Date.now()).toJSON().slice(0, 10))
     const [endDate, setEndDate] = useState(new Date(Date.now()).toJSON().slice(0, 10))
+    const [search, setSearch] = useState("")
 
     const { listaVendas, atualizaLista, alteraVenda, exportaVendaParaNuvem, loadingVendas } = useVendas()
     const { criaNovaEntregaFutura } = useEntregasFuturas();
@@ -54,6 +64,9 @@ function VendasPage() {
     }
 
     function handleClickNovaEntregaFutura(idVenda: number) {
+        alert("Falta implementação")
+        return
+        
         const dadosVenda = listaVendas.find(venda => venda.id == idVenda)
         let quantidadeTotalProdutos = 0
 
@@ -103,9 +116,9 @@ function VendasPage() {
             <div className={style.filter_container}>
                 <Input label='Data inicial' fieldName='dataInicial' inputType='date' placeholder={{insideInput: false, text: 'Período de vencimento'}} onChange={(e) => { setStartDate(e as string) }} value={startDate} />
                 <Input label='Data final' fieldName='dataFinal' inputType='date' placeholder={{insideInput: false, text: 'Período de vencimento'}} onChange={(e) => { setEndDate(e as string) }} value={endDate} />
-                <Input label='Pesquisa por' fieldName='texto' inputType='text' placeholder={{insideInput: false, text: 'Termo para pesquisa'}} />
+                <Input label='Pesquisa por' fieldName='texto' inputType='text' placeholder={{insideInput: false, text: 'Termo para pesquisa'}} value={search} onChange={(value) => {setSearch(String(value))}} />
 
-                <button onClick={() => { atualizaLista(startDate, endDate) }}>Listar</button>
+                <button onClick={() => { atualizaLista(startDate, endDate, search) }}>Listar</button>
             </div>
 
             {
@@ -118,7 +131,6 @@ function VendasPage() {
                                 <th>Data</th>
                                 <th>Cliente</th>
                                 <th>Valor</th>
-                                <th>Margem</th>
                                 <th>Entrega futura?</th>
                             </tr>
                         </thead>
@@ -128,23 +140,24 @@ function VendasPage() {
                                 listaVendas.length > 0 && listaVendas.map((venda, vendaIndex) => {
                                     const dataVenda = new Date(venda.dataEmissao!).toLocaleDateString()
                                     const valorVenda = Number(venda.vlrLiquido).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })
-                                    const margem = Number(venda.margemLucro).toFixed() + "%"
 
                                     return (
                                         <>
-                                            <tr className={style.row_venda} key={`${venda.id}${vendaIndex}`}>
-                                                <td className={`${style.column_detail_venda} ${style.col_n_venda}`} onClick={() => { toggleExpandVenda(vendaIndex) }}>{venda.id}</td>
-                                                <td className={`${style.column_detail_venda} ${style.col_data}`} onClick={() => { toggleExpandVenda(vendaIndex) }}>{dataVenda}</td>
-                                                <td className={`${style.column_detail_venda}`} onClick={() => { toggleExpandVenda(vendaIndex) }}>{venda.nome}</td>
-                                                <td className={`${style.column_detail_venda} ${style.col_valor}`} onClick={() => { toggleExpandVenda(vendaIndex) }}>{valorVenda}</td>
-                                                <td className={`${style.column_detail_venda} ${style.col_margem}`} onClick={() => { toggleExpandVenda(vendaIndex) }}>{margem}</td>
+                                            <tr className={style.row_venda} key={`${venda.id}${vendaIndex}`} onClick={() => {
+                                                setDadosVendaModal(venda)
+                                                modalVenda.openModal()
+                                                }}>
+                                                <td className={`${style.column_detail_venda} ${style.col_n_venda}`}>{venda.id}</td>
+                                                <td className={`${style.column_detail_venda} ${style.col_data}`}>{dataVenda}</td>
+                                                <td className={`${style.column_detail_venda}`}>{venda.nome}</td>
+                                                <td className={`${style.column_detail_venda} ${style.col_valor}`}>{valorVenda}</td>
                                                 <td className={style.col_btn_add_entrega}>
                                                     {
                                                         (venda.entregaFutura == 1)
                                                             ? <span>--</span>
                                                             : <button onClick={() => { handleClickNovaEntregaFutura(venda.id!) }}>Cadastrar entrega futura</button>
                                                     }
-                                                    <button>
+                                                    {/* <button>
                                                         <span onClick={async () => {
                                                             try {
                                                                 const novaVendaNuvem = await exportaVendaParaNuvem({...venda as AtributosVendaNuvem, idVenda: venda.id})
@@ -155,7 +168,7 @@ function VendasPage() {
                                                                 alert(`Erro ao exportar venda: ${error.message}`)
                                                             }
                                                         }}>Expotar para Nuvem</span>
-                                                    </button>
+                                                    </button> */}
                                                 </td>
                                             </tr>
 
@@ -235,6 +248,10 @@ function VendasPage() {
                         </tfoot>
                     </table>
             }
+
+            <modalVenda.ModalComponent modalTitle='Consulta venda' modalButtons={{cancelButton: {onClick: () => {modalVenda.closeModal()}, customCaption: "Fechar"}}}>
+                <FormVenda venda={dadosVendaModal!} />
+            </modalVenda.ModalComponent>
         </div>
     )
 }

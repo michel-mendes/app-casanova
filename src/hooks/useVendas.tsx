@@ -8,12 +8,12 @@ export function useVendas() {
     const [loadingVendas, setLoadingVendas] = useState<boolean>(false)
     const [aguardandoApi, setAguardandoApi] = useState(false)
 
-    async function atualizaLista(startDate: string, endDate: string) {
+    async function atualizaLista(startDate: string, endDate: string, search: string) {
 
         try {
             setLoadingVendas(true)
 
-            const novaLista: Array<IVenda> = await (await fetch(`/api/vendas?start=${startDate}&end=${endDate}`)).json()
+            const novaLista: Array<IVenda> = await (await fetch(`/api/vendas?start=${startDate}&end=${endDate}&search=${search}`)).json()
 
             setListaVendas(novaLista)
         } catch (error) {

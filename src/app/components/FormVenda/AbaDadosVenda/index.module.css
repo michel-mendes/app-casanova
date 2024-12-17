@@ -1,0 +1,29 @@
+.container_form input {
+    font: inherit;
+}
+
+.secao_dados_venda {
+    /* border: 1px solid black; */
+    display: flex;
+    flex-direction: column;
+}
+
+.header_secao {
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 120%;
+}
+
+.secao_dados_venda div:has(label) {
+    /* background-color: red; */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.secao_dados_venda label {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}

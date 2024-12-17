@@ -1,39 +1,64 @@
+import { Op, fn, where, col } from "sequelize";
+import { Where } from "sequelize/lib/utils";
+
 import { vendas } from "@/database/models"
 import { IVenda } from "@/app/interfaces"
 import { ItemVenda } from "@/database/models/itensVenda/ItemVenda"
 import { buscaVendaNuvem, novaVendaNuvem } from "./nuvem/vendas"
-import { Op } from "sequelize"
 import moment from "moment"
 import { AtributosVendaNuvem } from "@/database/models-mongoose/venda/IVendaNuvem"
 
-export async function listarVendas(startDate: string, endDate: string) {
+function geraListaTermosPesquisa(termoPesquisa?: string): Array<Where> {
+    if (termoPesquisa) {
+        const listaPalavras = termoPesquisa.split(" ")
+        const listaCondicoesPalavras: Array<any> = []
+
+        for (const texto of listaPalavras) (
+            listaCondicoesPalavras.push( where( fn("upper", col("nome")), Op.like, fn("upper", `%${texto}%`) ) )
+        )
+
+        return [...listaCondicoesPalavras]
+    } else {
+        return []
+    }
+}
+
+export async function listarVendas(startDate: string, endDate: string, searchTerm: string) {
     const start = moment(startDate).utc(true).startOf("day")
     const end = moment(endDate).utc(true).endOf("day")
 
     const listaVendas = await vendas.findAll({
         where: {
+            [Op.and]: [geraListaTermosPesquisa(searchTerm)],
             dataEmissao: {
                 [Op.gte]: start,
                 [Op.lte]: end
             },
             cancelado: 0
         },
-        include: {
-            model: ItemVenda,
-            attributes: [
-                "id",
-                "idVenda",
-                "idProduto",
-                "qtde",
-                "unidade",
-                "vlrUnitario",
-                "vlrTotal",
-                "descricao",
-                "vlrCustoDia",
-                "margemLucro"
-            ],
-            as: "itensVenda"
-        },
+        // where: {
+        //     dataEmissao: {
+        //         [Op.gte]: start,
+        //         [Op.lte]: end
+        //     },
+        //     cancelado: 0
+        // },
+        // include: {
+        //     model: ItemVenda,
+        //     attributes: [
+        //         "id",
+        //         "idVenda",
+        //         "idProduto",
+        //         "qtde",
+        //         "unidade",
+        //         "vlrUnitario",
+        //         "vlrTotal",
+        //         "descricao",
+        //         "vlrCustoDia",
+        //         "margemLucro"
+        //     ],
+        //     as: "itensVenda"
+        // },
         order: [["dataEmissao", "ASC"]]
     })
 

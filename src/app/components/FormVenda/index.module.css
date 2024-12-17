@@ -1,0 +1,10 @@
+.container_venda {
+    max-width: 950px;
+    min-height: 355px;
+}
+
+@media (min-width: 1000px) {
+    .container_venda {
+        min-width: 950px;
+    }
+}

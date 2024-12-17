@@ -7,11 +7,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         switch (method) {
             case "GET": {
-                const {start, end} = query
+                const {start, end, search} = query
 
                 if (!start || !end) throw("Faltando parâmetros 'start' ou 'end'")
 
-                const listaVendas = await listarVendas(String(start), String(end))
+                const listaVendas = await listarVendas(String(start), String(end), (search) ? String(search) : "")
 
                 res.status(200).send(listaVendas)
                 break;
