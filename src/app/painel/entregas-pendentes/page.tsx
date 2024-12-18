@@ -73,7 +73,7 @@ function EntregasPendentesPage() {
     }, [filtroCliente, filtroProduto, listaEntregasFuturas])
     
     useEffect(() => {
-        atualizaListaDeEntregasFuturas()
+        atualizaListaDeEntregasFuturas("somente-finalizadas")
     }, [])
 
     return (

@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { IEntregaPendente } from "@/database/models-mongoose/vendaEntregaFutura/IEntregaPendente";
 
+type FiltroStatusEntrega = "todas-entregas" | "somente-finalizadas" | "somente-nao-finalizadas"
+
 export function useEntregasFuturas() {
     const [listaEntregasFuturas, setListaEntregasFuturas] = useState<Array<IEntregaPendente>>([])
     const [loadingEntregasFuturas, setLoadingEntregasFuturas] = useState(false)
     const [aguardandoApi, setAguardandoApi] = useState(false)
 
-    async function atualizaListaDeEntregasFuturas() {
+    async function atualizaListaDeEntregasFuturas(statusEntrega: FiltroStatusEntrega) {
         
         try {
             setLoadingEntregasFuturas(true)
             
-            const novaLista: Array<IEntregaPendente> = await (await fetch(`/api/vendas-entrega-futura`)).json()
+            const novaLista: Array<IEntregaPendente> = await (await fetch(`/api/vendas-entrega-futura?statusEntrega=${statusEntrega}`)).json()
 
             setListaEntregasFuturas(novaLista)
         } finally {

@@ -7,7 +7,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         switch (method) {
             case "GET": {
-                const listaVendasEntregaFutura = await getAllVendasEntregaFutura()
+                const { statusEntrega } = query
+                const listaVendasEntregaFutura = await getAllVendasEntregaFutura( <any>statusEntrega )
 
                 res.status(200).send(listaVendasEntregaFutura)
                 break;

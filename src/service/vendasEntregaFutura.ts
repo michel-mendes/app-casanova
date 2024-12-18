@@ -1,3 +1,4 @@
+import { FilterQuery } from "mongoose"
 import { connectDatabaseMongoDB } from "@/database/dbConnect-mongoose"
 import { EntregaPendente } from "@/database/models-mongoose/vendaEntregaFutura"
 import { RomaneioEntrega } from "@/database/models-mongoose/romaneioEntrega"
@@ -12,6 +13,8 @@ import { produtos } from "@/database/models"
 const vendaEntregaFuturaCRUD = new GenericModelCRUD(EntregaPendente)
 const romaneiosEntregaCRUD = new GenericModelCRUD(RomaneioEntrega)
 
+type FiltroStatusEntrega = "todas-entregas" | "somente-finalizadas" | "somente-nao-finalizadas"
+
 export {
     getAllVendasEntregaFutura,
     createNewVendasEntregaFutura,
@@ -19,11 +22,28 @@ export {
     deletaEntregaPendente
 }
 
-async function getAllVendasEntregaFutura() {
+async function getAllVendasEntregaFutura(statusEntrega: FiltroStatusEntrega) {
     try {
         connectDatabaseMongoDB()
 
-        const listaVendasEF = await vendaEntregaFuturaCRUD.findDocuments()
+        let filtroStatus: FilterQuery<IEntregaPendente>
+
+        switch (statusEntrega) {
+            case "todas-entregas": {
+                filtroStatus = {}
+                break
+            }
+            case "somente-nao-finalizadas": {
+                filtroStatus = { finalizada: true }
+                break
+            }
+            case "somente-finalizadas": {
+                filtroStatus = { finalizada: false }
+                break
+            }
+        }
+
+        const listaVendasEF = await vendaEntregaFuturaCRUD.findDocuments(filtroStatus)
 
         return listaVendasEF
     } catch (error) {
