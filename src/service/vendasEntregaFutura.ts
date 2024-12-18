@@ -34,11 +34,11 @@ async function getAllVendasEntregaFutura(statusEntrega: FiltroStatusEntrega) {
                 break
             }
             case "somente-nao-finalizadas": {
-                filtroStatus = { finalizada: true }
+                filtroStatus = { finalizada: false }
                 break
             }
             case "somente-finalizadas": {
-                filtroStatus = { finalizada: false }
+                filtroStatus = { finalizada: true }
                 break
             }
         }

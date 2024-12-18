@@ -15,9 +15,12 @@ import { IEntregaPendente } from '@/database/models-mongoose/vendaEntregaFutura/
 import dropdownIcon from "../../images/dropdown-svgrepo-com.svg"
 import { CiEdit } from "react-icons/ci";
 
-import style from "./page.module.css"
 import { Input } from '../../components/Input'
+import { ComboBox } from '@/app/components/ComboBox'
+import { CustomButton } from '@/app/components/CustomButton'
 import { sortArrayOfObjects } from '../../helpers'
+
+import style from "./page.module.css"
 
 function EntregasPendentesPage() {
 
@@ -26,13 +29,13 @@ function EntregasPendentesPage() {
     const { listaEntregasFuturas, setListaEntregasFuturas, loadingEntregasFuturas, atualizaListaDeEntregasFuturas, alteraEntregaPendente, deletaEntregaPendente } = useEntregasFuturas()
 
     const [dadosEntregaModal, setDadosEntregaModal] = useState<IEntregaPendente>()
-    
+
     const [listaFiltrada, setListaFiltrada] = useState<Array<IEntregaPendente>>([])
     const [filtroCliente, setFiltroCliente] = useState("")
     const [filtroProduto, setFiltroProduto] = useState("")
-    
+
     const [tipoAgupamento, setTipoAgrupamento] = useState<"produto" | "venda">("venda")
-    const [mostraFializadas, setMostraFinalizadas] = useState(false)
+    const [filtroStatusEntrega, setFiltroStatusEntrega] = useState<"todas-entregas" | "somente-finalizadas" | "somente-nao-finalizadas">("somente-nao-finalizadas")
     const [mostraClientes, setMostraClientes] = useState(false)
 
     function handleClicaMostraClientes() {
@@ -42,9 +45,9 @@ function EntregasPendentesPage() {
     useEffect(() => {
         const listaFiltradaClientes = listaEntregasFuturas.filter(entrega => {
 
-            if ( !isNaN(Number(filtroCliente)) && entrega.idVenda == Number(filtroCliente) ) {
+            if (!isNaN(Number(filtroCliente)) && entrega.idVenda == Number(filtroCliente)) {
                 return entrega
-            } else if ( entrega.nomeCliente.toUpperCase().includes(filtroCliente.toUpperCase()) ) {
+            } else if (entrega.nomeCliente.toUpperCase().includes(filtroCliente.toUpperCase())) {
                 return entrega
             }
 
@@ -69,11 +72,11 @@ function EntregasPendentesPage() {
 
         const listaOrganizada = sortArrayOfObjects<IEntregaPendente>(listaFiltradaProdutos, "status", true)
 
-        setListaFiltrada( [...listaOrganizada] )
+        setListaFiltrada([...listaOrganizada])
     }, [filtroCliente, filtroProduto, listaEntregasFuturas])
-    
+
     useEffect(() => {
-        atualizaListaDeEntregasFuturas("somente-finalizadas")
+        atualizaListaDeEntregasFuturas(filtroStatusEntrega)
     }, [])
 
     return (
@@ -86,7 +89,7 @@ function EntregasPendentesPage() {
 
                 {/* Container seletor de relatório */}
                 <div className={style.container_radio_tipo_rel}>
-                    
+
                     <div className={style.container_filtros}>
                         <p>Agrupar por: </p>
 
@@ -116,26 +119,30 @@ function EntregasPendentesPage() {
                             <span>Produto</span>
                         </label>
 
-                        <Input inputType='text' fieldName='filtroCli' placeholder={{insideInput: true, text: "Filtre nº venda ou cliente"}} onChange={(value) => { setFiltroCliente(String(value)) }} />
-                        <Input inputType='text' fieldName='filtroProd' placeholder={{insideInput: true, text: "Filtre por produto"}} onChange={(value) => { setFiltroProduto(String(value)) }} />
+                        <Input inputType='text' fieldName='filtroCli' placeholder={{ insideInput: true, text: "Filtre nº venda ou cliente" }} onChange={(value) => { setFiltroCliente(String(value)) }} />
+                        <Input inputType='text' fieldName='filtroProd' placeholder={{ insideInput: true, text: "Filtre por produto" }} onChange={(value) => { setFiltroProduto(String(value)) }} />
                         <br />
                     </div>
 
                     {
                         tipoAgupamento == "venda" && (
-                            <div>
-                                <label htmlFor="check1" className={style.radio_button} style={{ cursor: "pointer" }}>
-                                    <input
-                                        type="checkbox"
-                                        name="exibeFinalizadas"
-                                        id="check1"
-                                        checked={mostraFializadas}
-                                        onChange={() => {
-                                            setMostraFinalizadas(prevState => !prevState)
-                                        }}
-                                    />
-                                    <span>Mostra finalizadas</span>
-                                </label>
+                            <div className={style.filtro_status_container}>
+                                <div>
+                                    <span>Status da entrega</span>
+                                    <ComboBox
+                                    items={
+                                        [
+                                            { id: "todas-entregas", description: "Todas entregas" },
+                                            { id: "somente-finalizadas", description: "Finalizadas" },
+                                            { id: "somente-nao-finalizadas", description: "Pendente / Em entrega" }
+                                        ]
+                                    }
+                                    defaultText='Pendente / Em entrega'
+                                    onSelectItem={(item) => { setFiltroStatusEntrega(item.id as any) }}
+                                />
+                                </div>
+
+                                <CustomButton caption='Atualizar' handleClick={() => { atualizaListaDeEntregasFuturas(filtroStatusEntrega) }} />
                             </div>
                         )
                     }
@@ -176,14 +183,14 @@ function EntregasPendentesPage() {
                                         {
                                             listaFiltrada.map(entregaFutura => {
                                                 return <LinhaPorVenda
-                                                            entrega={entregaFutura}
-                                                            alteraEntregaPendente={alteraEntregaPendente}
-                                                            exibeFinalizadas={mostraFializadas}
-                                                            deletaEntregaPendente={deletaEntregaPendente}
-                                                            setDadosEntregaPendente={setDadosEntregaModal}
-                                                            openModalFunction={modal.openModal}
-                                                            key={entregaFutura.idVenda}
-                                                        />
+                                                    entrega={entregaFutura}
+                                                    alteraEntregaPendente={alteraEntregaPendente}
+                                                    exibeFinalizadas={true}
+                                                    deletaEntregaPendente={deletaEntregaPendente}
+                                                    setDadosEntregaPendente={setDadosEntregaModal}
+                                                    openModalFunction={modal.openModal}
+                                                    key={entregaFutura.idVenda}
+                                                />
                                             })
                                         }
                                     </div>
@@ -193,7 +200,7 @@ function EntregasPendentesPage() {
                 }
             </div>
 
-            <modal.ModalComponent modalTitle={`Visualização de entrega pendente (Venda nº ${dadosEntregaModal?.idVenda})`} modalButtons={{cancelButton: {customCaption: "Fechar (ESC)", onClick: () => {modal.closeModal()}}}}>
+            <modal.ModalComponent modalTitle={`Visualização de entrega pendente (Venda nº ${dadosEntregaModal?.idVenda})`} modalButtons={{ cancelButton: { customCaption: "Fechar (ESC)", onClick: () => { modal.closeModal() } } }}>
                 <EntregaPendente entregaFutura={dadosEntregaModal!} alteraEntregaPendente={alteraEntregaPendente} deletaEntregaPendente={deletaEntregaPendente} />
             </modal.ModalComponent>
         </div>
@@ -203,7 +210,7 @@ function EntregasPendentesPage() {
 function EntregaPendente({ entregaFutura, alteraEntregaPendente, deletaEntregaPendente }: IEntregaFuturaProps) {
 
     const [abaAtiva, setAbaAtiva] = useState<"DetalhesEntrega" | "ListaRomaneios">("DetalhesEntrega")
-    
+
     const [popupMenuAberto, setPopupMenuAberto] = useState(false)
 
     const [romaneioEntrega, setRomaneioEntrega] = useState<ITempRomaneioEntrega>({
@@ -242,7 +249,7 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente, deletaEntregaPe
             alert(`Erro ao cancelar entrega pendente: ${error.message}`)
         }
     }
-    
+
     async function handleCliqueBotaoMarcaEntregaConcluida() {
         try {
             if (!confirm(`Deseja realmente finalizar a entrega do cliente "${entregaFutura.nomeCliente}"?`)) return
@@ -305,8 +312,8 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente, deletaEntregaPe
         // <tr>
         <>
             <div className={style.container_abas_entrega_futura}>
-                <span onClick={() => {setAbaAtiva("DetalhesEntrega")}}>Itens restantes</span>
-                <span onClick={() => {setAbaAtiva("ListaRomaneios")}}>Lista de entregas ({entregaFutura.romaneiosEntrega.length})</span>
+                <span onClick={() => { setAbaAtiva("DetalhesEntrega") }}>Itens restantes</span>
+                <span onClick={() => { setAbaAtiva("ListaRomaneios") }}>Lista de entregas ({entregaFutura.romaneiosEntrega.length})</span>
 
                 <div className={style.conteiner_dropdown}>
 
@@ -430,7 +437,7 @@ interface listaRomaneioProps {
     entregaPendente: IEntregaPendente
 }
 
-function ListaRomaneios({entregaPendente}: listaRomaneioProps) {
+function ListaRomaneios({ entregaPendente }: listaRomaneioProps) {
 
     const romaneios = entregaPendente.romaneiosEntrega
 
