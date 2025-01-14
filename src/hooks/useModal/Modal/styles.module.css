@@ -5,10 +5,11 @@
     background: white;
     border-radius: 6px;
     max-height: 95%;
+    max-width: 95%;
 }
 
 .modal_box > div {
-    padding: 20px 24px;
+    padding: 10px 14px;
 }
 
 .modal_header {
@@ -16,6 +17,20 @@
     color: black;
     font-weight: bold;
     font-size: 20px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close_button {
+    cursor: pointer;
+    transition: transform .25s;
+}
+.close_button:hover {
+    transition: transform .25s;
+    transform: scale(1.2);
 }
 
 .modal_body {
@@ -54,7 +69,8 @@
     .modal_box {
         /* width: 90%; */
         border-radius: 0;
-        max-height: inherit;
+        max-height: 100%;
+        max-width: 100%;
         position: fixed;
         top: 0;
         right: 0;

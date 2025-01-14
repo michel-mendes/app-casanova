@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { deletaEntregaPendente } from "@/service/vendasEntregaFutura";
+import { deletaEntregaPendente } from "@/service/nuvem/vendasEntregaFutura";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method, query } = req

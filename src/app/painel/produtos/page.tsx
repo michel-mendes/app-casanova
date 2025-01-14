@@ -29,7 +29,7 @@ function ProdutosPage() {
         atualizaListaProdutos(inputPesquisa.value)
     }
 
-    useEffect(() => {atualizaListaDeEntregasFuturas()}, [])
+    useEffect(() => {atualizaListaDeEntregasFuturas("somente-nao-finalizadas")}, [])
 
     return (
         <div className={style.page_container}>

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { createNewVendasEntregaFutura, getAllVendasEntregaFutura, alteraEntregaPendente } from "@/service/vendasEntregaFutura";
+import { createNewVendasEntregaFutura, getAllVendasEntregaFutura, alteraEntregaPendente } from "@/service/nuvem/vendasEntregaFutura";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {

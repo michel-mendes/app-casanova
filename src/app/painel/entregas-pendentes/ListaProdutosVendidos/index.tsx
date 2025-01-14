@@ -99,7 +99,7 @@ export function ListaProdutosPendentesEntrega({ listaEntregasPendentes, mostraCl
                                                                 <span> - </span>
                                                                 <span>{cliente.nomeCliente}</span>
                                                                 <span> - </span>
-                                                                <span>{cliente.quantidade}</span>
+                                                                <span>{Number(cliente.quantidade).toLocaleString(undefined, {maximumFractionDigits: 2})}</span>
                                                             </li>
                                                         )
                                                     })

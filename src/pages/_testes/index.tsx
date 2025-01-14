@@ -1,14 +1,20 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { useProdutos } from '@/hooks/useProdutos'
 import { useVendas } from '@/hooks/useVendas'
+import { useContasPagar } from '@/hooks/useContasPagar'
 
 function TestesPage() {
 
     const {aplicaAlteracoesFila} = useProdutos()
     const {exportaTodasParaNuvem, exportaVendasRecentes} = useVendas()
+    const {atualizaListaContasPagar, listaContasPagarSemanaAtual, listaContasPagar} = useContasPagar()
+
+    useEffect(() => {
+        console.log(listaContasPagar)
+    }, [listaContasPagar])
 
     return (
         <div>
@@ -41,6 +47,20 @@ function TestesPage() {
                         alert(error.message)
                     }
                 }}>Exportar</button>
+            </div>
+
+            <div>
+                <p>Lista todas contas a pagar</p>
+                <button onClick={async () => {
+                    try {
+                        const semana = await listaContasPagarSemanaAtual()
+
+                        alert("Deu certo")
+                        console.log(semana)
+                    } catch (error: any) {
+                        alert(`Erro: ${error.message}`)
+                    }
+                }}>Listar no console (F12)</button>
             </div>
         </div>
     )

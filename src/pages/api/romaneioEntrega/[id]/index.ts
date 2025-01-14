@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { localizaRomaneioPorId, deletaRomaneioEntrega } from "@/service/romaneioEntrega";
+import { localizaRomaneioPorId, deletaRomaneioEntrega } from "@/service/nuvem/romaneioEntrega";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method, query, body } = req

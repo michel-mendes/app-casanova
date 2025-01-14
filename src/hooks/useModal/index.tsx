@@ -12,9 +12,9 @@ function useModal() {
         setIsOpen(false)
     }
 
-    const ModalComponent = ({children, modalButtons, modalTitle}: IModalProps) => {
+    const ModalComponent = ({children, modalButtons, modalTitle, customSizes}: IModalProps) => {
         return (
-            <Modal isOpen={isOpen} modalButtons={modalButtons} modalTitle={modalTitle}>
+            <Modal isOpen={isOpen} modalButtons={modalButtons} modalTitle={modalTitle} customSizes={customSizes}>
                 {children}
             </Modal>
         )

@@ -3,12 +3,20 @@ import { ReactNode, useEffect } from "react";
 // Components
 import { CustomButton } from "../../../app/components/CustomButton";
 
+import closeCircledButton from "../../../app/images/close-circle-svgrepo-com.svg"
+
 import styles from "./styles.module.css"
+import Image from "next/image";
 
 export interface IModalProps {
   children?: ReactNode;
   modalTitle: string;
   isOpen?: boolean;
+  customSizes?: {
+    width: string;
+    height: string;
+  }
+
   modalButtons: {
     okButton?: {
       customCaption?: string,
@@ -40,7 +48,7 @@ export interface IModalProps {
   }
 }
 
-function Modal({ isOpen, modalTitle, children, modalButtons }: IModalProps) {
+function Modal({ isOpen, modalTitle, children, modalButtons, customSizes }: IModalProps) {
 
   const btnOk = !modalButtons.okButton ? null : <CustomButton caption={`${modalButtons.okButton?.customCaption ? modalButtons.okButton.customCaption : "OK"}`} handleClick={modalButtons.okButton.onClick} captionAlignment="center" />
   const btnCancel = !modalButtons.cancelButton ? null : <CustomButton handleClick={modalButtons.cancelButton.onClick} disabled={ (modalButtons.cancelButton.enabled !== undefined) ? !modalButtons.cancelButton.enabled : false } caption={`${modalButtons.cancelButton?.customCaption ? modalButtons.cancelButton.customCaption : "Cancelar"}`} captionAlignment="center" />
@@ -51,6 +59,7 @@ function Modal({ isOpen, modalTitle, children, modalButtons }: IModalProps) {
 
   // Handle ESC key pressing
   const cancelModal = (modalButtons.cancelButton?.onClick || modalButtons.noButton?.onClick) || function () { }
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -72,13 +81,22 @@ function Modal({ isOpen, modalTitle, children, modalButtons }: IModalProps) {
   return (
     <>
       <div className={styles.modal_overlay}>
-        <div className={styles.modal_box} onClick={(e) => { e.stopPropagation() }}>
+        <div className={styles.modal_box} style={(customSizes) && {width: customSizes.width, height: customSizes.height}} onClick={(e) => { e.stopPropagation() }}>
 
           {/* Modal header */}
           <div className={styles.modal_header}>
             <span>
               {modalTitle}
             </span>
+
+            <Image
+              src={closeCircledButton}
+              alt="Fechar janela"
+              width={32}
+              height={32}
+              className={styles.close_button}
+              onClick={() => {cancelModal()}}
+            />
           </div>
 
           {/* Modal body */}

@@ -2,6 +2,7 @@ import { ItemVenda } from "./ItemVenda";
 import { Sequelize } from "sequelize"
 import { DataType } from "sequelize-typescript";
 import { db } from "@/database/dbConnect";
+import produtos from "../produtos";
 
 function initItensVenda(sequelizeInstance: Sequelize) {
     ItemVenda.init({
@@ -22,8 +23,8 @@ function initItensVenda(sequelizeInstance: Sequelize) {
         particionado: { type: DataType.NUMBER },
         idProdutoParticionado1: { type: DataType.NUMBER },
         idProdutoParticionado2: { type: DataType.NUMBER },
-        vlrcustoProdPart1: { type: DataType.NUMBER },
-        vlrcustoProdPart2: { type: DataType.NUMBER },
+        vlrCustoProdPart1: { type: DataType.NUMBER },
+        vlrCustoProdPart2: { type: DataType.NUMBER },
         vlrVendaProdPart1: { type: DataType.NUMBER },
         vlrVendaProdPart2: { type: DataType.NUMBER },
         oferta: { type: DataType.NUMBER },
@@ -34,7 +35,7 @@ function initItensVenda(sequelizeInstance: Sequelize) {
         margemLucro: {
             type: DataType.VIRTUAL,
             get() {
-                return ((this.vlrUnitario - this.vlrCustoDia) / this.vlrCustoDia) * 100;
+                return ((this.vlrUnitario! - this.vlrCustoDia!) / this.vlrCustoDia!) * 100;
             }
         }
     }, {
@@ -43,6 +44,8 @@ function initItensVenda(sequelizeInstance: Sequelize) {
         modelName: "ItemVenda",
         tableName: "itensVenda",
     })
+
+    ItemVenda.belongsTo(produtos, {foreignKey: "idProduto", as: "produto"})
 
     return { ItemVenda }
 }

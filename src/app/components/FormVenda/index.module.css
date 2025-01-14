@@ -1,6 +1,26 @@
 .container_venda {
-    max-width: 950px;
+    /* max-width: 950px; */
     min-height: 355px;
+}
+
+.container_check_margem {
+    display: flex;
+    justify-content: right;
+}
+.container_check_margem > label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.container_venda_inexistente {
+    padding: 20px;
+    text-align: center;
+    font-size: 200%;
+    font-weight: bold;
 }
 
 @media (min-width: 1000px) {

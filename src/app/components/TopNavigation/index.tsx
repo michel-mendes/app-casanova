@@ -89,6 +89,7 @@ function TopNavigation() {
                             <Link href="/painel/produtos" className={style.dropdown_item} onClick={() => setIsDropdownOpen(false)}>Produtos</Link>
                             <Link href="/painel/vendas" className={style.dropdown_item} onClick={() => setIsDropdownOpen(false)}>Vendas</Link>
                             <Link href="/painel/contas-receber" className={style.dropdown_item} onClick={() => setIsDropdownOpen(false)}>Contas a Receber</Link>
+                            <Link href="/painel/contas-pagar" className={style.dropdown_item} onClick={() => setIsDropdownOpen(false)}>Contas a Pagar</Link>
                         </div>
                     )}
                 </div>
@@ -162,11 +163,17 @@ function TopNavigation() {
                             <span>Imprimir romaneios</span>
                         </Link>
 
+                        <hr />
+
                         <Link href={"/painel/produtos"} className={style.mobile_menu_link_container} onClick={handleCliqueBotaoHamburgerMenu}>
                             {/* <img src={deliveryTruckTime.src} alt="" className={style.mobile_menu_link_icon} /> */}
                             <span>Produtos</span>
                         </Link>
 
+                        <Link href={"/painel/vendas"} className={style.mobile_menu_link_container} onClick={handleCliqueBotaoHamburgerMenu}>
+                            {/* <img src={deliveryTruckTime.src} alt="" className={style.mobile_menu_link_icon} /> */}
+                            <span>Vendas</span>
+                        </Link>
 
                         <div className={style.close_menu_button} onClick={handleCliqueBotaoHamburgerMenu} id='closeMenuButton'>
                             <img src={closeHamburgerIcon.src} alt="" className={style.close_hamburger_icon} />

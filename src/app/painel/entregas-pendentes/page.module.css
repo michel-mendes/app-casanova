@@ -135,12 +135,22 @@
 }
 
 .conteiner_tabela {
+    /* max-width: 950px; */
+    min-height: 355px;
+    
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
 
     position: relative;
     /* align-items: center; */
+}
+
+@media (min-width: 1000px) {
+    .corpo_aba_romaneios,
+    .conteiner_tabela {
+        min-width: 950px;
+    }
 }
 
 .conteiner_tabela .detalhes_entrega {
@@ -220,9 +230,16 @@
 }
 
 .corpo_aba_romaneios {
+    /* max-width: 950px; */
+    min-height: 355px;
+    
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.container_venda_completa {
+    padding: 10px;
 }
 
 .romaneio_container {
@@ -238,6 +255,10 @@
 .romaneio_header {
     padding: 5px;
     background-color: #e0e0e0;
+}
+
+.tabela_historico_entregas {
+    width: 100%;
 }
 
 .itens_romaneio_nomes_colunas th {

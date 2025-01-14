@@ -40,6 +40,11 @@
     font-weight: bold;
 }
 
+.colunas_custo_margem {
+    background-color: rgb(107, 255, 107) !important;
+    text-align: center;
+}
+
 .table_footer {
     padding: 10px;
     display: flex;

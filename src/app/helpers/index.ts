@@ -56,9 +56,9 @@ export function sortArrayOfObjects<T extends ISortableObject>(
 
 export async function adicionaVendaParaEntregaFutura({ venda, apiNovaEntregaFutura, apiAlteraVenda }: ICadastroNovaEntregaFuturaArgs) {
     let quantidadeTotalProdutos = 0
-
+  
     for (const produto of venda?.itensVenda!) {
-        quantidadeTotalProdutos += produto.qtde
+        quantidadeTotalProdutos += produto.qtde!
     }
 
     const novaEntragaFutura = {

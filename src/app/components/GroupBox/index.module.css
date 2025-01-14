@@ -1,0 +1,13 @@
+.groupBox {
+    font: inherit;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.groupBox > legend {
+    font-weight: bold;
+    padding-left: 5px;
+    padding-right: 5px;
+    cursor: default;
+}

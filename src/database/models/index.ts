@@ -8,5 +8,6 @@ import auxBaixas from "./auxBaixas"
 import vendas from "./vendas"
 import itensVenda from "./itensVenda"
 import chequeClientes from "./chequeClientes"
+import retiradas from "./retiradas"
 
-export { produtos, clientes, fornecedores, pagar, receber, auxBaixas, vendas, itensVenda, chequeClientes }
+export { produtos, clientes, fornecedores, pagar, receber, auxBaixas, vendas, itensVenda, chequeClientes, retiradas }

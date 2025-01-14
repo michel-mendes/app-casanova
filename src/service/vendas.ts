@@ -2,11 +2,13 @@ import { Op, fn, where, col } from "sequelize";
 import { Where } from "sequelize/lib/utils";
 
 import { vendas } from "@/database/models"
+import { Funcionario } from "@/database/models/funcionarios/Funcionario";
 import { IVenda } from "@/app/interfaces"
 import { ItemVenda } from "@/database/models/itensVenda/ItemVenda"
 import { buscaVendaNuvem, novaVendaNuvem } from "./nuvem/vendas"
 import moment from "moment"
 import { AtributosVendaNuvem } from "@/database/models-mongoose/venda/IVendaNuvem"
+import { Produto } from "@/database/models/produtos/Produto";
 
 function geraListaTermosPesquisa(termoPesquisa?: string): Array<Where> {
     if (termoPesquisa) {
@@ -14,7 +16,7 @@ function geraListaTermosPesquisa(termoPesquisa?: string): Array<Where> {
         const listaCondicoesPalavras: Array<any> = []
 
         for (const texto of listaPalavras) (
-            listaCondicoesPalavras.push( where( fn("upper", col("nome")), Op.like, fn("upper", `%${texto}%`) ) )
+            listaCondicoesPalavras.push(where(fn("upper", col("Venda.nome")), Op.like, fn("upper", `%${texto}%`)))
         )
 
         return [...listaCondicoesPalavras]
@@ -28,6 +30,11 @@ export async function listarVendas(startDate: string, endDate: string, searchTer
     const end = moment(endDate).utc(true).endOf("day")
 
     const listaVendas = await vendas.findAll({
+        include: {
+            model: Funcionario,
+            attributes: ["nomeOperador"],
+            as: "operador"
+        },
         where: {
             [Op.and]: [geraListaTermosPesquisa(searchTerm)],
             dataEmissao: {
@@ -85,22 +92,33 @@ export async function alteraVenda(id: number, dadosVenda: IVenda) {
 export async function localizaVendaPorId(idVenda: number) {
     try {
         const venda = await vendas.findByPk(idVenda, {
-            include: {
-                model: ItemVenda,
-                attributes: [
-                    "id",
-                    "idVenda",
-                    "idProduto",
-                    "qtde",
-                    "unidade",
-                    "vlrUnitario",
-                    "vlrTotal",
-                    "descricao",
-                    "vlrCustoDia",
-                    "margemLucro"
-                ],
-                as: "itensVenda"
-            }
+            include: [
+                {
+                    model: ItemVenda,
+                    attributes: [
+                        "id",
+                        "idVenda",
+                        "idProduto",
+                        "qtde",
+                        "unidade",
+                        "vlrUnitario",
+                        "vlrTotal",
+                        "descricao",
+                        "vlrCustoDia",
+                        "margemLucro"
+                    ],
+                    as: "itensVenda",
+                    include: [{
+                        model: Produto,
+                        as: "produto"
+                    }]
+                },
+                {
+                    model: Funcionario,
+                    attributes: ["nomeOperador"],
+                    as: "operador"
+                }
+            ]
         })
 
         if (!venda) {
@@ -134,10 +152,10 @@ export async function exportaTodasVendasParaNuvem() {
             })
 
             for (let i = 0; i < vendasPorPagina; i++) {
-                const dadosVendaNuvem: AtributosVendaNuvem = listaVendas[i].toJSON()
+                const dadosVendaNuvem = listaVendas[i].toJSON() as AtributosVendaNuvem
 
                 try {
-                    await novaVendaNuvem({...dadosVendaNuvem, idVenda: listaVendas[i].id})
+                    await novaVendaNuvem({ ...dadosVendaNuvem, idVenda: listaVendas[i].id })
                     console.log(`Venda ${i + 1} cadastrada com sucesso`)
                 } catch (error: any) {
                     console.log(`Erro durande exportação de todas as vendas: ${error.message}`)
@@ -172,10 +190,10 @@ export async function exportaVendasRecentes() {
             // ----------------------------------------------------------------
 
 
-            const dadosVenda: AtributosVendaNuvem = venda.toJSON()
+            const dadosVenda = venda.toJSON() as AtributosVendaNuvem
 
             try {
-                await novaVendaNuvem({...dadosVenda, idVenda: venda.id})
+                await novaVendaNuvem({ ...dadosVenda, idVenda: venda.id })
                 quantVendasExportadas++
             } catch (error: any) {
                 console.log(`${new Date(Date.now()).toLocaleTimeString()} - Erro durande exportação de vendas recentes: ${error.message}`)

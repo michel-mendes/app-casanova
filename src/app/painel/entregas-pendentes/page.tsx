@@ -7,6 +7,8 @@ import { ListaProdutosPendentesEntrega } from './ListaProdutosVendidos'
 import { useModal } from '@/hooks/useModal'
 
 import { useEntregasFuturas } from '@/hooks/useVendaEntregaFutura'
+import { useVendas } from '@/hooks/useVendas'
+
 import { IEntregaFuturaProps, IItemRestanteProps, ITempItemEntregue, ITempRomaneioEntrega } from '../../interfaces'
 
 import { LoadingAnimation } from '../../components/LoadingAnimation'
@@ -20,7 +22,18 @@ import { ComboBox } from '@/app/components/ComboBox'
 import { CustomButton } from '@/app/components/CustomButton'
 import { sortArrayOfObjects } from '../../helpers'
 
+import { FormVenda } from '@/app/components/FormVenda'
+import { IVenda } from '../../interfaces'
+
 import style from "./page.module.css"
+import { TabControl } from '@/app/components/TabControl'
+
+interface FormItensRestantesProps {
+    entregaPendente: IEntregaPendente;
+    romaneioEntrega: ITempRomaneioEntrega;
+    setRomaneioEntrega: React.Dispatch<React.SetStateAction<ITempRomaneioEntrega>>
+    alteraEntregaPendente: (idEntrega: string, dados: IEntregaPendente) => Promise<IEntregaPendente>
+}
 
 function EntregasPendentesPage() {
 
@@ -130,16 +143,16 @@ function EntregasPendentesPage() {
                                 <div>
                                     <span>Status da entrega</span>
                                     <ComboBox
-                                    items={
-                                        [
-                                            { id: "todas-entregas", description: "Todas entregas" },
-                                            { id: "somente-finalizadas", description: "Finalizadas" },
-                                            { id: "somente-nao-finalizadas", description: "Pendente / Em entrega" }
-                                        ]
-                                    }
-                                    defaultText='Pendente / Em entrega'
-                                    onSelectItem={(item) => { setFiltroStatusEntrega(item.id as any) }}
-                                />
+                                        items={
+                                            [
+                                                { id: "todas-entregas", description: "Todas entregas" },
+                                                { id: "somente-finalizadas", description: "Finalizadas" },
+                                                { id: "somente-nao-finalizadas", description: "Pendente / Em entrega" }
+                                            ]
+                                        }
+                                        defaultText='Pendente / Em entrega'
+                                        onSelectItem={(item) => { setFiltroStatusEntrega(item.id as any) }}
+                                    />
                                 </div>
 
                                 <CustomButton caption='Atualizar' handleClick={() => { atualizaListaDeEntregasFuturas(filtroStatusEntrega) }} />
@@ -200,7 +213,11 @@ function EntregasPendentesPage() {
                 }
             </div>
 
-            <modal.ModalComponent modalTitle={`Visualização de entrega pendente (Venda nº ${dadosEntregaModal?.idVenda})`} modalButtons={{ cancelButton: { customCaption: "Fechar (ESC)", onClick: () => { modal.closeModal() } } }}>
+            <modal.ModalComponent
+                modalTitle={`Visualização de entrega pendente (Venda nº ${dadosEntregaModal?.idVenda})`}
+                modalButtons={{ cancelButton: { customCaption: "Fechar (ESC)", onClick: () => { modal.closeModal() } } }}
+                customSizes={{ height: "100vh", width: "100vw" }}
+            >
                 <EntregaPendente entregaFutura={dadosEntregaModal!} alteraEntregaPendente={alteraEntregaPendente} deletaEntregaPendente={deletaEntregaPendente} />
             </modal.ModalComponent>
         </div>
@@ -209,7 +226,9 @@ function EntregasPendentesPage() {
 
 function EntregaPendente({ entregaFutura, alteraEntregaPendente, deletaEntregaPendente }: IEntregaFuturaProps) {
 
-    const [abaAtiva, setAbaAtiva] = useState<"DetalhesEntrega" | "ListaRomaneios">("DetalhesEntrega")
+    const { localizaVenda } = useVendas()
+
+    const [vendaCompleta, setVendaCompleta] = useState<IVenda | null>(null)
 
     const [popupMenuAberto, setPopupMenuAberto] = useState(false)
 
@@ -226,12 +245,20 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente, deletaEntregaPe
     })
 
     useEffect(() => {
+        async function getVendaCompleta() {
+            const vendaLocalizada = await localizaVenda(entregaFutura.idVenda)
+
+            setVendaCompleta(vendaLocalizada)
+        }
+
         const listaRomaneiosLocal: Array<ITempRomaneioEntrega> = (localStorage) ? (JSON.parse(localStorage.getItem("romaneio") || "[]")) : []
         const meuRomaneio = listaRomaneiosLocal.find(romaneioLocal => romaneioLocal.idVenda == entregaFutura.idVenda)
 
         if (meuRomaneio) {
             setRomaneioEntrega(meuRomaneio)
         }
+
+        getVendaCompleta()
     }, [])
 
     function handleCliqueBotaoMenuPopup() {
@@ -264,29 +291,110 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente, deletaEntregaPe
         }
     }
 
+    return (
+        // <tr>
+        <>
+            <TabControl tabs={[
+                {
+                    tabTitle: "Itens restantes",
+                    tabContent: <FormItensRestantes
+                        entregaPendente={entregaFutura}
+                        romaneioEntrega={romaneioEntrega}
+                        setRomaneioEntrega={setRomaneioEntrega}
+                        alteraEntregaPendente={alteraEntregaPendente}
+                    />
+                },
+                {
+                    tabTitle: `Histórico de entregas (${entregaFutura.romaneiosEntrega.length} ${entregaFutura.romaneiosEntrega.length < 2 ? "entrega" : "entregas"})`,
+                    tabContent: <FormHistoricoEntregas entregaPendente={entregaFutura} />
+                },
+                {
+                    tabTitle: "Visualizar venda",
+                    tabContent: (
+                        <div className={style.container_venda_completa}>
+                            <FormVenda venda={vendaCompleta} />
+                        </div>
+                    )
+                },
+                {
+                    tabTitle: "Mais opções",
+                    tabContent: (
+                        <div className={style.container_abas_entrega_futura}>
+                            <CustomButton caption='Cancelar entrega' handleClick={handleCliqueBotaoCancelarEntregaPendente}/>
+                            <CustomButton caption='Marcar entrega como concluída' handleClick={handleCliqueBotaoMarcaEntregaConcluida}/>
+                        </div>
+                    )
+                }
+            ]} />
+
+        </>
+        // </tr>
+    )
+}
+
+function FormItensRestantes({ entregaPendente, romaneioEntrega, setRomaneioEntrega, alteraEntregaPendente }: FormItensRestantesProps) {
+
     async function handleClickAlteraNome() {
-        const novoNome = prompt(`Digite um novo nome para "${entregaFutura.nomeCliente}"`, "")
+        const novoNome = prompt(`Digite um novo nome para "${entregaPendente.nomeCliente}"`, "")
 
         if (!novoNome) {
             alert("Insira um nome válido")
             return
         }
 
-        await alteraEntregaPendente(String(entregaFutura.id), { nomeCliente: novoNome } as any)
+        await alteraEntregaPendente(String(entregaPendente.id), { nomeCliente: novoNome } as any)
         alert("Nome alterado com sucesso!")
     }
 
     async function handleClickAlteraEnderecoEntrega() {
-        const novoEnd = prompt(`Digite um novo endereço para a entrega de "${entregaFutura.nomeCliente}"`, "")
+        const novoEnd = prompt(`Digite um novo endereço para a entrega de "${entregaPendente.nomeCliente}"`, "")
 
         if (!novoEnd) {
             alert("Insira um endereço válido")
             return
         }
 
-        await alteraEntregaPendente(String(entregaFutura.id), { endereco: novoEnd } as any)
+        await alteraEntregaPendente(String(entregaPendente.id), { endereco: novoEnd } as any)
         alert("Endereço alterado com sucesso!")
     }
+
+    return (
+        <div className={style.conteiner_tabela}>
+
+            <div className={style.detalhes_entrega}>
+                <p>
+                    <span>Nome do cliente:</span> <br />
+                    <input type='text' readOnly value={entregaPendente.nomeCliente} /> <button title='Altera o nome do cliente' onClick={handleClickAlteraNome}><CiEdit size={"16px"} /></button>
+                </p>
+                <p>
+                    <span>Endereço de entrega:</span> <br />
+                    <input type='text' readOnly value={entregaPendente.endereco} /> <button title='Altera o endereço do cliente' onClick={handleClickAlteraEnderecoEntrega}><CiEdit size={"16px"} /></button>
+                </p>
+            </div>
+            <table className={style.tabela_produtos_pendentes}>
+                <thead>
+                    <tr>
+                        <th className={style.col_id_produto}>Cód. produto</th>
+                        <th>Restante a entregar</th>
+                        <th>Descrição</th>
+                        <th>Romaneio de entrega</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        entregaPendente.itensRestantes.map((dadosEntrega, itemIndex) => {
+                            return <ItemRestante key={itemIndex} dadosItem={dadosEntrega} romaneio={romaneioEntrega} setRomaneio={setRomaneioEntrega} />
+                        })
+                    }
+                </tbody>
+            </table>
+        </div>
+    )
+}
+
+function ItemRestante({ dadosItem, romaneio, setRomaneio }: IItemRestanteProps) {
+
+    const produtoJaAdicionado = romaneio.itensEntrega.find(item => item.idItemVenda == dadosItem.idItemVenda)
 
     function adicionaAoRomaneioTemporario(aRomaneio: ITempRomaneioEntrega) {
         const listaRomaneiosLocal: Array<ITempRomaneioEntrega> = (localStorage) ? (JSON.parse(localStorage.getItem("romaneio") || "[]")) : []
@@ -307,80 +415,6 @@ function EntregaPendente({ entregaFutura, alteraEntregaPendente, deletaEntregaPe
             localStorage && localStorage.setItem("romaneio", JSON.stringify(listaRomaneioAtualizada))
         }
     }
-
-    return (
-        // <tr>
-        <>
-            <div className={style.container_abas_entrega_futura}>
-                <span onClick={() => { setAbaAtiva("DetalhesEntrega") }}>Itens restantes</span>
-                <span onClick={() => { setAbaAtiva("ListaRomaneios") }}>Lista de entregas ({entregaFutura.romaneiosEntrega.length})</span>
-
-                <div className={style.conteiner_dropdown}>
-
-                    <button className={style.botao_dropdown} onClick={handleCliqueBotaoMenuPopup}>
-                        <p>Mais opções</p>
-                        <img src={dropdownIcon.src} alt="" />
-                    </button>
-
-                    {
-                        popupMenuAberto && (
-                            <div id="myDropdown" className={style.conteudo_dropdown}>
-                                <p onClick={handleCliqueBotaoCancelarEntregaPendente}>Cancelar entrega</p>
-                                <p onClick={handleCliqueBotaoMarcaEntregaConcluida}>Marcar entrega concluída</p>
-                            </div>
-                        )
-                    }
-                </div>
-            </div>
-
-            {
-                (abaAtiva == "ListaRomaneios")
-                    ? (
-                        <ListaRomaneios entregaPendente={entregaFutura} />
-                    )
-                    : (
-
-                        <div className={style.conteiner_tabela}>
-
-                            <div className={style.detalhes_entrega}>
-                                <p>
-                                    <span>Nome do cliente:</span> <br />
-                                    <input type='text' readOnly value={entregaFutura.nomeCliente} /> <button title='Altera o nome do cliente' onClick={handleClickAlteraNome}><CiEdit size={"16px"} /></button>
-                                </p>
-                                <p>
-                                    <span>Endereço de entrega:</span> <br />
-                                    <input type='text' readOnly value={entregaFutura.endereco} /> <button title='Altera o endereço do cliente' onClick={handleClickAlteraEnderecoEntrega}><CiEdit size={"16px"} /></button>
-                                </p>
-                            </div>
-                            <table className={style.tabela_produtos_pendentes}>
-                                <thead>
-                                    <tr>
-                                        <th className={style.col_id_produto}>Cód. produto</th>
-                                        <th>Restante a entregar</th>
-                                        <th>Descrição</th>
-                                        <th>Romaneio de entrega</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        entregaFutura.itensRestantes.map((dadosItem, itemIndex) => {
-                                            return <ItemRestante key={itemIndex} dadosItem={dadosItem} romaneio={romaneioEntrega} setRomaneio={setRomaneioEntrega} adicionaAoRomaneioTemporario={adicionaAoRomaneioTemporario} />
-                                        })
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-
-                    )
-            }
-        </>
-        // </tr>
-    )
-}
-
-function ItemRestante({ dadosItem, romaneio, setRomaneio, adicionaAoRomaneioTemporario }: IItemRestanteProps) {
-
-    const produtoJaAdicionado = romaneio.itensEntrega.find(item => item.idItemVenda == dadosItem.idItemVenda)
 
     function adicionaProdutoAoRomaneio() {
 
@@ -433,11 +467,11 @@ function ItemRestante({ dadosItem, romaneio, setRomaneio, adicionaAoRomaneioTemp
     )
 }
 
-interface listaRomaneioProps {
+interface FormHistoricoRomaneioProps {
     entregaPendente: IEntregaPendente
 }
 
-function ListaRomaneios({ entregaPendente }: listaRomaneioProps) {
+function FormHistoricoEntregas({ entregaPendente }: FormHistoricoRomaneioProps) {
 
     const romaneios = entregaPendente.romaneiosEntrega
 
@@ -456,7 +490,7 @@ function ListaRomaneios({ entregaPendente }: listaRomaneioProps) {
                                 </p>
                             </div>
 
-                            <table>
+                            <table className={style.tabela_historico_entregas}>
                                 <thead>
                                     <tr className={style.itens_romaneio_nomes_colunas}>
                                         <th>Quantidade</th>
@@ -487,7 +521,7 @@ function ListaRomaneios({ entregaPendente }: listaRomaneioProps) {
 }
 
 
-function LinhaPorVenda({ entrega, alteraEntregaPendente, exibeFinalizadas, deletaEntregaPendente, setDadosEntregaPendente, openModalFunction }: { entrega: IEntregaPendente, alteraEntregaPendente: (idEntrega: string, dados: IEntregaPendente) => Promise<IEntregaPendente>, exibeFinalizadas: boolean, deletaEntregaPendente: (idEntrega: string) => Promise<IEntregaPendente>, setDadosEntregaPendente: React.Dispatch<React.SetStateAction<IEntregaPendente | undefined>>, openModalFunction: () => void }) {
+function LinhaPorVenda({ entrega, alteraEntregaPendente, deletaEntregaPendente, setDadosEntregaPendente, openModalFunction }: { entrega: IEntregaPendente, alteraEntregaPendente: (idEntrega: string, dados: IEntregaPendente) => Promise<IEntregaPendente>, exibeFinalizadas: boolean, deletaEntregaPendente: (idEntrega: string) => Promise<IEntregaPendente>, setDadosEntregaPendente: React.Dispatch<React.SetStateAction<IEntregaPendente | undefined>>, openModalFunction: () => void }) {
 
     const [exibindoProdutos, setExibindoProdutos] = useState(false)
     const [alturaLinha, setAlturaLinha] = useState<{ height: string } | {}>({})
@@ -513,8 +547,6 @@ function LinhaPorVenda({ entrega, alteraEntregaPendente, exibeFinalizadas, delet
             setAlturaLinha({ height: "30px" })
         }
     }, [exibindoProdutos])
-
-    if (exibeFinalizadas == false && entregaFinalizada) return null
 
     return (
         <div

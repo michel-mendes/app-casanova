@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { criaProdutoEstoqueMonitorado, listaProdutosEstoqueMonitorado } from "@/service/produtosEstoqueMonitorado";
+import { criaProdutoEstoqueMonitorado, listaProdutosEstoqueMonitorado } from "@/service/nuvem/produtosEstoqueMonitorado";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { method, body } = req

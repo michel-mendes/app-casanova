@@ -191,26 +191,35 @@ function ListaProdutos({ listaProdutos, carregandoProdutos, listaEntregasFuturas
 
 async function formataDadosParaEtiqueta(produto: AtributosProduto) {
     const codigo = `${produto.id}`
-    const descricaoLinha1 = `${produto.descricao.match(/.{1,36}/g) || []}`.replace(",", `</br><span style="color: white; font-size: 5pt;">.</span>`)
+    // const descricaoLinha1 = `${produto.descricao.match(/.{1,36}/g) || []}`.replace(",", `</br><span style="color: white; font-size: 5pt;">.</span>`)
+    const descricaoLinha1 = `${produto.descricao.match(/.{1,36}/g) || []}`.replace(",", `\n`)
     const aVista = `R$ ${Number(produto.vlrVista).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
     const aPrazo = `R$ ${Number(produto.vlrPrazo).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-    const espacoPrecos = "".padStart(25 - aVista.length - aPrazo.length, ".")
+    const espacoPrecos = "".padStart(36 - aVista.length - aPrazo.length, " ")
 
-    const html = `
-    <div style="font-family: Consolas;">
-        <span style="color: white; font-size: 5pt;">.</span><span>Código: ${codigo}</span></br>
-        <span style="color: white; font-size: 5pt;">.</span><span style="font-size: 9pt;">${descricaoLinha1}</span></br>
-        <span style="color: white; font-size: 5pt;">.</span></br>
-        <span style="color: white; font-size: 5pt;">.</span><span>À Vista&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;À Prazo</span>
-        <span style="color: white; font-size: 5pt;">.</span><span><b style="font-size: 14pt">${aVista}</b><span style="color: white">${espacoPrecos}</span><b style="font-size: 14pt">${aPrazo}</b></span>
-    </div>
-    `
+    let texto = ""
+    texto = `Código: ${codigo}\n`
+    texto += `${descricaoLinha1}\n\n`
+    texto += `À Vista                      À Prazo\n`
+    texto += `${aVista}${espacoPrecos}${aPrazo}`
+    
+    // const html = `
+    // <div style="font-family: Consolas;">
+    //     <span style="color: white; font-size: 5pt;">.</span><span>Código: ${codigo}</span></br>
+    //     <span style="color: white; font-size: 5pt;">.</span><span style="font-size: 9pt;">${descricaoLinha1}</span></br>
+    //     <span style="color: white; font-size: 5pt;">.</span></br>
+    //     <span style="color: white; font-size: 5pt;">.</span><span>À Vista&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;À Prazo</span>
+    //     <span style="color: white; font-size: 5pt;">.</span><span><b style="font-size: 14pt">${aVista}</b><span style="color: white">${espacoPrecos}</span><b style="font-size: 14pt">${aPrazo}</b></span>
+    // </div>
+    // `
 
-    const blob = new Blob([html], { type: "text/html" })
-    const clipboarItem = new window.ClipboardItem({ "text/html": blob })
+    // const blob = new Blob([html], { type: "text/html" })
+    // const clipboarItem = new window.ClipboardItem({ "text/html": blob })
 
     try {
-        await navigator.clipboard.write([clipboarItem])
+        // await navigator.clipboard.write([clipboarItem])
+        
+        await navigator.clipboard.writeText(texto)
         alert("Dados copiados para a área de transferência!")
     } catch (error: any) {
         alert(`Erro ao copiar dados: "${error.message}"`)

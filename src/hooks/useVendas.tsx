@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-import { IVenda } from "@/app/interfaces";
 import { AtributosVendaNuvem } from "@/database/models-mongoose/venda/IVendaNuvem";
+import { VendaAttributes } from "@/database/models/vendas/Venda";
 
 export function useVendas() {
-    const [listaVendas, setListaVendas] = useState<Array<IVenda>>([])
+    const [listaVendas, setListaVendas] = useState<Array<VendaAttributes>>([])
     const [loadingVendas, setLoadingVendas] = useState<boolean>(false)
     const [aguardandoApi, setAguardandoApi] = useState(false)
 
@@ -13,7 +13,7 @@ export function useVendas() {
         try {
             setLoadingVendas(true)
 
-            const novaLista: Array<IVenda> = await (await fetch(`/api/vendas?start=${startDate}&end=${endDate}&search=${search}`)).json()
+            const novaLista: Array<VendaAttributes> = await (await fetch(`/api/vendas?start=${startDate}&end=${endDate}&search=${search}`)).json()
 
             setListaVendas(novaLista)
         } catch (error) {
@@ -24,7 +24,7 @@ export function useVendas() {
 
     }
 
-    async function alteraVenda(id: number, dadosVenda: IVenda) {
+    async function alteraVenda(id: number, dadosVenda: VendaAttributes) {
 
         try {
             setAguardandoApi(true)
@@ -39,7 +39,7 @@ export function useVendas() {
             }
             // --------------------------------
 
-            const vendaAlterada = (await apiResponse.json()) as IVenda
+            const vendaAlterada = (await apiResponse.json()) as VendaAttributes
 
             return vendaAlterada
         } finally {
@@ -55,10 +55,11 @@ export function useVendas() {
 
         if (!respostaApi.ok) {
             setAguardandoApi(false)
-            return alert((await respostaApi.json() as any).error)
+            return null
+            // return alert((await respostaApi.json() as any).error)
         }
 
-        const venda = (await respostaApi.json()) as IVenda
+        const venda = (await respostaApi.json()) as VendaAttributes
 
         setAguardandoApi(false)
         return venda

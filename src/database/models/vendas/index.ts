@@ -3,6 +3,7 @@ import itensVenda from "../itensVenda";
 import { Sequelize } from "sequelize"
 import { DataType } from "sequelize-typescript";
 import { db } from "@/database/dbConnect";
+import funcionarios from "../funcionarios";
 
 export function initVendas(sequelizeInstance: Sequelize) {
     Venda.init({
@@ -67,10 +68,10 @@ export function initVendas(sequelizeInstance: Sequelize) {
                     let totalCusto = 0
 
                     for (const item of this.itensVenda) {
-                        totalCusto += item.vlrCustoDia * item.qtde
+                        totalCusto += item.vlrCustoDia! * item.qtde!
                     }
 
-                    return ((this.vlrLiquido - totalCusto) / totalCusto) * 100
+                    return ((this.vlrLiquido! - totalCusto) / totalCusto) * 100
                 } else {
                     return 0
                 }
@@ -84,6 +85,8 @@ export function initVendas(sequelizeInstance: Sequelize) {
     })
 
     Venda.hasMany(itensVenda, {foreignKey: "idVenda", as: "itensVenda"})
+    Venda.belongsTo(funcionarios, {foreignKey: "idOperador", as: "operador"})
+    // Venda.hasOne(usuarios, {sourceKey: "idOperador", foreignKey: "id", as: "usuario"})
 
     return { Venda }
 }
