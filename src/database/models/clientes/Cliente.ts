@@ -1,4 +1,5 @@
-import { DataType, Model, Optional } from 'sequelize';
+import { Association, DataType, Model, NonAttribute, Optional } from 'sequelize';
+import { Receber } from '../receber/Receber';
 
 export interface ClienteAttributes {
     id: number;
@@ -41,6 +42,8 @@ export interface ClienteAttributes {
     idRespAberturaMesa?: number | null;
     tipoRespAberturaMesa?: string | null;
     foneMesa?: string | null;
+
+    listaDebito?: Array<Receber>
 }
 
 interface ClienteCreationAttributes extends Optional<ClienteAttributes, 'id'> { }
@@ -87,4 +90,10 @@ export class Cliente extends Model<ClienteAttributes, ClienteCreationAttributes>
     public idRespAberturaMesa!: number | null;
     public tipoRespAberturaMesa!: string | null;
     public foneMesa!: string | null;
+
+    declare listaDebito?: NonAttribute<Array<Receber>>;
+
+    declare static associations: {
+        listaDebito: Association<Cliente, Receber>,
+    }
 }
