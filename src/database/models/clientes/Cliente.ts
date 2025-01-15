@@ -1,52 +1,90 @@
-import { Model, Optional, NonAttribute, Association, InferAttributes, InferCreationAttributes } from "sequelize"
-import { Receber } from "../receber/Receber";
+import { DataType, Model, Optional } from 'sequelize';
 
-export class Cliente extends Model<InferAttributes<Cliente, { omit: "listaDebito" }>, InferCreationAttributes<Cliente, { omit: "listaDebito" }>> {
-    // export class Cliente extends Model<AtributosCliente, AtributosNovoCliente> {
-    declare id: number;
-    declare status: number;
-    declare nome: string;
-    declare endereco: string;
-    declare numero: string;
-    declare bairro: string;
-    declare complemento: string;
-    declare cidade: string;
-    declare uf: string;
-    declare cep: string;
-    declare rg: string;
-    declare cpf: string;
-    declare fone1: string;
-    declare fone2: string;
-    declare fone3: string;
-    declare email: string;
-    declare dtCadastro: Date;
-    declare dtAlteracao: Date;
-    declare idUsuario: number;
-    declare limite: number;
-    declare obs: string;
-    declare dtNascimento: Date;
-    declare localTrabalho: string;
-    declare foneTrabalho: string;
-    declare contatoTrabalho: string;
-    declare salario: number;
-    declare estadoCivil: string;
-    declare pessoa: string;
-    declare fantasia: string;
-    declare tipoCliente: string;
-    declare produtorRural: number;
-    declare dtVencimento: number;
-    declare diasVenctoVendas: number;
-    declare mesa: number;
-    declare statusMesa: string;
-    declare mensalidade: number;
-    declare vlrMensalidade: number;
-    declare idRespAberturaMesa: number;
-    declare tipoRespAberturaMesa: string;
-    declare foneMesa: string;
+export interface ClienteAttributes {
+    id: number;
+    status?: number | null;
+    nome: string;
+    endereco?: string | null;
+    numero?: string | null;
+    bairro?: string | null;
+    complemento?: string | null;
+    cidade?: string | null;
+    uf?: string | null;
+    cep?: string | null;
+    rg?: string | null;
+    cpf?: string | null;
+    fone1?: string | null;
+    fone2?: string | null;
+    fone3?: string | null;
+    email?: string | null;
+    dtCadastro?: Date | null;
+    dtAlteracao?: Date | null;
+    idUsuario?: number | null;
+    limite?: number | null;
+    obs?: string | null;
+    dtNascimento?: Date | null;
+    localTrabalho?: string | null;
+    foneTrabalho?: string | null;
+    contatoTrabalho?: string | null;
+    salario?: number | null;
+    estadoCivil?: string | null;
+    pessoa?: string | null;
+    fantasia?: string | null;
+    tipoCliente?: string | null;
+    produtorRural?: number | null;
+    dtVencimento?: number | null;
+    diasVenctoVendas?: number | null;
+    mesa?: number | null;
+    statusMesa?: string | null;
+    mensalidade?: number | null;
+    vlrMensalidade?: number | null;
+    idRespAberturaMesa?: number | null;
+    tipoRespAberturaMesa?: string | null;
+    foneMesa?: string | null;
+}
 
-    declare listaDebito?: NonAttribute<Array<Receber>>
+interface ClienteCreationAttributes extends Optional<ClienteAttributes, 'id'> { }
 
-    declare static associations: {
-        listaDebito: Association<Cliente, Receber>
-    }
+export class Cliente extends Model<ClienteAttributes, ClienteCreationAttributes>
+    implements ClienteAttributes {
+    public id!: number;
+    public status!: number | null;
+    public nome!: string;
+    public endereco!: string | null;
+    public numero!: string | null;
+    public bairro!: string | null;
+    public complemento!: string | null;
+    public cidade!: string | null;
+    public uf!: string | null;
+    public cep!: string | null;
+    public rg!: string | null;
+    public cpf!: string | null;
+    public fone1!: string | null;
+    public fone2!: string | null;
+    public fone3!: string | null;
+    public email!: string | null;
+    public dtCadastro!: Date | null;
+    public dtAlteracao!: Date | null;
+    public idUsuario!: number | null;
+    public limite!: number | null;
+    public obs!: string | null;
+    public dtNascimento!: Date | null;
+    public localTrabalho!: string | null;
+    public foneTrabalho!: string | null;
+    public contatoTrabalho!: string | null;
+    public salario!: number | null;
+    public estadoCivil!: string | null;
+    public pessoa!: string | null;
+    public fantasia!: string | null;
+    public tipoCliente!: string | null;
+    public produtorRural!: number | null;
+    public dtVencimento!: number | null;
+    public diasVenctoVendas!: number | null;
+    public mesa!: number | null;
+    public statusMesa!: string | null;
+    public mensalidade!: number | null;
+    public vlrMensalidade!: number | null;
+    public idRespAberturaMesa!: number | null;
+    public tipoRespAberturaMesa!: string | null;
+    public foneMesa!: string | null;
 }

@@ -16,10 +16,10 @@ function initPlanoContas(sequelizeInstance: Sequelize) {
           ativo: { type: DataType.INTEGER, allowNull: true, defaultValue: 1, },
         },
         {
+          freezeTableName: true,
           sequelize: sequelizeInstance,
           modelName: "PlanoContas",
           tableName: 'planoContas',
-          timestamps: false,
         }
       );
 
