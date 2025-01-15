@@ -63,6 +63,7 @@ function AbaDetalhamentoVenda({ dadosVenda, exibirCustosMargem }: AbaDadosVendaP
             <th>Número</th>
             <th>Bairro</th>
             <th>Cidade</th>
+            <th>CEP</th>
             <th>UF</th>
             <th>Telefone</th>
           </thead>
@@ -72,6 +73,7 @@ function AbaDetalhamentoVenda({ dadosVenda, exibirCustosMargem }: AbaDadosVendaP
             <td>{!dadosVenda.numero ? "" : dadosVenda.numero}</td>
             <td>{!dadosVenda.bairro ? "" : dadosVenda.bairro}</td>
             <td>{!dadosVenda.cidade ? "" : dadosVenda.cidade}</td>
+            <td>{!dadosVenda.cep ? "" : dadosVenda.cep}</td>
             <td>{!dadosVenda.uf ? "" : dadosVenda.uf}</td>
             <td>{!dadosVenda.telefone ? "" : dadosVenda.telefone}</td>
           </tbody>

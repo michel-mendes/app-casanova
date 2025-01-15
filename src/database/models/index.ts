@@ -9,5 +9,22 @@ import vendas from "./vendas"
 import itensVenda from "./itensVenda"
 import chequeClientes from "./chequeClientes"
 import retiradas from "./retiradas"
+import orcamentos from "./orcamentos"
+import itensOrcamento from "./itensOrcamento"
+import funcionarios from "./funcionarios"
 
-export { produtos, clientes, fornecedores, pagar, receber, auxBaixas, vendas, itensVenda, chequeClientes, retiradas }
+export {
+    produtos,
+    clientes,
+    fornecedores,
+    pagar,
+    receber,
+    auxBaixas,
+    vendas,
+    itensVenda,
+    chequeClientes,
+    retiradas,
+    orcamentos,
+    itensOrcamento,
+    funcionarios
+}

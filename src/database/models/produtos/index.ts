@@ -2,6 +2,7 @@ import { Sequelize } from "sequelize"
 import { DataType } from "sequelize-typescript";
 import { Produto } from "./Produto";
 import { db } from "@/database/dbConnect";
+import { itensOrcamento } from "../index"
 
 const initProduto = (sequelizeInstance: Sequelize) => {
     Produto.init({
@@ -98,6 +99,8 @@ const initProduto = (sequelizeInstance: Sequelize) => {
         modelName: "Produto",
         tableName: "produtos"
     })
+
+    // Produto.hasMany(itensOrcamento, { foreignKey: "idProduto", as: "itensOrcamento" })
 
     return { Produto }
 }

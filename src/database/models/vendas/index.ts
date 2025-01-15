@@ -1,9 +1,9 @@
 import { Venda } from "./Venda";
 import itensVenda from "../itensVenda";
+import funcionarios from "../funcionarios";
 import { Sequelize } from "sequelize"
 import { DataType } from "sequelize-typescript";
 import { db } from "@/database/dbConnect";
-import funcionarios from "../funcionarios";
 
 export function initVendas(sequelizeInstance: Sequelize) {
     Venda.init({
