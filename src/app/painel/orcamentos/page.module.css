@@ -1,0 +1,226 @@
+.div {
+    font-size: .7rem;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.page_container {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    flex-direction: column;
+    font-size: .7rem;
+    /* overflow-y: hidden; */
+    margin: 5px;
+    padding: 10px;
+
+    border: 1px solid silver;
+    border-radius: 6px;
+    background-color: white;
+    overflow: auto;
+}
+
+.filter_container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    /* border: 1px solid black; */
+}
+
+.filter_container > div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.container_filtro_texto {
+    flex: 3 auto auto;
+}
+.container_filtro_texto button {
+    height: fit-content;
+}
+
+.table_orcamentos {
+    /* border: 2px solid blue; */
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-collapse: collapse;
+}
+
+.row_orcamento {
+    border-bottom: none;
+}
+
+.column_detail_orcamento {
+    cursor: pointer;
+    border-right: silver 1px solid;
+    padding: 3px;
+}
+
+.col_n_orcamento {
+    text-align: center;
+}
+.col_data {
+    text-align: center;
+}
+.col_valor {
+    text-align: right;
+}
+.col_margem {
+    text-align: center;
+}
+.col_btn_add_entrega {
+    text-align: center;
+}
+
+.div_itens_orcamento {
+    border-top: silver 1px solid;
+    padding: 10px 20px 10px 20px;
+    overflow: hidden;
+}
+
+.div_itens_orcamento[is-expanded="false"] {
+    display: none;
+}
+.div_itens_orcamento[is-expanded="true"] {
+    display: block;
+}
+
+.hide_itens_orcamento {
+    height: 0px;
+}
+
+.show_itens_orcamento {
+    height: auto;
+}
+
+.table_itens_orcamento {
+    width: 100%;
+}
+
+
+
+
+/* Estilos gerais da tabela */
+.table_orcamentos {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 0.7rem; /* Fonte menor, mas legível */
+}
+
+.table_orcamentos thead {
+    background-color: #e0e0e0; /* Cinza claro neutro */
+    color: #333; /* Texto escuro */
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.table_orcamentos th, .table_orcamentos td {
+    /* padding: 2px 6px; */
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table_orcamentos tbody tr:nth-child(even) {
+    background-color: #f8f8f8; /* Alternância mais suave */
+}
+
+.table_orcamentos tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.table_orcamentos .row_orcamento {
+    border-left: 3px solid transparent;
+}
+
+.table_orcamentos .row_orcamento:hover {
+    border-left-color: #b0b0b0; /* Destaque lateral com tom neutro */
+}
+
+.table_orcamentos tfoot {
+    font-weight: bold;
+    background-color: #f5f5f5;
+}
+
+/* Botão neutro */
+.col_btn_add_entrega button {
+    background-color: #d9d9d9; /* Cinza suave */
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.8rem; /* Botão menor */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.col_btn_add_entrega button:hover {
+    background-color: #c4c4c4; /* Escurecer no hover */
+}
+
+/* Tabela Detalhamento */
+.table_itens_orcamento {
+    width: 100%;
+    /* margin-top: 8px; */
+    border-collapse: collapse;
+    font-size: 0.8rem; /* Fonte ainda menor */
+}
+
+.table_itens_orcamento th, .table_itens_orcamento td {
+    /* padding: 6px; */
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.table_itens_orcamento thead {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.div_itens_orcamento {
+    background-color: #fdfdfd;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    /* margin-top: 6px; */
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.div_itens_orcamento h3 {
+    /* margin-bottom: 6px; */
+    font-size: 1rem; /* Menor */
+    color: #444;
+}
+
+.div_itens_orcamento span {
+    display: block;
+    /* margin-bottom: 2px; */
+    font-size: 0.85rem; /* Ajuste para caber mais texto */
+    color: #555;
+}
+
+.rodape_total_orcamentos {
+    position: sticky;
+    bottom: 0;
+
+    font-weight: bold;
+    background-color: #f5f5f5;
+    /* height: 20px; */
+    padding: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}

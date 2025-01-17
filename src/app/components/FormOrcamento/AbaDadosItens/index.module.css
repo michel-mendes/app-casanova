@@ -1,0 +1,52 @@
+.tabela_itens {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabela_itens tbody tr:hover {
+    background-color: #e2e2e2;
+}
+
+/* Header com nomes das colunas */
+.tabela_itens thead th {
+    padding: 4px;
+    background-color: #d2d2d2;
+}
+
+/* Células da tabela */
+.tabela_itens tbody td {
+    padding: 4px;
+    border: 1px solid #d2d2d2;
+}
+
+.coluna_numItem {
+    text-align: center;
+}
+
+.coluna_codigo {
+    text-align: center;
+}
+
+.coluna_qtde {
+    text-align: center;
+}
+
+.coluna_vrUnit {
+    text-align: right;
+}
+
+.coluna_vrTotal {
+    text-align: right;
+    font-weight: bold;
+}
+
+.colunas_custo_margem {
+    background-color: rgb(107, 255, 107) !important;
+    text-align: center;
+}
+
+.table_footer {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
