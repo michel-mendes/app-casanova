@@ -87,7 +87,9 @@ function TopNavigation() {
                     {isDropdownOpen && (
                         <div className={style.dropdown_menu}>
                             <Link href="/painel/produtos" className={style.dropdown_item} onClick={() => setIsDropdownOpen(false)}>Produtos</Link>
+                            <Link href="/painel/produtos/entrega-futura" className={style.dropdown_item} onClick={() => setIsDropdownOpen(false)}>Produtos para entrega futura</Link>
                             <Link href="/painel/vendas" className={style.dropdown_item} onClick={() => setIsDropdownOpen(false)}>Vendas</Link>
+                            <Link href="/painel/orcamentos" className={style.dropdown_item} onClick={() => setIsDropdownOpen(false)}>Orçamentos</Link>
                             <Link href="/painel/contas-receber" className={style.dropdown_item} onClick={() => setIsDropdownOpen(false)}>Contas a Receber</Link>
                             <Link href="/painel/contas-pagar" className={style.dropdown_item} onClick={() => setIsDropdownOpen(false)}>Contas a Pagar</Link>
                         </div>
